@@ -1,0 +1,9 @@
+
+syntax: regexp
+^baobab/gwt-unitCache$
+syntax: regexp
+^baobab/war/WEB-INF/deploy$
+syntax: regexp
+^baobab/war/baobab$
+syntax: regexp
+^baobab/war/WEB-INF/classes$
