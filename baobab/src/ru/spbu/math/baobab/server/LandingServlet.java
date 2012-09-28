@@ -18,7 +18,13 @@ public class LandingServlet extends HttpServlet {
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     authService.setupUserAndMaintenance(req);
-    RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/index.jsp");
-    dispatcher.forward(req, resp);
+    String[] path = req.getRequestURI().split("/");
+    String file = path.length <= 1 ? "index.jsp" : path[1];
+    if (file.endsWith(".jsp")) {
+      RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/" + file);
+      dispatcher.forward(req, resp);
+    } else {
+      resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+    }
   }
 }

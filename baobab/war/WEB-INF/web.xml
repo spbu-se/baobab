@@ -8,6 +8,10 @@
   
   <servlet-mapping>
     <servlet-name>auth_servlet</servlet-name>
+    <url-pattern>/auth/dev</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>auth_servlet</servlet-name>
     <url-pattern>/auth/twitter</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
