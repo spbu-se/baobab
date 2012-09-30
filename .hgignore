@@ -7,3 +7,5 @@ syntax: regexp
 ^baobab/war/baobab$
 syntax: regexp
 ^baobab/war/WEB-INF/classes$
+syntax: regexp
+^baobab/src/auth\.secret\.properties$
