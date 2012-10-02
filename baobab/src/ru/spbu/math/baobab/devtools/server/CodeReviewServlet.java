@@ -1,4 +1,4 @@
-package ru.spbu.math.baobab.server;
+package ru.spbu.math.baobab.devtools.server;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -81,7 +81,7 @@ public class CodeReviewServlet extends HttpServlet {
   }
 
   private String createText(JSONObject jsonRev) {
-    StringBuilder result = new StringBuilder("Hello, I want you to make a code review. Please point your browser to http://code.google.com/p/baobab/source/detail?r=");
+    StringBuilder result = new StringBuilder("Hello, can you please review my code? The changelist is available at this link: to http://code.google.com/p/baobab/source/detail?r=");
     result.append(jsonRev.optString("revision")).append("\n");
     result.append(Strings.repeat("=", 32)).append("\n");
     result.append(jsonRev.optString("message"));
