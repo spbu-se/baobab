@@ -25,6 +25,14 @@
   
   <!-- Landing -->
   <servlet>
+    <servlet-name>code_review_servlet</servlet-name>
+    <servlet-class>ru.spbu.math.baobab.server.CodeReviewServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>code_review_servlet</servlet-name>
+    <url-pattern>/_ah/code_review</url-pattern>
+  </servlet-mapping>
+  <servlet>
     <servlet-name>team_servlet</servlet-name>
     <servlet-class>ru.spbu.math.baobab.server.TeamServlet</servlet-class>
   </servlet>
