@@ -12,5 +12,6 @@ public class TeamServlet extends HttpServlet {
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     resp.getWriter().println("The Team:");
     resp.getWriter().println("Dmitry Barashev");
+    resp.getWriter().println("Anton Bondarev");
   }
 }
