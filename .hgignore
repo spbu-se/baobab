@@ -11,4 +11,4 @@ syntax: regexp
 syntax: regexp
 ^baobab/war/WEB-INF/appengine-generated$
 syntax: regexp
-^baobab/.gwt/.gwt-log$
+^baobab/\.gwt/\.gwt-log$
