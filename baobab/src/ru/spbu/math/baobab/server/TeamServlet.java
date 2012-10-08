@@ -9,13 +9,13 @@ import javax.servlet.http.HttpServletResponse;
 
 public class TeamServlet extends HttpServlet {
   protected String [] myMembers = new String [] {
-		  "Dmitry Barashev", "Anton Bondarev", "Dmitry Luciv"
+	"Dmitry Barashev", "Anton Bondarev", "Dmitry Luciv"
   };
 	
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     resp.getWriter().println("The Team:");
     for(String member : myMembers)
-        resp.getWriter().println(" * " + member);
+      resp.getWriter().println(" * " + member);
   }
 }
