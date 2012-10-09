@@ -9,7 +9,8 @@ import javax.servlet.http.HttpServletResponse;
 
 public class TeamServlet extends HttpServlet {
   protected String [] myMembers = new String [] {
-	"Dmitry Barashev", "Anton Bondarev", "Dmitry Vadimovich Luciv"
+	"Dmitry Barashev", "Anton Bondarev", "Dmitry Vadimovich Luciv", "Alexander Gudulin",
+	"Ageev Denis"
   };
 	
   @Override
