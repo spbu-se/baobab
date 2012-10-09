@@ -11,6 +11,8 @@ public class TimeInstant {
   private final int myMinute;
   
   public TimeInstant(int hour, int minute) {
+    assert hour >= 0 && hour <= 23 : "invalid hour value=" + hour;
+    assert minute >= 0 && minute <= 59 : "invalid minute value=" + minute;
     myHour = hour;
     myMinute = minute;
   }
