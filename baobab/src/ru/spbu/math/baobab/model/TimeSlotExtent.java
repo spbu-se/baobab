@@ -8,7 +8,7 @@ import java.util.Collection;
  * 
  * @author dbarashev
  */
-public interface TimeSlotPopulation {
+public interface TimeSlotExtent {
   /**
    * @return collection of all available time slots
    */

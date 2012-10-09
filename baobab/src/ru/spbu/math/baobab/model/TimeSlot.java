@@ -21,4 +21,9 @@ public interface TimeSlot {
    * @return time slot finish time instant
    */
   TimeInstant getFinish();
+  
+  /**
+   * @return extent associated with this time slot
+   */
+  TimeSlotExtent getExtent();
 }
