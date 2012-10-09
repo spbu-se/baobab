@@ -8,10 +8,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public class TeamServlet extends HttpServlet {
+  protected String [] myMembers = new String [] {
+	"Dmitry Barashev", "Anton Bondarev", "Dmitry Vadimovich Luciv", "Alexander Gudulin",
+	"Ageev Denis", "Alexandr Lapitckiy"
+  };
+	
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     resp.getWriter().println("The Team:");
-    resp.getWriter().println("Dmitry Barashev");
-    resp.getWriter().println("Anton Bondarev");
+    for(String member : myMembers)
+      resp.getWriter().println(" * " + member);
   }
 }
