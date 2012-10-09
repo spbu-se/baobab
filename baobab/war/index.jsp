@@ -16,7 +16,7 @@
 	  </div>
   </c:if>
   <c:if test="${not empty user_id}">
-    Привет <c:out value="${nickname}"/>, твой ID сегодня: <c:out value="${user_id}"/>. если ты не против.
+    Привет <c:out value="${nickname}"/>, твой ID: <c:out value="${user_id}"/>. Живи теперь с этим.
     <div></div><a href="/auth/logout">Выйти</a></div> 
   </c:if>
   

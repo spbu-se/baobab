@@ -1,4 +1,3 @@
-
 syntax: regexp
 ^baobab/gwt-unitCache$
 syntax: regexp
@@ -11,3 +10,5 @@ syntax: regexp
 ^baobab/src/auth\.secret\.properties$
 syntax: regexp
 ^baobab/war/WEB-INF/appengine-generated$
+syntax: regexp
+^baobab/\.gwt/\.gwt-log$
