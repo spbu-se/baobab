@@ -1,0 +1,14 @@
+syntax: regexp
+^baobab/gwt-unitCache$
+syntax: regexp
+^baobab/war/WEB-INF/deploy$
+syntax: regexp
+^baobab/war/baobab$
+syntax: regexp
+^baobab/war/WEB-INF/classes$
+syntax: regexp
+^baobab/src/auth\.secret\.properties$
+syntax: regexp
+^baobab/war/WEB-INF/appengine-generated$
+syntax: regexp
+^baobab/\.gwt/\.gwt-log$
