@@ -19,7 +19,7 @@ public class LandingServlet extends HttpServlet {
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     authService.setupUserAndMaintenance(req);
     String[] path = req.getRequestURI().split("/");
-    String file = path.length <= 1 ? "index.jsp" : path[1];
+    String file = path.length <= 1 ? (DevMode.IS_ENABLED ? "dev_login.jsp" : "index.jsp") : path[1];
     if (file.endsWith(".jsp")) {
       RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/" + file);
       dispatcher.forward(req, resp);

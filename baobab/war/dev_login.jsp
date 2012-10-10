@@ -16,6 +16,10 @@
     </table>
     </form>
   </c:if>
+  <c:if test="${not empty user_id}">
+    Привет <c:out value="${nickname}"/>, твой ID: <c:out value="${user_id}"/>. Живи теперь с этим.
+    <div></div><a href="/auth/logout">Выйти</a></div> 
+  </c:if>
 </body>
 </html>
 
