@@ -1,0 +1,38 @@
+digraph g {
+  inter [label="Interpretator",shape=box,fillcolor="palegreen",style="filled, rounded"];
+  model [label=" Data model",shape=box,fillcolor="palegreen",style="filled,rounded"];
+  datastore [label="Datastore",shape=box,fillcolor="palegreen",style="filled,rounded"];
+
+exports [label="Exports",shape=box,fillcolor="palegreen",style="filled,rounded"];
+ui [label="User Interface",shape=box,fillcolor="palegreen",style="filled,rounded"];
+  subgraph cluster_store {
+    label = "";
+    style="filled";
+    color="lightgrey";
+    node [style=filled,color="palegreen"];
+    mysql [label="MySQL",fillcolor="palegreen",style="filled"];
+    nosql [label="noSQL",fillcolor="palegreen",style="filled"];
+  }
+
+  subgraph cluster_ui {
+    label = "";
+    style="filled";
+    color="lightgrey";
+    node [style=filled,color="palegreen"];
+    vk [label="VK",fillcolor="palegreen",style="filled"];
+    twitter [label="Twitter",fillcolor="palegreen",style="filled"];
+  }
+
+  inter -> model [dir=both]
+  datastore -> model [dir=both]
+  exports -> model [dir=both]
+  datastore -> mysql [dir=both]
+  datastore -> nosql [dir=both]
+  ui -> inter
+
+  ui-> vk
+  ui -> twitter
+  
+
+
+}
