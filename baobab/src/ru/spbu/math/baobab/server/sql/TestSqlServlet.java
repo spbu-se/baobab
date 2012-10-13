@@ -13,6 +13,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * This servlet does a smoke test of database connection. It runs a single select and
+ * prints how many rows it returned
+ * 
+ * @author dbarashev
+ */
 public class TestSqlServlet extends HttpServlet {
   private static final Logger LOGGER = Logger.getLogger("SqlService");
   
