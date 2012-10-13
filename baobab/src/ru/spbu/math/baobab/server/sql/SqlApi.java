@@ -68,6 +68,10 @@ public class SqlApi {
    * @throws SQLException
    */
   public List<PreparedStatement> prepareScript(String text) throws SQLException {
+    return createPreparedStatements(splitScript(text));
+  }  
+
+  static List<String> splitScript(String text) {
     List<String> stmts = Lists.newArrayList();
     StringBuilder stmtBuilder = new StringBuilder();
     for (String line : text.split("\\n")) {
@@ -85,13 +89,15 @@ public class SqlApi {
     }
     if (stmtBuilder.length() > 0) {
       stmts.add(stmtBuilder.toString());
-    }
-    
+    }    
+    return stmts;
+  }
+  
+  private List<PreparedStatement> createPreparedStatements(List<String> stmts) throws SQLException {
     List<PreparedStatement> result = Lists.newArrayList();
     for (String s : stmts) {
       result.add(myConnection.prepareCall(s));
-    }
-    
+    }    
     return result;
-  }  
+  }
 }
