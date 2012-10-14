@@ -18,7 +18,7 @@ public interface TimeSlot {
   int getDayOfWeek();
 
   /**
-   * @return wheter slot applies to both / odd / even week
+   * @return whether slot applies to both / odd / even week
    */
   EvenOddWeek gerEvenOddWeek();
   
