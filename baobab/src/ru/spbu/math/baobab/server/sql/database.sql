@@ -4,7 +4,7 @@ DROP TABLE IF EXISTS TimeSlot;
   -- finish_min: finish time in minutes since the day start
   -- name: time slot name
   -- day: time slot day in [1..7] range. Week starts on Monday
-  -- is_odd: time slot alternation flag. See EvenOddWeek enum 
+  -- is_odd: time slot flashing flag. See EvenOddWeek enum 
 CREATE TABLE TimeSlot (id INT PRIMARY KEY AUTO_INCREMENT, 
   start_min INT NOT NULL CHECK(start_min >= 0 AND start_min < 1440),
   finish_min INT NOT NULL CHECK(finish_min > start_min AND finish_min < 1440),
