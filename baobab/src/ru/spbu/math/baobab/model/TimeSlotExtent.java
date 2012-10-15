@@ -17,16 +17,6 @@ public interface TimeSlotExtent {
   Collection<TimeSlot> getAll();
   
   /**
-   * Searches for time slot identified by the given parameters.
-   * 
-   * @param name time slot name
-   * @param day week day in [1..7] range
-   * @param flashing flashing mode
-   * @return time slot with the given parameters or {@code null} if no such time slot exists
-   */
-  TimeSlot find(String name, int day, EvenOddWeek flashing);
-  
-  /**
    * Searches for all time slots defined for the given week day. Names or flashing modes do not matter. 
    * Returned list is ordered by time slot start moments in ascending order.   
    * 
