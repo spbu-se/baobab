@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <launchConfiguration type="com.google.gdt.eclipse.suite.webapp">
 <stringAttribute key="com.google.gdt.eclipse.suiteMainTypeProcessor.PREVIOUSLY_SET_MAIN_TYPE_NAME" value="com.google.gwt.dev.DevMode"/>
-<booleanAttribute key="com.google.gdt.eclipse.suiteWarArgumentProcessor.IS_WAR_FROM_PROJECT_PROPERTIES" value="true"/>
+<booleanAttribute key="com.google.gdt.eclipse.suiteWarArgumentProcessor.IS_WAR_FROM_PROJECT_PROPERTIES" value="false"/>
 <stringAttribute key="com.google.gwt.eclipse.core.URL" value="Baobab.html"/>
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
 <listEntry value="/baobab"/>
@@ -23,7 +23,7 @@
 <stringAttribute key="org.eclipse.jdt.launching.CLASSPATH_PROVIDER" value="com.google.gdt.eclipse.suite.appengineClasspathProvider"/>
 <booleanAttribute key="org.eclipse.jdt.launching.DEFAULT_CLASSPATH" value="false"/>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="com.google.gwt.dev.DevMode"/>
-<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-startupUrl Baobab.html -war /Users/sagod/Dropbox/workspace/baobab/baobab/war -remoteUI &quot;${gwt_remote_ui_server_port}:${unique_id}&quot; -logLevel INFO -codeServerPort 9997 -port 8888 -server com.google.appengine.tools.development.gwt.AppEngineLauncher ru.spbu.math.baobab.Baobab"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-startupUrl Baobab.html -war &quot;${project_loc:baobab}/war&quot; -remoteUI &quot;${gwt_remote_ui_server_port}:${unique_id}&quot; -logLevel INFO -codeServerPort 9997 -port 8888 -server com.google.appengine.tools.development.gwt.AppEngineLauncher ru.spbu.math.baobab.Baobab"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="baobab"/>
-<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Drdbms.url=jdbc:mysql://localhost:3306/baobab?user=baobab&amp;password=baobab -Drdbms.driver=com.mysql.jdbc.Driver -Drdbms.server=local -Drdbms.password=&quot;baobab&quot; -Drdbms.user=&quot;baobab&quot; -Drdbms.database=&quot;baobab&quot; -XstartOnFirstThread -Ddatastore.default_high_rep_job_policy_unapplied_job_pct=50 -Xmx512m -javaagent:/Applications/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.7.2.1/appengine-java-sdk-1.7.2.1/lib/agent/appengine-agent.jar -Xbootclasspath/p:/Applications/eclipse/plugins/com.google.appengine.eclipse.sdkbundle_1.7.2.1/appengine-java-sdk-1.7.2.1/lib/override/appengine-dev-jdk-overrides.jar"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Drdbms.url=jdbc:mysql://localhost:3306/baobab?user=baobab&amp;password=baobab -Drdbms.driver=com.mysql.jdbc.Driver -Drdbms.server=local -Drdbms.password=baobab -Drdbms.user=baobab -Drdbms.database=baobab -Ddatastore.default_high_rep_job_policy_unapplied_job_pct=50 -Xmx512m &quot;-javaagent:${eclipse_home}/plugins/com.google.appengine.eclipse.sdkbundle_1.7.2/appengine-java-sdk-1.7.2/lib/agent/appengine-agent.jar&quot;"/>
 </launchConfiguration>
