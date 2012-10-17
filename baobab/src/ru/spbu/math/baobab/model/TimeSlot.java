@@ -11,6 +11,16 @@ public interface TimeSlot {
    * @return time slot name
    */
   String getName();
+
+  /**
+   * @return day of week to which the slot applies
+   */
+  int getDayOfWeek();
+
+  /**
+   * @return whether slot applies to both / odd / even week
+   */
+  EvenOddWeek gerEvenOddWeek();
   
   /**
    * @return time slot start time instant
