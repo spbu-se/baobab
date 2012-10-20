@@ -1,59 +1,64 @@
 package ru.spbu.math.baobab.server;
 
+import java.util.ArrayList;
 import java.util.Collection;
+
 import ru.spbu.math.baobab.model.Attendee;
+import ru.spbu.math.baobab.model.AttendeeExtent;
 
 /**
  * Implementation of Attendee interface
  * 
- * @author sagod
+ * @author agudulin
  */
 public class AttendeeImpl implements Attendee {
-	public String name;
-	private Type type;
-	private String id;
-	private Collection<Attendee> members;
-	
-	public AttendeeImpl(String id, String name, Type type) {
-		this.setID(id);
-		this.name = name;
-		this.type = type;
-	}
-	
+  private String myName;
+  private Type myType;
+  private String myId;
+  private Collection<Attendee> myMembers = new ArrayList<Attendee>();
+	private AttendeeExtent myExtent;
+  
+  public AttendeeImpl(String id, String name, Type type, AttendeeExtent extent) {
+  	this.myExtent = extent;
+    this.setID(id);
+    this.myName = name;
+    this.myType = type;
+  }
+
 	public String getName() {
-		return this.name;
-	}
-	
-	public String getID() {
-		return this.id;
-	}
-	
-	public void setID(String id) {
-		if (this.id == id) {
-			throw new IllegalArgumentException("Attendee with the given ID already exists");
-		}
-		this.id = id;
-	}
-	
-	public Type getType() {
-		return this.type;
-	}
-	
-	public boolean isGroup() {
-		return (this.type == Type.ACADEMIC_GROUP || this.type == Type.FREE_FORM_GROUP);
-	}
-	
-	public Collection<Attendee> getGroupMembers() {
-		if (!this.isGroup()) {
-			return null;
-		}
-		return this.members;
-	}
-	
-	public void addGroupMember(Attendee member) {
-		if (!this.isGroup()) {
-			throw new IllegalStateException("The attendee is not a group.");
-		}
-		this.members.add(member);
-	}
+    return this.myName;
+  }
+  
+  public String getID() {
+    return this.myId;
+  }
+  
+  public void setID(String id) {
+  	if (this.myExtent.find(id) != null) {
+  		throw new IllegalArgumentException("Attendee with the given ID already exists");
+  	}
+    this.myId = id;
+  }
+  
+  public Type getType() {
+    return this.myType;
+  }
+  
+  public boolean isGroup() {
+    return (this.myType == Type.ACADEMIC_GROUP || this.myType == Type.FREE_FORM_GROUP);
+  }
+  
+  public Collection<Attendee> getGroupMembers() {
+    if (!this.isGroup()) {
+      return null;
+    }
+    return this.myMembers;
+  }
+  
+  public void addGroupMember(Attendee member) {
+    if (!this.isGroup()) {
+      throw new IllegalStateException("The attendee is not a group.");
+    }
+		this.getGroupMembers().add(member);
+  }
 }
