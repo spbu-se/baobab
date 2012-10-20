@@ -25,14 +25,6 @@
   
   <!-- Landing -->
   <servlet>
-    <servlet-name>code_review_servlet</servlet-name>
-    <servlet-class>ru.spbu.math.baobab.devtools.server.CodeReviewServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>code_review_servlet</servlet-name>
-    <url-pattern>/_ah/code_review</url-pattern>
-  </servlet-mapping>
-  <servlet>
     <servlet-name>team_servlet</servlet-name>
     <servlet-class>ru.spbu.math.baobab.server.TeamServlet</servlet-class>
   </servlet>
@@ -49,7 +41,26 @@
     <url-pattern>/</url-pattern>
   </servlet-mapping>
   
-  <!-- Servlets -->
+  <!--  Devtools and testing -->
+  <servlet>
+    <servlet-name>code_review_servlet</servlet-name>
+    <servlet-class>ru.spbu.math.baobab.devtools.server.CodeReviewServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>code_review_servlet</servlet-name>
+    <url-pattern>/_ah/code_review</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>test_sql_servlet</servlet-name>
+    <servlet-class>ru.spbu.math.baobab.server.sql.TestSqlServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>test_sql_servlet</servlet-name>
+    <url-pattern>/_ah/test_sql</url-pattern>
+  </servlet-mapping>
+  
+  <!-- GWT -->
   <servlet>
     <servlet-name>greetServlet</servlet-name>
     <servlet-class>ru.spbu.math.baobab.server.GreetingServiceImpl</servlet-class>
