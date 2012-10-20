@@ -16,16 +16,16 @@ public class AttendeeImpl implements Attendee {
   private Type myType;
   private String myId;
   private Collection<Attendee> myMembers = new ArrayList<Attendee>();
-	private AttendeeExtent myExtent;
+  private AttendeeExtent myExtent;
   
   public AttendeeImpl(String id, String name, Type type, AttendeeExtent extent) {
-  	this.myExtent = extent;
+    this.myExtent = extent;
     this.setID(id);
     this.myName = name;
     this.myType = type;
   }
 
-	public String getName() {
+  public String getName() {
     return this.myName;
   }
   
@@ -34,9 +34,9 @@ public class AttendeeImpl implements Attendee {
   }
   
   public void setID(String id) {
-  	if (this.myExtent.find(id) != null) {
-  		throw new IllegalArgumentException("Attendee with the given ID already exists");
-  	}
+    if (this.myExtent.find(id) != null) {
+      throw new IllegalArgumentException("Attendee with the given ID already exists");
+    }
     this.myId = id;
   }
   
@@ -59,6 +59,6 @@ public class AttendeeImpl implements Attendee {
     if (!this.isGroup()) {
       throw new IllegalStateException("The attendee is not a group.");
     }
-		this.getGroupMembers().add(member);
+    this.getGroupMembers().add(member);
   }
 }

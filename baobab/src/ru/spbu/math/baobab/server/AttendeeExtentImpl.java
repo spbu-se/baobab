@@ -18,7 +18,7 @@ public class AttendeeExtentImpl implements AttendeeExtent {
   public AttendeeExtentImpl() {}
   
   public AttendeeExtentImpl(String id, String name, Type type) {
-  	this.create(id, name, type);
+    this.create(id, name, type);
   }
   
   @Override
@@ -32,7 +32,7 @@ public class AttendeeExtentImpl implements AttendeeExtent {
 
   public Attendee find(String id) {
     if (this.myAttendees.containsKey(id)) {
-    	return this.myAttendees.get(id);
+      return this.myAttendees.get(id);
     }
     return null;
   }
