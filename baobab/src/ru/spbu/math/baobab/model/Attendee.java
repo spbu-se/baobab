@@ -32,6 +32,7 @@ public interface Attendee {
    * @throws IllegalArgumentException if attendee with the given ID already exists
    */
   void setID(String id);
+  
   /**
    * @return attendee type
    */
@@ -41,6 +42,7 @@ public interface Attendee {
    * @return {@code true} if this is a group member
    */
   boolean isGroup();
+  
   /**
    * @return group members if this attendee is a group, {@code null} otherwise
    */
