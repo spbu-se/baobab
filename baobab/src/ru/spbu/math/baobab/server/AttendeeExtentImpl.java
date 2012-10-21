@@ -13,27 +13,19 @@ import ru.spbu.math.baobab.model.AttendeeExtent;
  * @author agudulin
  */
 public class AttendeeExtentImpl implements AttendeeExtent {
-  private HashMap<String, Attendee> myAttendees = newHashMap();
-  
-  public AttendeeExtentImpl() {}
-  
-  public AttendeeExtentImpl(String id, String name, Type type) {
-    this.create(id, name, type);
-  }
+  private final HashMap<String, Attendee> myAttendees = newHashMap();
   
   @Override
   public Attendee create(String id, String name, Type type) {
     Attendee attendee = new AttendeeImpl(id, name, type, this);
     // Constructor will throw IllegalArgumentException if 
     // an attendee with current id already exists
-    this.myAttendees.put(id, attendee);
+    myAttendees.put(id, attendee);
     return attendee;
   }
 
+  @Override
   public Attendee find(String id) {
-    if (this.myAttendees.containsKey(id)) {
-      return this.myAttendees.get(id);
-    }
-    return null;
+    return myAttendees.get(id);
   }
 }
