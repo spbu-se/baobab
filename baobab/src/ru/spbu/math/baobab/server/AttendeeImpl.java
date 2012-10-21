@@ -13,46 +13,46 @@ import ru.spbu.math.baobab.model.AttendeeExtent;
  */
 public class AttendeeImpl implements Attendee {
   private String myName;
-  private Type myType;
+  private final Type myType;
   private String myId;
-  private Collection<Attendee> myMembers = new ArrayList<Attendee>();
-  private AttendeeExtent myExtent;
+  private final Collection<Attendee> myMembers = new ArrayList<Attendee>();
+  private final AttendeeExtent myExtent;
   
   public AttendeeImpl(String id, String name, Type type, AttendeeExtent extent) {
-    this.myExtent = extent;
+    myExtent = extent;
     this.setID(id);
-    this.myName = name;
-    this.myType = type;
+    myName = name;
+    myType = type;
   }
 
   public String getName() {
-    return this.myName;
+    return myName;
   }
   
   public String getID() {
-    return this.myId;
+    return myId;
   }
   
   public void setID(String id) {
-    if (this.myExtent.find(id) != null) {
+    if (myExtent.find(id) != null) {
       throw new IllegalArgumentException("Attendee with the given ID already exists");
     }
-    this.myId = id;
+    myId = id;
   }
   
   public Type getType() {
-    return this.myType;
+    return myType;
   }
   
   public boolean isGroup() {
-    return (this.myType == Type.ACADEMIC_GROUP || this.myType == Type.FREE_FORM_GROUP);
+    return (myType == Type.ACADEMIC_GROUP || myType == Type.FREE_FORM_GROUP);
   }
   
   public Collection<Attendee> getGroupMembers() {
     if (!this.isGroup()) {
       return null;
     }
-    return this.myMembers;
+    return myMembers;
   }
   
   public void addGroupMember(Attendee member) {

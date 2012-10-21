@@ -49,6 +49,8 @@ public class AttendeeImplTest extends TestCase {
     Attendee academicGroup = attendeeExtent.create("124", "Test", Type.ACADEMIC_GROUP);
     Attendee teacher = attendeeExtent.create("1", "Test", Type.TEACHER);
     Attendee student = attendeeExtent.create("2", "Test", Type.STUDENT);
+    
+    assertTrue(academicGroup.getGroupMembers().isEmpty());
     academicGroup.addGroupMember(teacher);
     academicGroup.addGroupMember(student);
     
@@ -58,18 +60,6 @@ public class AttendeeImplTest extends TestCase {
     
     assertEquals(academicGroup.getGroupMembers(), members);
     assertNull(teacher.getGroupMembers());
-  }
-
-  public void testAddGroupMember() {
-    AttendeeExtentImpl attendeeExtent = new AttendeeExtentImpl();
-    Attendee teacher = attendeeExtent.create("1", "Test", Type.TEACHER);
-    Attendee student = attendeeExtent.create("2", "Test", Type.STUDENT);
-    try {
-      teacher.addGroupMember(student);
-      fail("Expected IllegalStateException.");
-    } catch (IllegalStateException e) {
-      // OK: the attendee is not a group
-    }
   }
 
 }
