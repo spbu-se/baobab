@@ -40,3 +40,5 @@ syntax: regexp
 ^baobab/war/WEB-INF/lib/jsr107cache-1\.1\.jar$
 syntax: regexp
 ^baobab/war/WEB-INF/lib/jta-1\.1\.jar$
+syntax: regexp
+^baobab/\.settings$
