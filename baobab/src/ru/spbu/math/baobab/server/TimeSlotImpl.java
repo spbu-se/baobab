@@ -13,11 +13,11 @@ import ru.spbu.math.baobab.model.TimeSlotExtent;
 
 public class TimeSlotImpl implements TimeSlot {
   private String mName;
-  private int mDay;
-  private EvenOddWeek mFlashing;
-  private TimeInstant mStart;
-  private TimeInstant mFinish;
-  private TimeSlotExtent mTimeSlotExtent;
+  private final int mDay;
+  private final EvenOddWeek mFlashing;
+  private final TimeInstant mStart;
+  private final TimeInstant mFinish;
+  private final TimeSlotExtent mTimeSlotExtent;
   
   
   public TimeSlotImpl(String name, TimeInstant start, TimeInstant finish,
