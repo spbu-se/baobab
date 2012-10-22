@@ -29,7 +29,7 @@ public class TimeSlotExtentImpl implements TimeSlotExtent{
 
   @Override
   public List<TimeSlot> findByWeekDay(int day){
-    List<TimeSlot> list = new ArrayList<TimeSlot>();
+    List<TimeSlot> list = Lists.newArrayList();
     for (TimeSlot ts : myTimeSlots){
       if (ts.getDayOfWeek() == day){
         list.add(ts);
@@ -70,6 +70,7 @@ public class TimeSlotExtentImpl implements TimeSlotExtent{
   @Override
   public TimeSlot create(String name, TimeInstant start, TimeInstant finish,
       int day, EvenOddWeek flashing){
+    
     for (TimeSlot ts : myTimeSlots){
       if (ts.getName() == name){
         throw new IllegalStateException(
