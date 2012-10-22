@@ -19,7 +19,7 @@ import ru.spbu.math.baobab.model.TimeSlotExtent;
  */
 
 public class TimeSlotExtentImpl implements TimeSlotExtent{
-  private Collection<TimeSlot> mTimeSlot = new ArrayList();
+  private final Collection<TimeSlot> mTimeSlot = new ArrayList();
 
     @Override
 	public Collection<TimeSlot> getAll() {
@@ -77,7 +77,7 @@ public class TimeSlotExtentImpl implements TimeSlotExtent{
 			               int day, EvenOddWeek flashing){
 	  boolean Err=false;
 	  for(TimeSlot i : mTimeSlot){
-	    if (i.getName() == name) Err = false;
+	    if (i.getName() == name) Err = true;
 	  }
 	  if (Err) 
 		throw new IllegalStateException("The TimeSlot with this name is already exist");
