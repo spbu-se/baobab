@@ -1,10 +1,12 @@
 package ru.spbu.math.baobab.server;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import ru.spbu.math.baobab.model.EvenOddWeek;
@@ -17,73 +19,79 @@ import ru.spbu.math.baobab.model.TimeSlotExtent;
  * 
  * @author dageev
  */
+public class TimeSlotExtentImpl implements TimeSlotExtent {
+  private final Collection<TimeSlot> myTimeSlot = com.google.common.collect.Lists
+      .newArrayList();
 
-public class TimeSlotExtentImpl implements TimeSlotExtent{
-  private final Collection<TimeSlot> mTimeSlot = new ArrayList();
+  @Override
+  public Collection<TimeSlot> getAll() {
+    return myTimeSlot;
+  }
 
-    @Override
-	public Collection<TimeSlot> getAll() {
-	  return mTimeSlot;
-	}
+  @Override
+  public List<TimeSlot> findByWeekDay(int day) {
+    List<TimeSlot> list = new ArrayList<TimeSlot>();
+    for (TimeSlot i : myTimeSlot) {
+      if (i.getDayOfWeek() == day)
+        list.add(i);
+    }
+    Collections.sort(list, DateComparator);
+    return list;
+  }
 
-	@Override
-	public List<TimeSlot> findByWeekDay(int day) {
-	  List<TimeSlot> pList = new ArrayList<TimeSlot>();
-	  for(TimeSlot i : mTimeSlot){
-		if(i.getDayOfWeek() == day)
-	      pList.add(i);  
-	  }
-	  Collections.sort(pList, new Comparator<TimeSlot>() {
-		public int compare(TimeSlot o1, TimeSlot o2) {
-		  TimeInstant TimeStart1 = o1.getStart();
-		  TimeInstant TimeStart2 = o2.getStart();
-		  int val1 = TimeStart1.getHour()*60 + TimeStart1.getMinute();
-		  int val2 = TimeStart2.getHour()*60 + TimeStart2.getMinute();
-		  return (val1<val2 ? -1 : (val1==val2 ? 0 : 1));
-	    }
-	  });
-	  return pList;
-	}
+  @Override
+  public List<TimeSlot> findByDate(Date date) {
+    List<TimeSlot> list = new ArrayList<TimeSlot>();
+    Calendar calendar = GregorianCalendar.getInstance();
+    calendar.setTime(date);
+    int day = calendar.get(Calendar.DAY_OF_WEEK);
+    int EvenorOdd = calendar.get(Calendar.WEEK_OF_YEAR) / 14;
+    for (TimeSlot ts : myTimeSlot) {
+      if (ts.getDayOfWeek() == day) {
+        boolean add = true;
+        if (ts.getEvenOddWeek() == EvenOddWeek.ODD && EvenorOdd == 1) {
+          add = false;
+        }
 
-	@Override
-	public List<TimeSlot> findByDate(Date date) {
-	  List<TimeSlot> pList = new ArrayList<TimeSlot>();
-	  int day = date.getDay();
-	  int EvenorOdd = date.getDate() / 14;
-	  for(TimeSlot i : mTimeSlot){
-		if(i.getDayOfWeek() == day){
-	      boolean flag = true;
-		  if ( i.getEvenOddWeek() == EvenOddWeek.ODD && EvenorOdd == 1)
-		    flag = false;
-		  if ( i.getEvenOddWeek() == EvenOddWeek.EVEN && EvenorOdd == 0)
-			flag = false;
-		  if (flag) pList.add(i);
-		}
-	  }
-	  Collections.sort(pList, new Comparator<TimeSlot>() {
-	    public int compare(TimeSlot o1, TimeSlot o2) {
-		  TimeInstant TimeStart1 = o1.getStart();
-		  TimeInstant TimeStart2 = o2.getStart();
-		  int val1 = TimeStart1.getHour()*60 + TimeStart1.getMinute();
-		  int val2 = TimeStart2.getHour()*60 + TimeStart2.getMinute();
-		  return (val1<val2 ? -1 : (val1==val2 ? 0 : 1));
-		}
-	  });
-	  return pList;
-	}
+        if (ts.getEvenOddWeek() == EvenOddWeek.EVEN && EvenorOdd == 0) {
+          add = false;
+        }
+        if (add) {
+          list.add(ts);
+        }
+      }
+    }
+    Collections.sort(list, DateComparator);
+    return list;
+  }
 
-	@Override
-	public TimeSlot create(String name, TimeInstant start, TimeInstant finish,
-			               int day, EvenOddWeek flashing){
-	  boolean Err=false;
-	  for(TimeSlot i : mTimeSlot){
-	    if (i.getName() == name) Err = true;
-	  }
-	  if (Err) 
-		throw new IllegalStateException("The TimeSlot with this name is already exist");
-	  TimeSlot timeslot = new TimeSlotImpl(name, start, finish, day, flashing, this);
-      mTimeSlot.add(timeslot);
-      return timeslot;
-		
-	}
+  @Override
+  public TimeSlot create(String name, TimeInstant start, TimeInstant finish,
+      int day, EvenOddWeek flashing) {
+    boolean err = false;
+    for (TimeSlot ts : myTimeSlot) {
+      if (ts.getName() == name)
+        err = true;
+    }
+    if (err)
+      throw new IllegalStateException(
+          "The TimeSlot with this name is already exist");
+    TimeSlot timeslot = new TimeSlotImpl(name, start, finish, day, flashing,
+        this);
+    myTimeSlot.add(timeslot);
+    return timeslot;
+
+  }
+
+  private static Comparator<TimeSlot> DateComparator = new Comparator<TimeSlot>() {
+    public int compare(TimeSlot o1, TimeSlot o2) {
+      TimeInstant timeStart1 = o1.getStart();
+      TimeInstant timeStart2 = o2.getStart();
+      int val1 = timeStart1.getHour() * 60 + timeStart1.getMinute();
+      int val2 = timeStart2.getHour() * 60 + timeStart2.getMinute();
+      return (val1 - val2);
+    }
+
+  };
+
 }
