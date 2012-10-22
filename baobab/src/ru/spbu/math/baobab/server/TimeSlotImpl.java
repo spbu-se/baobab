@@ -4,53 +4,57 @@ import ru.spbu.math.baobab.model.EvenOddWeek;
 import ru.spbu.math.baobab.model.TimeInstant;
 import ru.spbu.math.baobab.model.TimeSlot;
 import ru.spbu.math.baobab.model.TimeSlotExtent;
-
 /**
  * Implementation of TimeSlot interface
  * 
  * @author dageev
  */
-
 public class TimeSlotImpl implements TimeSlot {
-  private String mName;
-  private final int mDay;
-  private final EvenOddWeek mFlashing;
-  private final TimeInstant mStart;
-  private final TimeInstant mFinish;
-  private final TimeSlotExtent mTimeSlotExtent;
+  private String myName;
+  private final int myDay;
+  private final EvenOddWeek myFlashing;
+  private final TimeInstant myStart;
+  private final TimeInstant myFinish;
+  private final TimeSlotExtent myTimeSlotExtent;
   
   
   public TimeSlotImpl(String name, TimeInstant start, TimeInstant finish,
 			          int day, EvenOddWeek flashing, TimeSlotExtent timeslotextent){
-	mTimeSlotExtent = timeslotextent;
-	mName=name;
-	mDay=day; 
-	mFlashing= flashing;
-	mStart = start;
-	mFinish= finish;
+	myTimeSlotExtent = timeslotextent;
+	myName=name;
+	myDay=day; 
+	myFlashing= flashing;
+	myStart = start;
+	myFinish= finish;
   }
   
+  @Override
   public String getName(){
-    return mName;
+    return myName;
   }
 
+  @Override
   public int getDayOfWeek(){
-    return mDay;
+    return myDay;
   }
 
+  @Override
   public EvenOddWeek getEvenOddWeek(){
-	return mFlashing;
+	return myFlashing;
   }
   
+  @Override
   public TimeInstant getStart(){
-	return mStart;
-  }
-
-  public TimeInstant getFinish(){
-	return mFinish;
+	return myStart;
   }
   
+  @Override
+  public TimeInstant getFinish(){
+	return myFinish;
+  }
+  
+  @Override
   public TimeSlotExtent getExtent(){
-	return mTimeSlotExtent;
+	return myTimeSlotExtent;
   }
 }
