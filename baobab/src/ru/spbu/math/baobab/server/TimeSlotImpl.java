@@ -20,12 +20,12 @@ public class TimeSlotImpl implements TimeSlot {
   
   public TimeSlotImpl(String name, TimeInstant start, TimeInstant finish,
       int day, EvenOddWeek flashing, TimeSlotExtent timeslotextent){
-	  myTimeSlotExtent = timeslotextent;
-	  myName=name;
-	  myDay=day; 
-	  myFlashing= flashing;
-	  myStart = start;
-	  myFinish= finish;
+    myTimeSlotExtent = timeslotextent;
+    myName=name;
+    myDay=day; 
+    myFlashing= flashing;
+    myStart = start;
+    myFinish= finish;
   }
   
   @Override
@@ -40,21 +40,21 @@ public class TimeSlotImpl implements TimeSlot {
 
   @Override
   public EvenOddWeek getEvenOddWeek(){
-	  return myFlashing;
+    return myFlashing;
   }
   
   @Override
   public TimeInstant getStart(){
-	  return myStart;
+    return myStart;
   }
   
   @Override
   public TimeInstant getFinish(){
-	  return myFinish;
+    return myFinish;
   }
   
   @Override
   public TimeSlotExtent getExtent(){
-  	return myTimeSlotExtent;
+    return myTimeSlotExtent;
   }
 }

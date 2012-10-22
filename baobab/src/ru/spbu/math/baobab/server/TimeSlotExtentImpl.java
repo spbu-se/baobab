@@ -1,6 +1,5 @@
 package ru.spbu.math.baobab.server;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -49,16 +48,16 @@ public class TimeSlotExtentImpl implements TimeSlotExtent{
     if (calendar.get(Calendar.WEEK_OF_YEAR) % 2 == 1){
       isEven = true;
     }
-    for (TimeSlot ts : myTimeSlots) {
-      if (ts.getDayOfWeek() == day) {
+    for (TimeSlot ts : myTimeSlots){
+      if (ts.getDayOfWeek() == day){
         boolean add = true;
-        if (ts.getEvenOddWeek() == EvenOddWeek.ODD && !isEven) {
+        if (ts.getEvenOddWeek() == EvenOddWeek.ODD && !isEven){
           add = false;
         }
-        if (ts.getEvenOddWeek() == EvenOddWeek.EVEN && isEven) {
+        if (ts.getEvenOddWeek() == EvenOddWeek.EVEN && isEven){
           add = false;
         }
-        if (add) {
+        if (add){
           list.add(ts);
         }
       }
@@ -70,7 +69,6 @@ public class TimeSlotExtentImpl implements TimeSlotExtent{
   @Override
   public TimeSlot create(String name, TimeInstant start, TimeInstant finish,
       int day, EvenOddWeek flashing){
-    
     for (TimeSlot ts : myTimeSlots){
       if (ts.getName() == name){
         throw new IllegalStateException(
