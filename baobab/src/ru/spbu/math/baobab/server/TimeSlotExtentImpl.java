@@ -13,7 +13,6 @@ import ru.spbu.math.baobab.model.EvenOddWeek;
 import ru.spbu.math.baobab.model.TimeInstant;
 import ru.spbu.math.baobab.model.TimeSlot;
 import ru.spbu.math.baobab.model.TimeSlotExtent;
-
 /**
  * Implementation of TimeSlotExtent interface
  * 
@@ -31,29 +30,29 @@ public class TimeSlotExtentImpl implements TimeSlotExtent {
   @Override
   public List<TimeSlot> findByWeekDay(int day) {
     List<TimeSlot> list = new ArrayList<TimeSlot>();
-    for (TimeSlot i : myTimeSlot) {
-      if (i.getDayOfWeek() == day)
-        list.add(i);
+    for (TimeSlot ts : myTimeSlot) {
+      if (ts.getDayOfWeek() == day)
+        list.add(ts);
     }
     Collections.sort(list, DateComparator);
     return list;
   }
 
   @Override
-  public List<TimeSlot> findByDate(Date date) {
+  public List<TimeSlot> findByDate(Date date){
     List<TimeSlot> list = new ArrayList<TimeSlot>();
     Calendar calendar = GregorianCalendar.getInstance();
     calendar.setTime(date);
     int day = calendar.get(Calendar.DAY_OF_WEEK);
-    int EvenorOdd = calendar.get(Calendar.WEEK_OF_YEAR) / 14;
+    int evenorodd = calendar.get(Calendar.WEEK_OF_YEAR) / 2;
     for (TimeSlot ts : myTimeSlot) {
       if (ts.getDayOfWeek() == day) {
         boolean add = true;
-        if (ts.getEvenOddWeek() == EvenOddWeek.ODD && EvenorOdd == 1) {
+        if (ts.getEvenOddWeek() == EvenOddWeek.ODD && evenorodd == 1) {
           add = false;
         }
 
-        if (ts.getEvenOddWeek() == EvenOddWeek.EVEN && EvenorOdd == 0) {
+        if (ts.getEvenOddWeek() == EvenOddWeek.EVEN && evenorodd == 0) {
           add = false;
         }
         if (add) {
