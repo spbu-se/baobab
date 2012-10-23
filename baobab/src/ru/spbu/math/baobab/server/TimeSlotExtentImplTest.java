@@ -46,7 +46,7 @@ public class TimeSlotExtentImplTest extends TestCase {
     try {
       timeSlotExtent.create("first double class", start1, finish1, 5, EvenOddWeek.ODD);
       fail("Expected IllegalArgumentException");
-    } catch (IllegalArgumentException e) {
+    } catch (IllegalStateException e) {
       // can't create with existing name
     }
   }
@@ -62,8 +62,8 @@ public class TimeSlotExtentImplTest extends TestCase {
     timeSlotExtent.create("third double class", start1, finish1, 4, EvenOddWeek.ALL);
     timeSlotExtent.create("fourth double class", start, finish, 4, EvenOddWeek.ALL);
     List<TimeSlot> list = timeSlotExtent.findByWeekDay(4);
-    assertEquals(list.get(0).getName(), "first double class4");
-    assertEquals(list.get(1).getName(), "first double class3");
+    assertEquals(list.get(0).getName(), "fourth double class");
+    assertEquals(list.get(1).getName(), "third double class");
   }
 
   public void testFindByDate() {
