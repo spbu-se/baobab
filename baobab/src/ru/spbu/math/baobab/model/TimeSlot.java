@@ -20,7 +20,7 @@ public interface TimeSlot {
   /**
    * @return whether slot applies to both / odd / even week
    */
-  EvenOddWeek gerEvenOddWeek();
+  EvenOddWeek getEvenOddWeek();
   
   /**
    * @return time slot start time instant
