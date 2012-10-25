@@ -16,8 +16,7 @@ import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
 
 /**
- * Test of creating a PDF file. If everything is OK, browser will recognize it
- * as PDF and will open a PDF viewer.
+ * Test of creating a PDF file. If everything is OK, browser will recognize it as PDF and will open a PDF viewer.
  * 
  * @author agudulin
  */
@@ -25,8 +24,7 @@ public class TestPdfServlet extends HttpServlet {
   private static final Logger LOGGER = Logger.getLogger("PdfService");
 
   @Override
-  protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-      throws ServletException, IOException {
+  protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     resp.setContentType("application/pdf");
     Document document = new Document();
 
@@ -35,8 +33,7 @@ public class TestPdfServlet extends HttpServlet {
 
       document.open();
       Paragraph title = new Paragraph();
-      title.add(new Paragraph("Baobab", new Font(Font.FontFamily.COURIER, 24,
-          Font.BOLD)));
+      title.add(new Paragraph("Baobab", new Font(Font.FontFamily.COURIER, 24, Font.BOLD)));
       document.add(title);
       document.close();
     } catch (DocumentException e) {
