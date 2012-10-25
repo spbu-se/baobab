@@ -41,4 +41,4 @@ syntax: regexp
 syntax: regexp
 ^baobab/war/WEB-INF/lib/jta-1\.1\.jar$
 syntax: regexp
-^baobab/\.settings$
+^baobab/\.settings/.*$
