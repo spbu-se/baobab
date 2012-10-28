@@ -5,23 +5,36 @@ package ru.spbu.math.baobab.lang;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ScriptInterpretator {
+public class ScriptInterpreter {
 
-	private final static String DEFINE_TIMESLOT = "";
+	private final static String DEFINE_TIMESLOT_NAME = "DefineTimeslot";
+	private final static String DEFINE_ATTENDEE_NAME = "DefineAttendee";
+	
+	private final static String ID_NAME = "ID";
+	private final static String TIME_NAME = "TIME";
+	private final static String EVEN_ODD_NAME = "EVEN";
+	private final static String WEEKDAY_NAME = "WEEKDAY";
+	
+	private final static String ID_PATTERN = "\\w+";
+	private final static String TIME_PATTERN = "\\d{1,2}:\\d{2}";
+	private final static String EVEN_ODD_PATTERN_ENG = "odd|even";
+	private final static String EVEN_ODD_PATTERN_RUS = "четный|нечетный";
+	private final static String WEEKDAY_PATTERN_ENG = "Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|Mo|Tu|We|Th|Fr|Sa|Su";
+	private final static String WEEKDAY_PATTERN_RUS = "понедельник|вторник|среда|четверг|пятница|суббота|воскресенье|пн|вт|ср|чт|пт|сб|вс";
+	
+	private final static String DEFINE_TIMESLOT = String.format("(?<%s>define\\stimeslot)\\s(?<%s>%s)\\s(?<%s>%s)\\sto\\s\\k<%s>\\son\\s(?<%s>%s)\\s(?<%s>%s)",
+			DEFINE_TIMESLOT_NAME, ID_NAME, ID_PATTERN, TIME_NAME, TIME_PATTERN, TIME_NAME, EVEN_ODD_NAME, EVEN_ODD_PATTERN_ENG, WEEKDAY_NAME, WEEKDAY_PATTERN_ENG);
 	private final static String DEFINE_ATTENDEE = "";
-
-	private final static String DEFINE_TIMESLOT_NAME = "DEFINE_TIMESLOT";
-	private final static String DEFINE_ATTENDEE_NAME = "DEFINE_ATTENDEE";
 
 	private static Pattern MAIN_PATTERN;
 
-	public ScriptInterpretator() {
+	public ScriptInterpreter() {
 		MAIN_PATTERN = Pattern.compile(getMainRegex());
 	}
 
 	/* Form string which matches to all regular expressions */
 	private String getMainRegex() {
-		String mainRegex = "^" + "$";
+		String mainRegex = "^" + DEFINE_TIMESLOT + "$";
 		return mainRegex;
 	}
 
