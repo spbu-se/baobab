@@ -65,7 +65,11 @@ public class ScriptInterpreter {
 		}
 	}
 
-	/* Form string which matches to all regular expressions */
+	/* 
+	 * Form string which matches to all regular expressions 
+	 * 
+	 * @return main pattern string for all regexps
+	 */
 	private String getMainRegex() {
 		String mainRegex = "^" + DEFINE_TIMESLOT + "$";
 		return mainRegex;
@@ -74,7 +78,7 @@ public class ScriptInterpreter {
 	/*
 	 * Receive command and process it
 	 * 
-	 * @param: String
+	 * @param command some command in baobab language
 	 */
 	public void process(String command) throws Exception {
 		Matcher commandMatch = MAIN_PATTERN.matcher(command);
@@ -89,7 +93,7 @@ public class ScriptInterpreter {
 	/*
 	 * Defines type of command and execute it
 	 * 
-	 * @param: Matcher
+	 * @param match matcher with matched command string
 	 * 
 	 * @return: void
 	 */
@@ -107,9 +111,9 @@ public class ScriptInterpreter {
 	}
 
 	/*
-	 * defines time slot
+	 * defines time slot using TimeSlotExtent
 	 * 
-	 * @param: Matcher
+	 * @param match matcher with matched command string
 	 * 
 	 * @return: void
 	 */

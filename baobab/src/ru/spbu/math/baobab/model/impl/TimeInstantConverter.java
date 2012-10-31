@@ -14,6 +14,12 @@ public class TimeInstantConverter {
 	
 	private final static Pattern TIME_PATTERN = Pattern.compile("(\\d{1,2}):(\\d{2})");
 	
+	/*
+	 * converts string to TimeInstant
+	 * 
+	 * @param value string to convert
+	 * @return converted TimeInstant
+	 */
 	public static TimeInstant convertToTimeInstant(String value) throws Exception{
 		Matcher commandMatch = TIME_PATTERN.matcher(value);
 		if (commandMatch.lookingAt()) {
