@@ -15,7 +15,13 @@ public class WeekdayConverter {
 	private static final String[] FRIDAY = { "Friday", "Fr", "пятница", "пт"};
 	private static final String[] SATURDAY = { "Saturday", "Sa", "суббота", "сб"};
 	private static final String[] SUNDAY = { "Sunday", "Su", "воскресенье", "вс"};
-	
+
+	/*
+	 * converts string to int (weekday in [1..7] range)
+	 * 
+	 * @param value string to convert
+	 * @return converted int
+	 */
 	public static int convertToInt(String value) throws Exception{
 		if (IsArrayMember(MONDAY, value)){
 			return 1;
@@ -41,6 +47,13 @@ public class WeekdayConverter {
 		throw new Exception("convertToInt: Incorrect value");
 	}
 	
+	/*
+	 * checks is string array contains value string
+	 * 
+	 * @param value string for checking
+	 * @param array array, that may contains value
+	 * @return true if array contains value, false if not
+	 */
 	private static Boolean IsArrayMember(String[] array, String value){
 		for (int i = 0; i < array.length; i++){
 			if (value.contentEquals(array[i])){
