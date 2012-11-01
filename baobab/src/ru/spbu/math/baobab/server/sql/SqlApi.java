@@ -51,15 +51,28 @@ public class SqlApi {
   public SqlApi(String database, String username) {
     Connection c = null;
     try {
-      c = DriverManager.getConnection(CONNECTION_SPEC + database, username, "");
+      c = DriverManager.getConnection(CONNECTION_SPEC + database, username, null);
     } catch (SQLException e) {
-      e.printStackTrace();
+      LOGGER.log(Level.SEVERE, "Failed to create connection", e);
     }
     myConnection = c;
   }
   
   /**
-   * Splits the givent text to a list of SQL statements, striping out comments, and creates
+   * Disposes this API instance and releases all resources.
+   */
+  public void dispose() {
+    if (myConnection != null) {
+      try {
+        myConnection.close();
+      } catch (SQLException e) {
+        LOGGER.log(Level.SEVERE, "Failed to close connection", e);
+      }
+    }
+  }
+  
+  /**
+   * Splits the given text to a list of SQL statements, striping out comments, and creates
    * {@link PreparedStatement} instance for each statement.
    * 
    * @param text SQL script with statements separated by semicolon + linebreak pairs
