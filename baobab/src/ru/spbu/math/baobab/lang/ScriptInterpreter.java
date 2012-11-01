@@ -65,8 +65,8 @@ public class ScriptInterpreter {
 		}
 	}
 
-	/* 
-	 * Form string which matches to all regular expressions 
+	/*
+	 * Form string which matches to all regular expressions
 	 * 
 	 * @return main pattern string for all regexps
 	 */
@@ -122,16 +122,16 @@ public class ScriptInterpreter {
 				.group(DEFINE_TIMESLOT_NAME + ID_NAME) : match
 				.group(DEFINE_TIMESLOT_NAME + ID_NAME + RUSSIAN_VERSION);
 		TimeInstant start = TimeInstantConverter.convertToTimeInstant(match
-				.group(TIME_NAME) != null ? match.group(DEFINE_TIMESLOT_NAME
-				+ TIME_NAME) : match.group(DEFINE_TIMESLOT_NAME + TIME_NAME
-				+ RUSSIAN_VERSION));
+				.group(DEFINE_TIMESLOT_NAME + TIME_NAME) != null ? match
+				.group(DEFINE_TIMESLOT_NAME + TIME_NAME) : match
+				.group(DEFINE_TIMESLOT_NAME + TIME_NAME + RUSSIAN_VERSION));
 		TimeInstant finish = TimeInstantConverter.convertToTimeInstant(match
-				.group(TIME_NAME + "2") != null ? match
+				.group(DEFINE_TIMESLOT_NAME + TIME_NAME + "2") != null ? match
 				.group(DEFINE_TIMESLOT_NAME + TIME_NAME + "2")
 				: match.group(DEFINE_TIMESLOT_NAME + TIME_NAME
 						+ RUSSIAN_VERSION + "2"));
 		EvenOddWeek flashing = OddEvenWeekConverter.convertToOddEvenWeek(match
-				.group(EVEN_ODD_NAME) != null ? match
+				.group(DEFINE_TIMESLOT_NAME + EVEN_ODD_NAME) != null ? match
 				.group(DEFINE_TIMESLOT_NAME + EVEN_ODD_NAME) : match
 				.group(DEFINE_TIMESLOT_NAME + EVEN_ODD_NAME + RUSSIAN_VERSION));
 		Integer weekday = WeekdayConverter.convertToInt(match
