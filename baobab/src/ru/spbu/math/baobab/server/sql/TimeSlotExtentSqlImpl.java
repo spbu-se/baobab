@@ -24,6 +24,25 @@ import ru.spbu.math.baobab.server.TimeSlotImpl;
  */
 public class TimeSlotExtentSqlImpl implements TimeSlotExtent {
 
+  private void fetchTimeSlots(ResultSet rs, List<TimeSlot> timeSlots) throws SQLException {
+    for (boolean hasRow = rs.next(); hasRow; hasRow = rs.next()) {
+      String name = rs.getString("name");
+
+      Integer startInMinutes = rs.getInt("start_min");
+      TimeInstant start = new TimeInstant(startInMinutes / 60, startInMinutes - (startInMinutes / 60) * 60);
+
+      Integer finishInMinutes = rs.getInt("finish_min");
+      TimeInstant finish = new TimeInstant(finishInMinutes / 60, finishInMinutes - (finishInMinutes / 60) * 60);
+
+      Integer day = rs.getInt("day");
+
+      EvenOddWeek flashing = EvenOddWeek.values()[rs.getInt("is_odd")];
+
+      TimeSlot ts = new TimeSlotImpl(name, start, finish, day, flashing, this);
+      timeSlots.add(ts);
+    }
+  }
+
   @Override
   public Collection<TimeSlot> getAll() {
     List<TimeSlot> timeSlots = Lists.newArrayList();
@@ -33,33 +52,13 @@ public class TimeSlotExtentSqlImpl implements TimeSlotExtent {
       List<PreparedStatement> stmts = sqlApi.prepareScript("SELECT * FROM TimeSlot ORDER BY start_min;");
 
       ResultSet rs = stmts.get(0).executeQuery();
-      for (boolean hasRow = rs.next(); hasRow; hasRow = rs.next()) {
-        String name = rs.getString("name");
-
-        Integer startInMinutes = rs.getInt("start_min");
-        TimeInstant start = new TimeInstant(startInMinutes % 60, startInMinutes - (startInMinutes % 60) * 60);
-
-        Integer finishInMinutes = rs.getInt("finish_min");
-        TimeInstant finish = new TimeInstant(finishInMinutes % 60, finishInMinutes - (finishInMinutes % 60) * 60);
-
-        Integer day = rs.getInt("day");
-
-        Integer flashingInt = rs.getInt("is_odd");
-        EvenOddWeek flashing = EvenOddWeek.ALL;
-        if (flashingInt == 1) {
-          flashing = EvenOddWeek.EVEN;
-        } else if (flashingInt == 2) {
-          flashing = EvenOddWeek.ODD;
-        }
-
-        TimeSlot ts = new TimeSlotImpl(name, start, finish, day, flashing, this);
-        timeSlots.add(ts);
-      }
-
+      fetchTimeSlots(rs, timeSlots);
       return timeSlots;
 
     } catch (SQLException e) {
       e.printStackTrace();
+    } finally {
+      sqlApi.dispose();
     }
 
     return null;
@@ -68,37 +67,20 @@ public class TimeSlotExtentSqlImpl implements TimeSlotExtent {
   @Override
   public List<TimeSlot> findByWeekDay(int day) {
     List<TimeSlot> timeSlots = Lists.newArrayList();
-    SqlApi mySqlApi = new SqlApi();
+    SqlApi sqlApi = new SqlApi();
 
     try {
-      List<PreparedStatement> stmts = mySqlApi.prepareScript("SELECT * FROM TimeSlot WHERE day=? ORDER BY start_min");
+      List<PreparedStatement> stmts = sqlApi.prepareScript("SELECT * FROM TimeSlot WHERE day=? ORDER BY start_min");
       stmts.get(0).setInt(1, day);
 
       ResultSet rs = stmts.get(0).executeQuery();
-      for (boolean hasRow = rs.next(); hasRow; hasRow = rs.next()) {
-        String name = rs.getString("name");
-
-        Integer startInMinutes = rs.getInt("start_min");
-        TimeInstant start = new TimeInstant(startInMinutes % 60, startInMinutes - (startInMinutes % 60) * 60);
-
-        Integer finishInMinutes = rs.getInt("finish_min");
-        TimeInstant finish = new TimeInstant(finishInMinutes % 60, finishInMinutes - (finishInMinutes % 60) * 60);
-
-        Integer flashingInt = rs.getInt("is_odd");
-        EvenOddWeek flashing = EvenOddWeek.ALL;
-        if (flashingInt == 1) {
-          flashing = EvenOddWeek.EVEN;
-        } else if (flashingInt == 2) {
-          flashing = EvenOddWeek.ODD;
-        }
-
-        TimeSlot ts = new TimeSlotImpl(name, start, finish, day, flashing, this);
-        timeSlots.add(ts);
-      }
+      fetchTimeSlots(rs, timeSlots);
       return timeSlots;
 
     } catch (SQLException e) {
       e.printStackTrace();
+    } finally {
+      sqlApi.dispose();
     }
 
     return null;
@@ -107,7 +89,7 @@ public class TimeSlotExtentSqlImpl implements TimeSlotExtent {
   @Override
   public List<TimeSlot> findByDate(Date date) {
     List<TimeSlot> timeSlots = Lists.newArrayList();
-    SqlApi mySqlApi = new SqlApi();
+    SqlApi sqlApi = new SqlApi();
 
     Calendar calendar = GregorianCalendar.getInstance();
     calendar.setTime(date);
@@ -115,36 +97,19 @@ public class TimeSlotExtentSqlImpl implements TimeSlotExtent {
     boolean isOdd = calendar.get(Calendar.WEEK_OF_YEAR) % 2 == 1;
 
     try {
-      List<PreparedStatement> stmts = mySqlApi
+      List<PreparedStatement> stmts = sqlApi
           .prepareScript("SELECT * FROM TimeSlot WHERE day=? AND is_odd=? ORDER BY start_min");
       stmts.get(0).setInt(1, day);
       stmts.get(0).setInt(2, (isOdd) ? 1 : 2);
 
       ResultSet rs = stmts.get(0).executeQuery();
-      for (boolean hasRow = rs.next(); hasRow; hasRow = rs.next()) {
-        String name = rs.getString("name");
-
-        Integer startInMinutes = rs.getInt("start_min");
-        TimeInstant start = new TimeInstant(startInMinutes % 60, startInMinutes - (startInMinutes % 60) * 60);
-
-        Integer finishInMinutes = rs.getInt("finish_min");
-        TimeInstant finish = new TimeInstant(finishInMinutes % 60, finishInMinutes - (finishInMinutes % 60) * 60);
-
-        Integer flashingInt = rs.getInt("is_odd");
-        EvenOddWeek flashing = EvenOddWeek.ALL;
-        if (flashingInt == 1) {
-          flashing = EvenOddWeek.EVEN;
-        } else if (flashingInt == 2) {
-          flashing = EvenOddWeek.ODD;
-        }
-
-        TimeSlot ts = new TimeSlotImpl(name, start, finish, day, flashing, this);
-        timeSlots.add(ts);
-      }
+      fetchTimeSlots(rs, timeSlots);
       return timeSlots;
 
     } catch (SQLException e) {
       e.printStackTrace();
+    } finally {
+      sqlApi.dispose();
     }
 
     return null;
@@ -155,8 +120,11 @@ public class TimeSlotExtentSqlImpl implements TimeSlotExtent {
     SqlApi sqlApi = new SqlApi();
 
     try {
-      PreparedStatement stmt = sqlApi.prepareScript("SELECT * FROM TimeSlot WHERE name=?;").get(0);
+      PreparedStatement stmt = sqlApi.prepareScript("SELECT * FROM TimeSlot WHERE name=? AND day=? AND is_odd=?;").get(
+          0);
       stmt.setString(1, name);
+      stmt.setInt(2, day);
+      stmt.setInt(3, flashing.ordinal());
       int rowCount = 0;
       ResultSet resultSet = stmt.executeQuery();
       for (boolean hasRow = resultSet.next(); hasRow; hasRow = resultSet.next()) {
@@ -171,13 +139,7 @@ public class TimeSlotExtentSqlImpl implements TimeSlotExtent {
         stmt.setInt(2, start.getHour() * 60 + start.getMinute());
         stmt.setInt(3, finish.getHour() * 60 + finish.getMinute());
         stmt.setInt(4, day);
-        if (flashing.equals(EvenOddWeek.ODD)) {
-          stmt.setInt(5, 1);
-        } else if (flashing.equals(EvenOddWeek.EVEN)) {
-          stmt.setInt(5, 2);
-        } else {
-          stmt.setInt(5, 0);
-        }
+        stmt.setInt(5, flashing.ordinal());
 
         stmt.execute();
 
@@ -189,7 +151,10 @@ public class TimeSlotExtentSqlImpl implements TimeSlotExtent {
 
     } catch (SQLException e) {
       e.printStackTrace();
+    } finally {
+      sqlApi.dispose();
     }
+
     return null;
   }
 }

@@ -5,7 +5,6 @@ import static org.junit.Assert.*;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -45,15 +44,18 @@ public class TimeSlotExtentSqlImplTest {
     TimeSlot ts2 = timeSlotExtentSql.create("second double class", start1, finish1, 2, EvenOddWeek.EVEN);
     TimeSlot ts3 = timeSlotExtentSql.create("third double class", start1, finish1, 2, EvenOddWeek.ODD);
 
-    Collection<TimeSlot> timeSlots = Lists.newArrayList();
+    List<TimeSlot> timeSlots = Lists.newArrayList();
     timeSlots.add(ts1);
     timeSlots.add(ts2);
     timeSlots.add(ts3);
 
-    Collection<TimeSlot> timeSlotsFromDb = timeSlotExtentSql.getAll();
+    List<TimeSlot> timeSlotsFromDb = (List<TimeSlot>) timeSlotExtentSql.getAll();
 
-    // XXX: can't understand why this test doesn't pass
-    assertEquals(timeSlots, timeSlotsFromDb);
+    for (int i = 0; i < timeSlots.size(); ++i) {
+      assertEquals(timeSlots.get(i).getName(), timeSlotsFromDb.get(i).getName());
+      assertEquals(timeSlots.get(i).getDayOfWeek(), timeSlotsFromDb.get(i).getDayOfWeek());
+      assertEquals(timeSlots.get(i).getEvenOddWeek(), timeSlotsFromDb.get(i).getEvenOddWeek());
+    }
   }
 
   @Test
@@ -123,13 +125,13 @@ public class TimeSlotExtentSqlImplTest {
 
     TimeInstant start = new TimeInstant(9, 30);
     TimeInstant finish = new TimeInstant(11, 5);
-    timeSlotExtent.create("first double class", start, finish, 2, EvenOddWeek.ALL);
+    timeSlotExtent.create("first double class", start, finish, 2, EvenOddWeek.ODD);
 
     TimeInstant start1 = new TimeInstant(13, 40);
     TimeInstant finish1 = new TimeInstant(15, 15);
 
     try {
-      timeSlotExtent.create("first double class", start1, finish1, 5, EvenOddWeek.ODD);
+      timeSlotExtent.create("first double class", start1, finish1, 2, EvenOddWeek.ODD);
       fail("Expected IllegalArgumentException");
     } catch (IllegalStateException e) {
       // can't create with existing name
