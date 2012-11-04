@@ -59,6 +59,19 @@ public class SqlApi {
   }
   
   /**
+   * Disposes this API instance and releases all resources.
+   */
+  public void dispose() {
+    if (myConnection != null) {
+      try {
+        myConnection.close();
+      } catch (SQLException e) {
+        LOGGER.log(Level.SEVERE, "Failed to close connection", e);
+      }
+    }
+  }
+  
+  /**
    * Splits the given text to a list of SQL statements, striping out comments, and creates
    * {@link PreparedStatement} instance for each statement.
    * 
