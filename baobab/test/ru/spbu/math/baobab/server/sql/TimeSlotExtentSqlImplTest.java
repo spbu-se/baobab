@@ -51,11 +51,7 @@ public class TimeSlotExtentSqlImplTest {
 
     List<TimeSlot> timeSlotsFromDb = (List<TimeSlot>) timeSlotExtentSql.getAll();
 
-    for (int i = 0; i < timeSlots.size(); ++i) {
-      assertEquals(timeSlots.get(i).getName(), timeSlotsFromDb.get(i).getName());
-      assertEquals(timeSlots.get(i).getDayOfWeek(), timeSlotsFromDb.get(i).getDayOfWeek());
-      assertEquals(timeSlots.get(i).getEvenOddWeek(), timeSlotsFromDb.get(i).getEvenOddWeek());
-    }
+    assertEquals(timeSlots, timeSlotsFromDb);
   }
 
   @Test
