@@ -43,7 +43,7 @@ public class TimeInstant {
       return false;
     }
     TimeInstant other = (TimeInstant) obj;
-    return com.google.common.base.Objects.equal(myHour, other.myHour)
-        && com.google.common.base.Objects.equal(myMinute, other.myMinute);
+    return Objects.equal(myHour, other.myHour)
+        && Objects.equal(myMinute, other.myMinute);
   }
 }
