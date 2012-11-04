@@ -1,5 +1,7 @@
 package ru.spbu.math.baobab.server;
 
+import com.google.common.base.Objects;
+
 import ru.spbu.math.baobab.model.EvenOddWeek;
 import ru.spbu.math.baobab.model.TimeInstant;
 import ru.spbu.math.baobab.model.TimeSlot;
@@ -56,5 +58,31 @@ public class TimeSlotImpl implements TimeSlot {
   @Override
   public TimeSlotExtent getExtent() {
     return myTimeSlotExtent;
+  }
+
+  @Override
+  public int hashCode() {
+    return com.google.common.base.Objects.hashCode(myDay, myFinish, myFlashing, myName, myStart, myTimeSlotExtent);
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+
+    TimeSlotImpl other = (TimeSlotImpl) obj;
+    return Objects.equal(myDay, other.myDay)
+        && Objects.equal(myFinish, other.myFinish)
+        && Objects.equal(myFlashing, other.myFlashing)
+        && Objects.equal(myName, other.myName)
+        && Objects.equal(myStart, other.myStart)
+        && Objects.equal(myTimeSlotExtent, other.myTimeSlotExtent);
   }
 }
