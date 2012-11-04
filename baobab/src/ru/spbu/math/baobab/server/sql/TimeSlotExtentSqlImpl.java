@@ -29,10 +29,10 @@ public class TimeSlotExtentSqlImpl implements TimeSlotExtent {
       String name = rs.getString("name");
 
       Integer startInMinutes = rs.getInt("start_min");
-      TimeInstant start = new TimeInstant(startInMinutes / 60, startInMinutes - (startInMinutes / 60) * 60);
+      TimeInstant start = new TimeInstant(startInMinutes / 60, startInMinutes % 60);
 
       Integer finishInMinutes = rs.getInt("finish_min");
-      TimeInstant finish = new TimeInstant(finishInMinutes / 60, finishInMinutes - (finishInMinutes / 60) * 60);
+      TimeInstant finish = new TimeInstant(finishInMinutes / 60, finishInMinutes % 60);
 
       Integer day = rs.getInt("day");
 
@@ -120,34 +120,35 @@ public class TimeSlotExtentSqlImpl implements TimeSlotExtent {
     SqlApi sqlApi = new SqlApi();
 
     try {
-      PreparedStatement stmt = sqlApi.prepareScript("SELECT * FROM TimeSlot WHERE name=? AND day=? AND is_odd=?;").get(
-          0);
+      PreparedStatement stmt = sqlApi.prepareScript(
+          "SELECT * FROM TimeSlot WHERE name=? AND day=? AND (is_odd=? OR is_odd=?);").get(0);
       stmt.setString(1, name);
       stmt.setInt(2, day);
       stmt.setInt(3, flashing.ordinal());
+      stmt.setInt(4, 0);
       int rowCount = 0;
       ResultSet resultSet = stmt.executeQuery();
       for (boolean hasRow = resultSet.next(); hasRow; hasRow = resultSet.next()) {
         rowCount++;
       }
 
-      if (rowCount == 0) {
-        stmt = sqlApi.prepareScript("INSERT INTO TimeSlot SET name=?, start_min=?, finish_min=?, day=?, is_odd=?;")
-            .get(0);
-
-        stmt.setString(1, name);
-        stmt.setInt(2, start.getHour() * 60 + start.getMinute());
-        stmt.setInt(3, finish.getHour() * 60 + finish.getMinute());
-        stmt.setInt(4, day);
-        stmt.setInt(5, flashing.ordinal());
-
-        stmt.execute();
-
-        TimeSlot ts = new TimeSlotImpl(name, start, finish, day, flashing, this);
-        return ts;
-      } else {
-        throw new IllegalStateException("The TimeSlot with this name is already exist");
+      if (rowCount > 0) {
+        throw new IllegalStateException("The TimeSlot with this name is already exists");
       }
+
+      stmt = sqlApi.prepareScript("INSERT INTO TimeSlot SET name=?, start_min=?, finish_min=?, day=?, is_odd=?;")
+          .get(0);
+
+      stmt.setString(1, name);
+      stmt.setInt(2, start.getHour() * 60 + start.getMinute());
+      stmt.setInt(3, finish.getHour() * 60 + finish.getMinute());
+      stmt.setInt(4, day);
+      stmt.setInt(5, flashing.ordinal());
+
+      stmt.execute();
+
+      TimeSlot ts = new TimeSlotImpl(name, start, finish, day, flashing, this);
+      return ts;
 
     } catch (SQLException e) {
       e.printStackTrace();
