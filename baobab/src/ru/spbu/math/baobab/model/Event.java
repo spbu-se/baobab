@@ -32,6 +32,12 @@ public interface Event {
   Auditorium getAuditorium();
   
   /**
+   * Associates auditorium with this event.
+   * 
+   * @param auditorium new auditorium
+   */
+  void setAuditorium(Auditorium auditorium);
+  /**
    * @return topic associated with this event
    */
   Topic getTopic();
