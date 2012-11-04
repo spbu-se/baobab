@@ -43,6 +43,15 @@
   </servlet-mapping>
   
   <servlet>
+    <servlet-name>test_schedule</servlet-name>
+    <servlet-class>ru.spbu.math.baobab.server.SimpleScheduleDemoServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>test_schedule</servlet-name>
+    <url-pattern>/_ah/test_schedule</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
     <servlet-name>landing_servlet</servlet-name>
     <servlet-class>ru.spbu.math.baobab.server.LandingServlet</servlet-class>
   </servlet>

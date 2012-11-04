@@ -14,13 +14,13 @@
 		<tr>
 			<th>&nbsp;</th>
 			<th>&nbsp;</th>
-			<% for(Attendee attendee: table.GetHorHeaders()) { %>
+			<% for(Attendee attendee: table.getHorHeaders()) { %>
 			<th>
 				<% out.print(attendee.getName()); %>
 			</th>
 			<% } %>
 		</tr>
-		<% for (TimeSlot timeslot: table.GetVertHeader()) { %>
+		<% for (TimeSlot timeslot: table.getVertHeader()) { %>
 		<tr>
 			<% if (timeslot.getDayOfWeek() != DayOfWeek) { %>
 			<th><small> <% out.print(Days[DayOfWeek++]); %>
@@ -30,7 +30,7 @@
 			<th>
 				<% out.print(timeslot.getName()); %>
 			</th>
-			<% for (int i = 1; i <= table.GetHorHeaders().size(); i++) { %>
+			<% for (int i = 1; i <= table.getHorHeaders().size(); i++) { %>
 			<td>&nbsp;</td>
 			<%  } %>
 			<% } %>
