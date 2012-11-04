@@ -1,3 +1,8 @@
+DROP TABLE IF EXISTS TopicAttendee;
+DROP TABLE IF EXISTS TopicOwner;
+DROP TABLE IF EXISTS Event;
+DROP TABLE IF EXISTS Topic;
+DROP TABLE IF EXISTS Auditorium;
 DROP TABLE IF EXISTS GroupMember;
 DROP TABLE IF EXISTS Attendee;
 DROP TABLE IF EXISTS AttendeeGroup;
@@ -29,7 +34,8 @@ CREATE TABLE Attendee(id INT PRIMARY KEY AUTO_INCREMENT,
   name VARCHAR(256) NOT NULL,
   type INT NOT NULL CHECK(type >= 0 AND type <= 4) ,
   group_id INT,
-  FOREIGN KEY(group_id) REFERENCES AttendeeGroup(id));
+  FOREIGN KEY(group_id) REFERENCES AttendeeGroup(id),
+  CHECK(type >= 2 AND group_id IS NOT NULL OR type < 2 AND group_id IS NULL));
   
 -- Many-to-many relationship between attendees and groups
 CREATE TABLE GroupMember(
@@ -38,3 +44,41 @@ CREATE TABLE GroupMember(
   FOREIGN KEY(group_id) REFERENCES AttendeeGroup(id),
   FOREIGN KEY(attendee_id) REFERENCES Attendee(id));
   
+CREATE TABLE Auditorium(
+  num VARCHAR(10) PRIMARY KEY,
+  capacity INT CHECK (capacity > 0)
+);
+
+CREATE TABLE Topic(
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  uid VARCHAR(32) NOT NULL UNIQUE,
+  name VARCHAR(256),
+  type INT NOT NULL CHECK(type >= 0 AND type <= 5)
+);
+
+CREATE TABLE Event(
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  start_date DATE NOT NULL,
+  finish_date DATE NOT NULL,
+  time_slot_id INT NOT NULL,
+  topic_id INT NOT NULL,
+  auditorium_num VARCHAR(10),
+  CHECK (finish_date >= start_date),
+  FOREIGN KEY (time_slot_id) REFERENCES TimeSlot(id),
+  FOREIGN KEY (auditorium_num) REFERENCES Auditorium(num),
+  FOREIGN KEY (topic_id) REFERENCES Topic(id)
+);
+
+CREATE TABLE TopicOwner(
+  topic_id INT,
+  attendee_id INT,
+  FOREIGN KEY (topic_id) REFERENCES Topic(id),
+  FOREIGN KEY (attendee_id) REFERENCES Attendee(id)
+);
+
+CREATE TABLE TopicAttendee(
+  topic_id INT,
+  attendee_id INT,
+  FOREIGN KEY (topic_id) REFERENCES Topic(id),
+  FOREIGN KEY (attendee_id) REFERENCES Attendee(id)  
+);
