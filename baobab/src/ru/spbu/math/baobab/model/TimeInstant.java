@@ -1,5 +1,7 @@
 package ru.spbu.math.baobab.model;
 
+import com.google.common.base.Objects;
+
 /**
  * Time instant is a moment of a day, with minute precision. It repeats every day. E.g. 9:30 is a time instant.
  * 

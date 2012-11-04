@@ -1,5 +1,7 @@
 package ru.spbu.math.baobab.server;
 
+import com.google.common.base.Objects;
+
 import ru.spbu.math.baobab.model.EvenOddWeek;
 import ru.spbu.math.baobab.model.TimeInstant;
 import ru.spbu.math.baobab.model.TimeSlot;
@@ -74,6 +76,7 @@ public class TimeSlotImpl implements TimeSlot {
     if (getClass() != obj.getClass()) {
       return false;
     }
+
     TimeSlotImpl other = (TimeSlotImpl) obj;
     return com.google.common.base.Objects.equal(myDay, other.myDay)
         && com.google.common.base.Objects.equal(myFinish, other.myFinish)
