@@ -5,7 +5,7 @@
     <servlet-name>auth_servlet</servlet-name>
     <servlet-class>ru.spbu.math.baobab.server.auth.BaobabAuthServlet</servlet-class>
   </servlet>
-  
+ 
   <servlet-mapping>
     <servlet-name>auth_servlet</servlet-name>
     <url-pattern>/auth/dev</url-pattern>
@@ -22,7 +22,7 @@
     <servlet-name>auth_servlet</servlet-name>
     <url-pattern>/auth/logout</url-pattern>
   </servlet-mapping>
-  
+ 
   <!-- Landing -->
   <servlet>
     <servlet-name>team_servlet</servlet-name>
@@ -32,6 +32,16 @@
     <servlet-name>team_servlet</servlet-name>
     <url-pattern>/team</url-pattern>
   </servlet-mapping>
+  
+   <servlet>
+    <servlet-name>schedule_servlet</servlet-name>
+    <servlet-class>ru.spbu.math.baobab.server.SimpleScheduleServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>schedule_servlet</servlet-name>
+    <url-pattern>/schedule</url-pattern>
+  </servlet-mapping>
+  
   <servlet>
     <servlet-name>landing_servlet</servlet-name>
     <servlet-class>ru.spbu.math.baobab.server.LandingServlet</servlet-class>
@@ -40,7 +50,7 @@
     <servlet-name>landing_servlet</servlet-name>
     <url-pattern>/</url-pattern>
   </servlet-mapping>
-  
+ 
   <!--  Devtools and testing -->
   <servlet>
     <servlet-name>code_review_servlet</servlet-name>
@@ -50,7 +60,7 @@
     <servlet-name>code_review_servlet</servlet-name>
     <url-pattern>/_ah/code_review</url-pattern>
   </servlet-mapping>
-  
+ 
   <servlet>
     <servlet-name>test_sql_servlet</servlet-name>
     <servlet-class>ru.spbu.math.baobab.server.sql.TestSqlServlet</servlet-class>
@@ -59,19 +69,19 @@
     <servlet-name>test_sql_servlet</servlet-name>
     <url-pattern>/_ah/test_sql</url-pattern>
   </servlet-mapping>
-  
+ 
   <!-- GWT -->
   <servlet>
     <servlet-name>greetServlet</servlet-name>
     <servlet-class>ru.spbu.math.baobab.server.GreetingServiceImpl</servlet-class>
   </servlet>
-  
+ 
   <servlet-mapping>
     <servlet-name>greetServlet</servlet-name>
     <url-pattern>/baobab/greet</url-pattern>
   </servlet-mapping>
-  
-  <!-- 
+ 
+  <!--
   <welcome-file-list>
     <welcome-file>Baobab.html</welcome-file>
   </welcome-file-list>
