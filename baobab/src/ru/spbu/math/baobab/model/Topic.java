@@ -3,6 +3,8 @@ package ru.spbu.math.baobab.model;
 import java.util.Collection;
 import java.util.Date;
 
+import javax.annotation.Nullable;
+
 /**
  * Topic is something which is the goal of holding an event or series of events. 
  * It may be a lecture course or a single invited lecture.
@@ -44,9 +46,10 @@ public interface Topic {
    *  
    * @param date event date
    * @param timeSlot event time slot
+   * @param auditorium auditorium where event will take place
    * @return new event instance
    */
-  Event addEvent(Date date, TimeSlot timeSlot);
+  Event addEvent(Date date, TimeSlot timeSlot, @Nullable Auditorium auditorium);
   
   /**
    * Creates a series of events in the specified date interval, whenever time slot is
@@ -55,9 +58,10 @@ public interface Topic {
    * @param start event interval start date
    * @param finish event interval finish date
    * @param timeSlot event time slot
+   * @param auditorium auditorium where events will take place
    * @return a collection of created events
    */
-  Collection<Event> addAllEvents(Date start, Date finish, TimeSlot timeSlot);
+  Collection<Event> addAllEvents(Date start, Date finish, TimeSlot timeSlot, @Nullable Auditorium auditorium);
   
   /**
    * @return all events when this topic takes place
