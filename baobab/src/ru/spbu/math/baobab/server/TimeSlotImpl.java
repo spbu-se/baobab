@@ -78,11 +78,11 @@ public class TimeSlotImpl implements TimeSlot {
     }
 
     TimeSlotImpl other = (TimeSlotImpl) obj;
-    return com.google.common.base.Objects.equal(myDay, other.myDay)
-        && com.google.common.base.Objects.equal(myFinish, other.myFinish)
-        && com.google.common.base.Objects.equal(myFlashing, other.myFlashing)
-        && com.google.common.base.Objects.equal(myName, other.myName)
-        && com.google.common.base.Objects.equal(myStart, other.myStart)
-        && com.google.common.base.Objects.equal(myTimeSlotExtent, other.myTimeSlotExtent);
+    return Objects.equal(myDay, other.myDay)
+        && Objects.equal(myFinish, other.myFinish)
+        && Objects.equal(myFlashing, other.myFlashing)
+        && Objects.equal(myName, other.myName)
+        && Objects.equal(myStart, other.myStart)
+        && Objects.equal(myTimeSlotExtent, other.myTimeSlotExtent);
   }
 }
