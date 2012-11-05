@@ -25,7 +25,7 @@ import ru.spbu.math.baobab.model.TimeSlotExtent;
  */
 public class TimeSlotExtentSqlImplTest {
   static void deleteFromTimeSLot() throws SQLException {
-    SqlApi sqlApi = new SqlApi();
+    SqlApi sqlApi = SqlApi.create();
     List<PreparedStatement> stmts = sqlApi.prepareScript("DELETE FROM TimeSlot;");
     stmts.get(0).execute();
   };
