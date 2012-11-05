@@ -7,23 +7,24 @@ import junit.framework.TestCase;
 
 /**
  * Tests for AttendeeExtentSqlImpl.
+ * 
  * @author aoool
- *
+ * 
  */
 
 public class AttendeeExtentSqlImplTest extends TestCase {
-  
+
   public void testCreate() {
     AttendeeExtent attendeeExtent = new AttendeeExtentSqlImpl();
     attendeeExtent.create("123", "Test1", Type.TEACHER);
     try {
       attendeeExtent.create("123", "Test2", Type.TEACHER);
       fail("Expected IllegalArgumentException");
-    } catch(IllegalArgumentException e) {
-      //OK: can't add another attendee with existing id
+    } catch (IllegalArgumentException e) {
+      // OK: can't add another attendee with existing id
     }
   }
-  
+
   public void testFind() {
     AttendeeExtent attendeeExtent = new AttendeeExtentSqlImpl();
     attendeeExtent.create("1", "Test1", Type.TEACHER);
