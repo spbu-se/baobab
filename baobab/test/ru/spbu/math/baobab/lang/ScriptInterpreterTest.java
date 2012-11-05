@@ -30,7 +30,7 @@ public class ScriptInterpreterTest extends TestCase {
       fail("command's not correct");
     }
   }
-  
+
   public void testIncorrectCommand() {
     boolean isExceptionCatched = false;
     TimeSlotExtent timeSlotExtent = new TimeSlotExtentImpl();
@@ -39,8 +39,7 @@ public class ScriptInterpreterTest extends TestCase {
       interpteter.process("define timeslot 1st_try to 12:40 on even Monday");
     } catch (Exception e) {
       isExceptionCatched = true;
-    }
-    finally{
+    } finally {
       assertTrue(isExceptionCatched);
     }
   }
