@@ -7,6 +7,7 @@ import java.util.List;
 
 import ru.spbu.math.baobab.model.Attendee;
 import ru.spbu.math.baobab.model.AttendeeExtent;
+import ru.spbu.math.baobab.model.Attendee.Type;
 
 /**
  * SQL-based implementation of AttendeeExtent
@@ -32,10 +33,11 @@ public class AttendeeExtentSqlImpl implements AttendeeExtent {
       stmt = con.prepareScript("SELECT id FROM Attendee WHERE uid=?");
       stmt.get(0).setString(1, id);
       int intID = stmt.get(0).executeQuery().getInt(1);
-      Attendee myAttendee = new AttendeeSqlImpl(intID, this);
+      Attendee myAttendee = new AttendeeSqlImpl(intID, id, name, type, this);
       // set group_id for group members
       if (myAttendee.isGroup()) {
-        stmt = con.prepareScript("INSERT INTO AttendeeGroup SET id=?; UPDATE Attendee SET group_id = ? WHERE id = ?;");
+        stmt = con.prepareScript("INSERT INTO AttendeeGroup SET id=?; \n "
+            + "UPDATE Attendee SET group_id = ? WHERE id = ?;");
         stmt.get(0).setInt(1, intID);
         stmt.get(0).executeQuery();
         stmt.get(1).setInt(1, intID);
@@ -55,13 +57,29 @@ public class AttendeeExtentSqlImpl implements AttendeeExtent {
   public Attendee find(String id) {
     SqlApi con = new SqlApi();
     try {
-      PreparedStatement stmt = con.prepareScript("SELECT id FROM Attendee WHERE uid=?").get(0);
+      PreparedStatement stmt = con.prepareScript("SELECT id, name, type FROM Attendee WHERE uid=?").get(0);
       stmt.setString(1, id);
       ResultSet resultFind = stmt.executeQuery();
-      resultFind.next();
-      if (resultFind.getRow() != 0) {
-        Attendee myAttendee = new AttendeeSqlImpl(resultFind.getInt(1), this);
-        return myAttendee;
+      if (resultFind.next()) {
+        Attendee myAttendee;
+        switch (resultFind.getInt(3)) {
+        case 0:
+          myAttendee = new AttendeeSqlImpl(resultFind.getInt(1), id, resultFind.getString(2), Type.STUDENT, this);
+          return myAttendee;
+        case 1:
+          myAttendee = new AttendeeSqlImpl(resultFind.getInt(1), id, resultFind.getString(2), Type.TEACHER, this);
+          return myAttendee;
+        case 2:
+          myAttendee = new AttendeeSqlImpl(resultFind.getInt(1), id, resultFind.getString(2), Type.ACADEMIC_GROUP, this);
+          return myAttendee;
+        case 3:
+          myAttendee = new AttendeeSqlImpl(resultFind.getInt(1), id, resultFind.getString(2), Type.CHAIR, this);
+          return myAttendee;
+        case 4:
+          myAttendee = new AttendeeSqlImpl(resultFind.getInt(1), id, resultFind.getString(2), Type.FREE_FORM_GROUP,
+              this);
+          return myAttendee;
+        }
       }
     } catch (SQLException e) {
       e.printStackTrace();
