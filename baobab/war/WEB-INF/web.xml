@@ -71,15 +71,6 @@
   </servlet-mapping>
   
   <servlet>
-    <servlet-name>schedule_servlet</servlet-name>
-    <servlet-class>ru.spbu.math.baobab.server.SimpleScheduleServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>schedule_servlet</servlet-name>
-    <url-pattern>/schedule</url-pattern>
-  </servlet-mapping>
-  
-  <servlet>
     <servlet-name>test_schedule</servlet-name>
     <servlet-class>ru.spbu.math.baobab.server.SimpleScheduleDemoServlet</servlet-class>
   </servlet>

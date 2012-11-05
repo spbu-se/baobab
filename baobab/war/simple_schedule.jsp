@@ -7,34 +7,29 @@
 <html>
 <body>
 	<% Table table = (Table) request.getAttribute("table"); %>
-	<% int DayOfWeek = 0; %>
-	<% String[] Days = {"Mon","Thu","Wed","Tus","Fri","Sat"}; %>
 	<table width="100%" border="1" cellpadding="4" cellspacing="0">
 		<caption>Simple Schedule</caption>
 		<tr>
 			<th>&nbsp;</th>
 			<th>&nbsp;</th>
-			<% for(Attendee attendee: table.getHorHeaders()) { %>
+			<% for (Attendee attendee : table.getHorHeaders()) { %>
 			<th>
 				<% out.print(attendee.getName()); %>
 			</th>
 			<% } %>
 		</tr>
-		<% for (TimeSlot timeslot: table.getVertHeader()) { %>
+		<% for (TimeSlot timeslot : table.getVertHeader()) { %>
 		<tr>
-			<% if (timeslot.getDayOfWeek() != DayOfWeek) { %>
-			<th><small> <% out.print(Days[DayOfWeek++]); %>
-			</small> <%} else {%></th>
-			<th>&nbsp;</th>
-			<%} %>
+			<th><small> <% out.print(table.getDayOfWeek().get(timeslot)); %>
+			</small></th>
 			<th>
 				<% out.print(timeslot.getName()); %>
 			</th>
-			<% for (int i = 1; i <= table.getHorHeaders().size(); i++) { %>
+			<% for (Attendee attendee: table.getHorHeaders()) { %>
 			<td>&nbsp;</td>
-			<%  } %>
 			<% } %>
 		</tr>
+		<% } %>
 	</table>
 </body>
 </html>
