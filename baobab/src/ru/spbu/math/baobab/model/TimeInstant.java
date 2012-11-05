@@ -26,6 +26,10 @@ public class TimeInstant {
     return myMinute;
   }
 
+  public int getDayMinute() {
+    return myHour * 60 + myMinute;
+  }
+  
   @Override
   public int hashCode() {
     return com.google.common.base.Objects.hashCode(myHour, myMinute);
