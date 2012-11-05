@@ -5,7 +5,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import ru.spbu.math.baobab.model.Attendee;
@@ -16,116 +15,83 @@ import ru.spbu.math.baobab.model.AttendeeExtent;
  * 
  * @author aoool
  */
-
 public class AttendeeSqlImpl implements Attendee {
 
   private final int myID; // unique id for every Attendee in Attendee table
+  private String myUID;
+  private String myName;
+  private Type myType;
   private final AttendeeExtent myExtent;
 
-  public AttendeeSqlImpl(int ID, AttendeeExtent extent) {
-    myID = ID;
+  // constructor for AttendeeExtent
+  public AttendeeSqlImpl(int id, String uid, String name, Type type, AttendeeExtent extent) {
+    myID = id;
+    myUID = uid;
+    myName = name;
+    myType = type;
     myExtent = extent;
+  }
+
+  // constructor for getGroupMembers()
+  public AttendeeSqlImpl(int id, AttendeeExtent extent) {
+    myID = id;
+    myUID = null;
+    myName = null;
+    myType = null;
+    myExtent = extent;
+    SqlApi con = new SqlApi();
+    try {
+      // find out uid, name and type for current Attendee
+      List<PreparedStatement> stmt = con.prepareScript("SELECT uid, name, type FROM Attendee WHERE id=?");
+      stmt.get(0).setInt(1, myID);
+      ResultSet result = stmt.get(0).executeQuery();
+      myUID = result.getString(1);
+      myName = result.getString(2);
+      myType = Type.values()[result.getInt(3)];
+    } catch (SQLException e) {
+      e.printStackTrace();
+    } finally {
+      con.dispose();
+    }
   }
 
   @Override
   public String getName() {
-    try {
-      SqlApi con = new SqlApi();
-      List<PreparedStatement> stmt = con.prepareScript("SELECT name FROM Attendee WHERE uid=?");
-      Iterator<PreparedStatement> it = stmt.iterator();
-      while (it.hasNext()) {
-        PreparedStatement value = (PreparedStatement) it.next();
-        value.setString(1, this.getID());
-        ResultSet resultFind = value.executeQuery();
-        return resultFind.getString(1);
-      }
-      con.dispose();
-    } catch (SQLException e) {
-      e.printStackTrace();
-    }
-    return null;
+    return myName;
   }
 
   @Override
-  // should be modified because returned result is not as in the description
   public String getID() {
-    try {
-      SqlApi con = new SqlApi();
-      List<PreparedStatement> stmt;
-      stmt = con.prepareScript("SELECT uid FROM Attendee WHERE id=?");
-      Iterator<PreparedStatement> it = stmt.iterator();
-      while (it.hasNext()) {
-        PreparedStatement value = (PreparedStatement) it.next();
-        value.setInt(1, myID);
-        ResultSet resultFind = value.executeQuery();
-        return resultFind.getString(1);
-      }
-      con.dispose();
-    } catch (SQLException e) {
-      e.printStackTrace();
-    }
-    return null;
+    return myUID;
   }
 
   @Override
   public void setID(String id) {
     if (myExtent.find(id) != null) {
-      throw new IllegalArgumentException("Attendee with the given ID already exists");
+      throw new IllegalArgumentException("Attendee with the given ID already exists.");
     }
+    SqlApi con = new SqlApi();
     try {
-      SqlApi con = new SqlApi();
-      List<PreparedStatement> stmt;
-      stmt = con.prepareScript("UPDATE Attendee SET uid = ? WHERE id = ?");
-      Iterator<PreparedStatement> it = stmt.iterator();
-      while (it.hasNext()) {
-        PreparedStatement value = (PreparedStatement) it.next();
-        value.setString(1, id);
-        value.setInt(2, myID);
-        value.executeQuery();
-      }
-      con.dispose();
+      PreparedStatement stmt = con.prepareScript("UPDATE Attendee SET uid = ? WHERE id = ?").get(0);
+      stmt.setString(1, id);
+      stmt.setInt(2, myID);
+      stmt.execute();
+      myUID = id;
     } catch (SQLException e) {
       e.printStackTrace();
+    } finally {
+      con.dispose();
     }
   }
 
   @Override
   public Type getType() {
-    int typeNumber = -1;
-    try {
-      SqlApi con = new SqlApi();
-      List<PreparedStatement> stmt;
-      stmt = con.prepareScript("SELECT type FROM Attendee WHERE id=?");
-      Iterator<PreparedStatement> it = stmt.iterator();
-      while (it.hasNext()) {
-        PreparedStatement value = (PreparedStatement) it.next();
-        value.setInt(1, myID);
-        ResultSet resultFind = value.executeQuery();
-        typeNumber = resultFind.getInt(1);
-      }
-      con.dispose();
-    } catch (SQLException e) {
-      e.printStackTrace();
-    }
-    switch (typeNumber) {
-    case 0:
-      return Type.STUDENT;
-    case 1:
-      return Type.TEACHER;
-    case 2:
-      return Type.ACADEMIC_GROUP;
-    case 3:
-      return Type.CHAIR;
-    case 4:
-      return Type.FREE_FORM_GROUP;
-    default:
-      return null;
-    }
+    return myType;
   }
 
   @Override
   public boolean isGroup() {
-    if ((getType() == Type.ACADEMIC_GROUP) || (getType() == Type.CHAIR) || (getType() == Type.FREE_FORM_GROUP)) {
+    if ((myType == Type.ACADEMIC_GROUP) || (myType == Type.CHAIR) || (myType == Type.FREE_FORM_GROUP)) {
       return true;
     }
     return false;
@@ -133,39 +99,25 @@ public class AttendeeSqlImpl implements Attendee {
 
   @Override
   public Collection<Attendee> getGroupMembers() {
+    SqlApi con = new SqlApi();
     try {
       Collection<Attendee> members = new ArrayList<Attendee>();
-      SqlApi con = new SqlApi();
       // find out group_id of current Attendee
-      List<PreparedStatement> stmt1;
-      stmt1 = con.prepareScript("SELECT group_id FROM Attendee WHERE id=?");
-      Iterator<PreparedStatement> it1 = stmt1.iterator();
-      ResultSet resultFind1;
-      int group_id = 0;
-      while (it1.hasNext()) {
-        PreparedStatement value1 = (PreparedStatement) it1.next();
-        value1.setInt(1, myID);
-        resultFind1 = value1.executeQuery();
-        group_id = resultFind1.getInt(1);
-      }
+      List<PreparedStatement> stmt = con.prepareScript("SELECT group_id FROM Attendee WHERE id=?; \n"
+          + "SELECT attendee_id FROM GroupMember WHERE group_id = ?");
+      stmt.get(0).setInt(1, myID);
       // find out group members
-      List<PreparedStatement> stmt2;
-      stmt2 = con.prepareScript("SELECT attendee_id FROM GroupMember WHERE group_id = ?");
-      Iterator<PreparedStatement> it2 = stmt2.iterator();
-      ResultSet resultFind2;
-      while (it2.hasNext()) {
-        PreparedStatement value2 = (PreparedStatement) it2.next();
-        value2.setInt(1, group_id);
-        resultFind2 = value2.executeQuery();
-        while (resultFind2.next()) {
-          Attendee groupAttendee = new AttendeeSqlImpl(resultFind2.getInt(1), myExtent);
-          members.add(groupAttendee);
-        }
+      stmt.get(1).setInt(1, stmt.get(0).executeQuery().getInt(1)); // set group_id
+      ResultSet result = stmt.get(1).executeQuery();
+      while (result.next()) {
+        Attendee groupAttendee = new AttendeeSqlImpl(result.getInt(1), myExtent);
+        members.add(groupAttendee);
       }
-      con.dispose();
       return members;
     } catch (SQLException e) {
       e.printStackTrace();
+    } finally {
+      con.dispose();
     }
     return null;
   }
@@ -175,45 +127,20 @@ public class AttendeeSqlImpl implements Attendee {
     if (!member.isGroup()) {
       throw new IllegalStateException("The attendee is not a group.");
     }
+    SqlApi con = new SqlApi();
     try {
-      SqlApi con = new SqlApi();
-      // find out group_id of current Attendee
-      List<PreparedStatement> stmt1;
-      stmt1 = con.prepareScript("SELECT group_id FROM Attendee WHERE id=?");
-      Iterator<PreparedStatement> it1 = stmt1.iterator();
-      ResultSet resultFind1;
-      int group_id = 0;
-      while (it1.hasNext()) {
-        PreparedStatement value1 = (PreparedStatement) it1.next();
-        value1.setInt(1, myID);
-        resultFind1 = value1.executeQuery();
-        group_id = resultFind1.getInt(1);
-      }
-      // find out attendee_id of member
-      List<PreparedStatement> stmt2;
-      stmt2 = con.prepareScript("SELECT id FROM Attendee WHERE uid = ?");
-      Iterator<PreparedStatement> it2 = stmt2.iterator();
-      ResultSet resultFind2;
-      int attendee_id = 0;
-      while (it2.hasNext()) {
-        PreparedStatement value2 = (PreparedStatement) it2.next();
-        value2.setString(1, member.getID());
-        resultFind2 = value2.executeQuery();
-        attendee_id = resultFind2.getInt(1);
-      }
+      List<PreparedStatement> stmt = con.prepareScript("SELECT group_id FROM Attendee WHERE id=?; \n"
+          + "SELECT id FROM Attendee WHERE uid = ?; \n" + "INSERT INTO GroupMember SET group_id=?, attendee_id = ?;");
+      stmt.get(0).setInt(1, myID);
+      stmt.get(1).setString(1, member.getID());
       // adding a new group member
-      List<PreparedStatement> stmt3;
-      stmt3 = con.prepareScript("INSERT INTO GroupMember SET group_id=?, attendee_id = ?");
-      Iterator<PreparedStatement> it3 = stmt3.iterator();
-      while (it3.hasNext()) {
-        PreparedStatement value3 = (PreparedStatement) it3.next();
-        value3.setInt(1, group_id);
-        value3.setInt(2, attendee_id);
-        value3.executeQuery();
-      }
-      con.dispose();
+      stmt.get(2).setInt(1, stmt.get(0).executeQuery().getInt(1)); // set group_id
+      stmt.get(2).setInt(2, stmt.get(1).executeQuery().getInt(1)); // set attendee_id
+      stmt.get(2).execute();
     } catch (SQLException e) {
       e.printStackTrace();
+    } finally {
+      con.dispose();
     }
   }
 }

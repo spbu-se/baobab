@@ -14,7 +14,6 @@ import junit.framework.TestCase;
  * @author aoool
  * 
  */
-
 public class AttendeeSqlImplTest extends TestCase {
 
   public void testGetName() {
