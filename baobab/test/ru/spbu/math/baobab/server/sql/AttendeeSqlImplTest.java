@@ -10,30 +10,31 @@ import junit.framework.TestCase;
 
 /**
  * Tests for AttendeeSqlImpl.
+ * 
  * @author aoool
- *
+ * 
  */
 
 public class AttendeeSqlImplTest extends TestCase {
-  
+
   public void testGetName() {
     AttendeeExtent attendeeExtent = new AttendeeExtentSqlImpl();
     Attendee student = attendeeExtent.create("student", "Test", Type.STUDENT);
-    assertEquals(student.getName(),"Test");
+    assertEquals(student.getName(), "Test");
   }
-  
+
   public void testGetID() {
     AttendeeExtent attendeeExtent = new AttendeeExtentSqlImpl();
     Attendee student = attendeeExtent.create("student", "Test", Type.STUDENT);
-    assertEquals(student.getID(),"student");
+    assertEquals(student.getID(), "student");
   }
-  
+
   public void testGetType() {
     AttendeeExtent attendeeExtent = new AttendeeExtentSqlImpl();
     Attendee group = attendeeExtent.create("group", "Test", Type.ACADEMIC_GROUP);
-    assertEquals(group.getType(),Type.ACADEMIC_GROUP);
+    assertEquals(group.getType(), Type.ACADEMIC_GROUP);
   }
-  
+
   public void testSetID() {
     AttendeeExtent attendeeExtent = new AttendeeExtentSqlImpl();
     Attendee student = attendeeExtent.create("student", "Test", Type.STUDENT);
@@ -44,13 +45,13 @@ public class AttendeeSqlImplTest extends TestCase {
     try {
       teacher.setID("student");
       fail("Expected IllegalArgumentException");
-    } catch(IllegalArgumentException e) {
-      //OK: can't set new ID if attendee with this ID already exists
+    } catch (IllegalArgumentException e) {
+      // OK: can't set new ID if attendee with this ID already exists
     }
     teacher.setID("SuperTeacher");
-    assertEquals(teacher.getID(),"SuperTeacher");
+    assertEquals(teacher.getID(), "SuperTeacher");
   }
-  
+
   public void testIsGroup() {
     AttendeeExtent attendeeExtent = new AttendeeExtentSqlImpl();
     Attendee teacher = attendeeExtent.create("1", "Test1", Type.TEACHER);
@@ -67,7 +68,7 @@ public class AttendeeSqlImplTest extends TestCase {
     Attendee teacher = attendeeExtent.create("2", "Test2", Type.TEACHER);
     Attendee student = attendeeExtent.create("3", "Test3", Type.STUDENT);
     assertTrue(academicGroup.getGroupMembers().isEmpty());
-    academicGroup.addGroupMember(teacher);  //testAddGroupMember
+    academicGroup.addGroupMember(teacher); // testAddGroupMember
     academicGroup.addGroupMember(student);
     Collection<Attendee> members = new ArrayList<Attendee>();
     members.add(teacher);
