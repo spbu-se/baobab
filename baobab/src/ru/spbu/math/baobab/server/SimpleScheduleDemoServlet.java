@@ -1,6 +1,8 @@
 package ru.spbu.math.baobab.server;
 
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
+
 import ru.spbu.math.baobab.model.Attendee;
 import ru.spbu.math.baobab.model.AttendeeExtent;
 import ru.spbu.math.baobab.model.EvenOddWeek;
@@ -8,7 +10,6 @@ import ru.spbu.math.baobab.model.TimeInstant;
 import ru.spbu.math.baobab.model.TimeSlot;
 import ru.spbu.math.baobab.model.TimeSlotExtent;
 import ru.spbu.math.baobab.model.Attendee.Type;
-import com.google.common.collect.Lists;
 
 /**
  * Simple Schedule Demo Servlet
@@ -18,8 +19,8 @@ import com.google.common.collect.Lists;
 public class SimpleScheduleDemoServlet extends SimpleScheduleServlet {
 
   @Override
-  protected Collection<TimeSlot> createTimeSlots() {
-    Collection<TimeSlot> timeSlots = Lists.newArrayList();
+  protected List<TimeSlot> createTimeSlots() {
+    List<TimeSlot> timeSlots = new ArrayList();
     TimeInstant start = new TimeInstant(9, 30);
     TimeInstant finish = new TimeInstant(11, 5);
     TimeInstant start1 = new TimeInstant(11, 15);
@@ -37,8 +38,8 @@ public class SimpleScheduleDemoServlet extends SimpleScheduleServlet {
   }
 
   @Override
-  protected Collection<Attendee> createAttendees() {
-    Collection<Attendee> attendees = Lists.newArrayList();
+  protected List<Attendee> createAttendees() {
+    List<Attendee> attendees = new ArrayList();
     AttendeeExtent attendeeExtent = new AttendeeExtentImpl();
     attendees.add(attendeeExtent.create("1", "141", Type.ACADEMIC_GROUP));
     attendees.add(attendeeExtent.create("2", "142", Type.ACADEMIC_GROUP));

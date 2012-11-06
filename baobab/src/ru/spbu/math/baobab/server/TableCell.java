@@ -4,17 +4,17 @@ package ru.spbu.math.baobab.server;
  * @author dageev
  */
 public class TableCell {
-  private String myEvent = ""; // in future it will be EVENT
+  private String myValue = "";
 
-  public TableCell(String event) {
-    myEvent = event;
+  public TableCell(String value) {
+    myValue = value;
   }
 
-  public void setEvent(String event) {
-    myEvent = event;
+  public void setValue(String value) {
+    myValue = value;
   }
 
-  public String getEvent() {
-    return myEvent;
+  public String getValue() {
+    return myValue;
   }
 }
