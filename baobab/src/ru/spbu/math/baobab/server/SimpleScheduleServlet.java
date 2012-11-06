@@ -1,7 +1,7 @@
 package ru.spbu.math.baobab.server;
 
 import java.io.IOException;
-import java.util.Collection;
+import java.util.List;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -23,12 +23,12 @@ public abstract class SimpleScheduleServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     request.setCharacterEncoding("UTF-8");
     Table table = new Table(createTimeSlots(), createAttendees());
-    request.setAttribute("table", table);
+    request.setAttribute("tableRows", table.getTableRows());
     RequestDispatcher view = request.getRequestDispatcher("/simple_schedule.jsp");
     view.forward(request, response);
   }
 
-  protected abstract Collection<TimeSlot> createTimeSlots();
+  protected abstract List<TimeSlot> createTimeSlots();
 
-  protected abstract Collection<Attendee> createAttendees();
+  protected abstract List<Attendee> createAttendees();
 }

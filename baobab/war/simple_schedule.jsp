@@ -6,28 +6,16 @@
 <%@ page import="java.util.*"%>
 <html>
 <body>
-	<% Table table = (Table) request.getAttribute("table"); %>
+	<% List<TableRow> tableRows= (List<TableRow>) request.getAttribute("tableRows"); %>
 	<table width="100%" border="1" cellpadding="4" cellspacing="0">
 		<caption>Simple Schedule</caption>
+		<% for (TableRow row : tableRows) { %>
 		<tr>
-			<th>&nbsp;</th>
-			<th>&nbsp;</th>
-			<% for (Attendee attendee : table.getHorHeaders()) { %>
-			<th>
-				<% out.print(attendee.getName()); %>
-			</th>
-			<% } %>
-		</tr>
-		<% for (TimeSlot timeslot : table.getVertHeader()) { %>
-		<tr>
-			<th><small> <% out.print(table.getDayOfWeek().get(timeslot)); %>
-			</small></th>
-			<th>
-				<% out.print(timeslot.getName()); %>
-			</th>
-			<% for (Attendee attendee: table.getHorHeaders()) { %>
-			<td>&nbsp;</td>
-			<% } %>
+		  <% for (TableCell cell : row.getRow()) { %>
+		    <td> 
+		      <% out.print(cell.getValue()); %>
+		    </td>
+		  <% } %>
 		</tr>
 		<% } %>
 	</table>
