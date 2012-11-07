@@ -1,5 +1,6 @@
 package ru.spbu.math.baobab.server;
 
+import java.util.Arrays;
 import java.util.List;
 
 import ru.spbu.math.baobab.model.Attendee;
@@ -15,60 +16,41 @@ import com.google.common.collect.Lists;
 import junit.framework.TestCase;
 
 public class ScheduleTest extends TestCase {
+  private final TableCell EMPTY_CELL = new TableCell("");
 
   public void testFirstRow() {
     Table table = new Table(createTimeSlots(), createAttendees());
     TableRow row = new TableRow();
-    TableCell cell = new TableCell("");
-    row.addCell(cell);
-    TableCell cell1 = new TableCell("141");
-    TableCell cell2 = new TableCell("142");
-    TableCell cell3 = new TableCell("143");
-    TableCell cell4 = new TableCell("144");
-    TableCell cell5 = new TableCell("241");
-    TableCell cell6 = new TableCell("242");
-    TableCell cell7 = new TableCell("243");
-    TableCell cell8 = new TableCell("244");
-    row.addCell(cell1);
-    row.addCell(cell2);
-    row.addCell(cell3);
-    row.addCell(cell4);
-    row.addCell(cell5);
-    row.addCell(cell6);
-    row.addCell(cell7);
-    row.addCell(cell8);
-    assertEquals(table.getTableRows().get(0).getRow(), row.getRow());
+    row.addCell(EMPTY_CELL);
+    row.addCell(EMPTY_CELL);
+    row.addCell(new TableCell("141"));
+    row.addCell(new TableCell("142"));
+    row.addCell(new TableCell("143"));
+    row.addCell(new TableCell("144"));
+    row.addCell(new TableCell("241"));
+    row.addCell(new TableCell("242"));
+    row.addCell(new TableCell("243"));
+    row.addCell(new TableCell("244"));
+    assertEquals(table.getTableRows().get(0), row);
   }
 
   public void testFirstColumn() {
-    List<String> column = Lists.newArrayList();
-    column.add("");
-    column.add("Mon");
-    column.add("");
-    column.add("Tue");
-    column.add("");
-    column.add("Wed");
-    column.add("");
+    List<String> column = Arrays.asList("", "Mon", "", "Tue", "", "Wed", "");
     List<String> column1 = Lists.newArrayList();
     Table table = new Table(createTimeSlots(), createAttendees());
     for (TableRow row : table.getTableRows()) {
-      column1.add(row.getRow().get(1).getValue());
+      column1.add(row.getCells().get(0).getValue());
     }
     assertEquals(column1, column);
   }
 
   public void testSecondColumn() {
-    List<String> column = Lists.newArrayList();
-    column.add("");
-    column.add("1 pair");
-    column.add("2 pair");
-    column.add("3 pair");
-    column.add("4 pair");
-    column.add("6 pair");
+    List<String> column = Arrays.asList("", "1 pair", "2 pair", "3 pair", 
+        "4 pair", "5 pair", "6 pair");
     List<String> column1 = Lists.newArrayList();
     Table table = new Table(createTimeSlots(), createAttendees());
     for (TableRow row : table.getTableRows()) {
-      column1.add(row.getRow().get(1).getValue());
+      column1.add(row.getCells().get(1).getValue());
     }
     assertEquals(column1, column);
   }

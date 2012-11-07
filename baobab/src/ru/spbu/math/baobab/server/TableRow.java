@@ -1,6 +1,8 @@
 package ru.spbu.math.baobab.server;
 
 import java.util.List;
+
+import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 
 /**
@@ -16,7 +18,27 @@ public class TableRow {
     myCells.add(cell);
   }
 
-  public List<TableCell> getRow() {
+  public List<TableCell> getCells() {
     return myCells;
+  }
+
+  @Override
+  public int hashCode() {
+    return com.google.common.base.Objects.hashCode(myCells);
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    TableRow other = (TableRow) obj;
+    return Objects.equal(myCells, other.myCells);
   }
 }

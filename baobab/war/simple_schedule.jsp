@@ -11,7 +11,7 @@
 		<caption>Simple Schedule</caption>
 		<% for (TableRow row : tableRows) { %>
 		<tr>
-		  <% for (TableCell cell : row.getRow()) { %>
+		  <% for (TableCell cell : row.getCells()) { %>
 		    <td> 
 		      <% out.print(cell.getValue()); %>
 		    </td>

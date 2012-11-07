@@ -1,6 +1,5 @@
 package ru.spbu.math.baobab.server;
 
-import java.util.HashMap;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -10,52 +9,52 @@ import ru.spbu.math.baobab.model.Attendee;
 import ru.spbu.math.baobab.model.TimeSlot;
 
 /**
+ * Class Table, which can create simple table with
+ *  existing TimeSlots and Attendees
+ * 
  * @author dageev
  */
 public class Table {
   private final List<TimeSlot> myVertHeaders;
   private final List<Attendee> myHorHeaders;
+  private final TableCell EMPTY_CELL = new TableCell("");
 
   public Table(List<TimeSlot> timeslot, List<Attendee> attendees) {
     myVertHeaders = timeslot;
     myHorHeaders = attendees;
   }
 
-  public HashMap<TimeSlot, String> getDayOfWeek() {
-    HashMap<TimeSlot, String> daysofweek = new HashMap<TimeSlot, String>();
+  public List<TableCell> getDayOfWeek() {
+    List<TableCell> firstColumn = Lists.newArrayList();
     List<TimeSlot> timeSlots = myVertHeaders;
     int dayOfWeek = 0;
     String[] days = { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
     for (TimeSlot timeslot : timeSlots) {
       if (timeslot.getDayOfWeek() != dayOfWeek) {
-        daysofweek.put(timeslot, days[dayOfWeek++]);
+        firstColumn.add(new TableCell(days[dayOfWeek++]));
       } else {
-        daysofweek.put(timeslot, "");
+        firstColumn.add(EMPTY_CELL);
       }
     }
-    return daysofweek;
+    return firstColumn;
   }
 
   public List<TableRow> getTableRows() {
     List<TableRow> table = Lists.newArrayList();
     TableRow row = new TableRow();
-    TableCell cell = new TableCell("");
-    TableCell cell0 = new TableCell("");
-    row.addCell(cell);
-    row.addCell(cell0);
+    row.addCell(EMPTY_CELL);
+    row.addCell(EMPTY_CELL);
     for (Attendee attendee : myHorHeaders) {
-      TableCell cell1 = new TableCell(attendee.getName());
-      row.addCell(cell1);
+      row.addCell(new TableCell(attendee.getName()));
     }
     table.add(row);
+    int cnt = 0;
     for (TimeSlot timeslot : myVertHeaders) {
       row = new TableRow();
-      TableCell cell2 = new TableCell(getDayOfWeek().get(timeslot));
-      row.addCell(cell2);
-      TableCell cell3 = new TableCell(timeslot.getName());
-      row.addCell(cell3);
+      row.addCell(getDayOfWeek().get(cnt++));
+      row.addCell(new TableCell(timeslot.getName()));
       for (Attendee attendee : myHorHeaders) {
-        row.addCell(cell);
+        row.addCell(EMPTY_CELL);
       }
       table.add(row);
     }
