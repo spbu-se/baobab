@@ -7,7 +7,7 @@ import ru.spbu.math.baobab.model.Topic.Type;
 import ru.spbu.math.baobab.model.TopicExtent;
 
 /**
- * In-memory implementation of TopicEtent
+ * In-memory implementation of TopicExtent
  * 
  * @author dageev
  */
