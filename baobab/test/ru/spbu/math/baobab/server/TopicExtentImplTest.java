@@ -11,7 +11,7 @@ import ru.spbu.math.baobab.model.TopicExtent;
 import ru.spbu.math.baobab.model.Topic.Type;
 
 /**
- * Tests for Im-memory implementation of TopicExtent
+ * Tests for in-memory implementation of TopicExtent
  * 
  * @author dageev
  */
