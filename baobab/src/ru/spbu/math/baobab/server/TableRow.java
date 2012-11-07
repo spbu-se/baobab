@@ -24,7 +24,7 @@ public class TableRow {
 
   @Override
   public int hashCode() {
-    return com.google.common.base.Objects.hashCode(myCells);
+    return myCells.hashCode();
   }
 
   @Override
@@ -39,6 +39,6 @@ public class TableRow {
       return false;
     }
     TableRow other = (TableRow) obj;
-    return Objects.equal(myCells, other.myCells);
+    return myCells.equals(other.myCells);
   }
 }

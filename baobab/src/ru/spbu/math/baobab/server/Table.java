@@ -9,22 +9,21 @@ import ru.spbu.math.baobab.model.Attendee;
 import ru.spbu.math.baobab.model.TimeSlot;
 
 /**
- * Class Table, which can create simple table with
- *  existing TimeSlots and Attendees
+ * Class Table, which can create simple table with existing TimeSlots and Attendees
  * 
  * @author dageev
  */
 public class Table {
   private final List<TimeSlot> myVertHeaders;
   private final List<Attendee> myHorHeaders;
-  private final TableCell EMPTY_CELL = new TableCell("");
+  private final static TableCell EMPTY_CELL = new TableCell("");
 
   public Table(List<TimeSlot> timeslot, List<Attendee> attendees) {
     myVertHeaders = timeslot;
     myHorHeaders = attendees;
   }
 
-  public List<TableCell> getDayOfWeek() {
+  private List<TableCell> getDayOfWeek() {
     List<TableCell> firstColumn = Lists.newArrayList();
     List<TimeSlot> timeSlots = myVertHeaders;
     int dayOfWeek = 0;
@@ -48,12 +47,11 @@ public class Table {
       row.addCell(new TableCell(attendee.getName()));
     }
     table.add(row);
-    int cnt = 0;
-    for (TimeSlot timeslot : myVertHeaders) {
+    for (int i = 0; i < myVertHeaders.size(); i++) {
       row = new TableRow();
-      row.addCell(getDayOfWeek().get(cnt++));
-      row.addCell(new TableCell(timeslot.getName()));
-      for (Attendee attendee : myHorHeaders) {
+      row.addCell(getDayOfWeek().get(i));
+      row.addCell(new TableCell(myVertHeaders.get(i).getName()));
+      for (int j = 0; j < myHorHeaders.size(); j++) {
         row.addCell(EMPTY_CELL);
       }
       table.add(row);
