@@ -3,6 +3,8 @@ package ru.spbu.math.baobab.server;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.collect.Lists;
+
 import ru.spbu.math.baobab.model.Attendee;
 import ru.spbu.math.baobab.model.AttendeeExtent;
 import ru.spbu.math.baobab.model.EvenOddWeek;
@@ -20,7 +22,7 @@ public class SimpleScheduleDemoServlet extends SimpleScheduleServlet {
 
   @Override
   protected List<TimeSlot> createTimeSlots() {
-    List<TimeSlot> timeSlots = new ArrayList();
+    List<TimeSlot> timeSlots = Lists.newArrayList();
     TimeInstant start = new TimeInstant(9, 30);
     TimeInstant finish = new TimeInstant(11, 5);
     TimeInstant start1 = new TimeInstant(11, 15);
