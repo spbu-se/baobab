@@ -41,7 +41,7 @@ public class SimpleScheduleDemoServlet extends SimpleScheduleServlet {
 
   @Override
   protected List<Attendee> createAttendees() {
-    List<Attendee> attendees = new ArrayList();
+    List<Attendee> attendees = Lists.newArrayList();
     AttendeeExtent attendeeExtent = new AttendeeExtentImpl();
     attendees.add(attendeeExtent.create("1", "141", Type.ACADEMIC_GROUP));
     attendees.add(attendeeExtent.create("2", "142", Type.ACADEMIC_GROUP));

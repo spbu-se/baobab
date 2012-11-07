@@ -18,7 +18,7 @@ public class TableCell {
 
   @Override
   public int hashCode() {
-    return com.google.common.base.Objects.hashCode(myValue);
+    return myValue.hashCode();
   }
 
   @Override
@@ -33,6 +33,6 @@ public class TableCell {
       return false;
     }
     TableCell other = (TableCell) obj;
-    return Objects.equal(myValue, other.myValue);
+    return myValue.equals(other.myValue);
   }
 }
