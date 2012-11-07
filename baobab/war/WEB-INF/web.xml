@@ -40,6 +40,7 @@
     <servlet-name>landing_servlet</servlet-name>
     <url-pattern>/</url-pattern>
   </servlet-mapping>
+ 
   
   <!--  Devtools and testing -->
   <servlet>
@@ -67,6 +68,15 @@
   <servlet-mapping>
       <servlet-name>test_pdf_servlet</servlet-name>
       <url-pattern>/_ah/test_pdf</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>test_schedule</servlet-name>
+    <servlet-class>ru.spbu.math.baobab.server.SimpleScheduleDemoServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>test_schedule</servlet-name>
+    <url-pattern>/_ah/test_schedule</url-pattern>
   </servlet-mapping>
   
   <!-- GWT -->
