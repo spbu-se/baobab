@@ -3,11 +3,14 @@ package ru.spbu.math.baobab.server.sql;
 import java.util.Collection;
 import java.util.Date;
 
+import com.google.common.base.Objects;
+
 import ru.spbu.math.baobab.model.Attendee;
 import ru.spbu.math.baobab.model.Auditorium;
 import ru.spbu.math.baobab.model.Event;
 import ru.spbu.math.baobab.model.TimeSlot;
 import ru.spbu.math.baobab.model.Topic;
+import ru.spbu.math.baobab.server.TimeSlotImpl;
 
 /**
  * SQL-based implementation of Topic
@@ -81,5 +84,28 @@ public class TopicSqlImpl implements Topic {
   public Collection<Attendee> getOwners() {
     // TODO Auto-generated method stub
     return null;
+  }
+
+  @Override
+  public int hashCode() {
+    return com.google.common.base.Objects.hashCode(myId, myType, myName);
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+
+    TopicSqlImpl other = (TopicSqlImpl) obj;
+    return Objects.equal(myId, other.myId)
+        && Objects.equal(myType, other.myType)
+        && Objects.equal(myName, other.myName);
   }
 }
