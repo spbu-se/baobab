@@ -88,7 +88,7 @@ public class TopicSqlImpl implements Topic {
 
   @Override
   public int hashCode() {
-    return com.google.common.base.Objects.hashCode(myId, myType, myName);
+    return Objects.hashCode(myId, myType, myName);
   }
 
   @Override
@@ -96,10 +96,7 @@ public class TopicSqlImpl implements Topic {
     if (this == obj) {
       return true;
     }
-    if (obj == null) {
-      return false;
-    }
-    if (getClass() != obj.getClass()) {
+    if (obj instanceof TopicSqlImpl == false) {
       return false;
     }
 
