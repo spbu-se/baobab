@@ -62,7 +62,7 @@ public class TimeSlotImpl implements TimeSlot {
 
   @Override
   public int hashCode() {
-    return com.google.common.base.Objects.hashCode(myDay, myFinish, myFlashing, myName, myStart, myTimeSlotExtent);
+    return Objects.hashCode(myDay, myFinish, myFlashing, myName, myStart, myTimeSlotExtent);
   }
 
   @Override
@@ -70,10 +70,7 @@ public class TimeSlotImpl implements TimeSlot {
     if (this == obj) {
       return true;
     }
-    if (obj == null) {
-      return false;
-    }
-    if (getClass() != obj.getClass()) {
+    if (obj instanceof TimeSlotImpl == false) {
       return false;
     }
 
