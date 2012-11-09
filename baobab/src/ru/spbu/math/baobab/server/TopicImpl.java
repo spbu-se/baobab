@@ -1,9 +1,12 @@
 package ru.spbu.math.baobab.server;
 
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 
 import javax.annotation.Nullable;
+
+import com.google.common.collect.Lists;
 
 import ru.spbu.math.baobab.model.Attendee;
 import ru.spbu.math.baobab.model.Auditorium;
@@ -20,6 +23,7 @@ public class TopicImpl implements Topic {
   private final String myName;
   private final Type myType;
   private final String myId;
+  private final Collection<Event> myEvents = Lists.newArrayList();
 
   public TopicImpl(String id, Type type, String name) {
     myId = id;
@@ -44,20 +48,33 @@ public class TopicImpl implements Topic {
 
   @Override
   public Event addEvent(Date date, TimeSlot timeSlot, @Nullable Auditorium auditorium) {
-    // TODO Auto-generated method stub
-    return null;
+    Event event = new EventImpl(date, timeSlot, auditorium, this);
+    myEvents.add(event);
+    return event;
   }
 
   @Override
   public Collection<Event> addAllEvents(Date start, Date finish, TimeSlot timeSlot, @Nullable Auditorium auditorium) {
-    // TODO Auto-generated method stub
-    return null;
+    Calendar calStart = Calendar.getInstance();
+    Calendar calFinish = Calendar.getInstance();
+    
+    calStart.setTime(start);
+    calFinish.setTime(finish);
+    
+    Collection<Event> events = Lists.newArrayList();
+    
+    for (; !calStart.after(calFinish); calStart.add(Calendar.DATE, 1)) {
+      Date current = calStart.getTime();
+      Event event = addEvent(current, timeSlot, auditorium);
+      events.add(event);
+    }
+    
+    return events;
   }
 
   @Override
   public Collection<Event> getEvents() {
-    // TODO Auto-generated method stub
-    return null;
+    return myEvents;
   }
 
   @Override
