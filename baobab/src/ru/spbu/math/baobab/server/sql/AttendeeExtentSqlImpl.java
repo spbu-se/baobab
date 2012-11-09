@@ -21,7 +21,7 @@ public class AttendeeExtentSqlImpl implements AttendeeExtent {
     if (find(id) != null) {
       throw new IllegalArgumentException("Attendee with the given ID already exists.");
     }
-    SqlApi con = new SqlApi();
+    SqlApi con = SqlApi.create();
     try {
       List<PreparedStatement> stmt = con.prepareScript("INSERT INTO Attendee SET uid=?, name=?, type=?; \n"
           + "SELECT id FROM Attendee WHERE uid=?; \n" + "INSERT INTO AttendeeGroup SET id=?; \n "
@@ -33,7 +33,9 @@ public class AttendeeExtentSqlImpl implements AttendeeExtent {
       stmt.get(0).execute();
       // set unique id for created Attendee
       stmt.get(1).setString(1, id);
-      int intID = stmt.get(1).executeQuery().getInt(1);
+      ResultSet result = stmt.get(1).executeQuery();
+      result.next();
+      int intID = result.getInt(1);
       Attendee attendee = new AttendeeSqlImpl(intID, id, name, type, this);
       // set group_id for group members
       if (attendee.isGroup()) {
@@ -54,7 +56,7 @@ public class AttendeeExtentSqlImpl implements AttendeeExtent {
 
   @Override
   public Attendee find(String id) {
-    SqlApi con = new SqlApi();
+    SqlApi con = SqlApi.create();
     try {
       PreparedStatement stmt = con.prepareScript("SELECT id, name, type FROM Attendee WHERE uid=?").get(0);
       stmt.setString(1, id);
