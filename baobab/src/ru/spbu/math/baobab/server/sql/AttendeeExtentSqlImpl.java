@@ -24,7 +24,8 @@ public class AttendeeExtentSqlImpl implements AttendeeExtent {
     SqlApi con = SqlApi.create();
     try {
       List<PreparedStatement> stmt = con.prepareScript("INSERT INTO Attendee SET uid=?, name=?, type=?; \n"
-          + "SELECT id FROM Attendee WHERE uid=?;");
+          + "SELECT id FROM Attendee WHERE uid=?; \n" + "INSERT INTO AttendeeGroup SET id=?; \n "
+          + "UPDATE Attendee SET group_id = ? WHERE id = ?;");
       // insert new Attendee into Attendee table
       stmt.get(0).setString(1, id);
       stmt.get(0).setString(2, name);
@@ -34,9 +35,18 @@ public class AttendeeExtentSqlImpl implements AttendeeExtent {
       stmt.get(1).setString(1, id);
       ResultSet result = stmt.get(1).executeQuery();
       result.next();
-      int intID = result.getInt(1);
-      Attendee attendee = new AttendeeSqlImpl(intID, id, name, type, this);
-      return attendee;
+      int intID = result.getInt("id");
+      if ((type == Type.ACADEMIC_GROUP) || (type == Type.CHAIR) || (type == Type.FREE_FORM_GROUP)) {
+        // set group_id for group members
+        stmt.get(2).setInt(1, intID);
+        stmt.get(2).execute();
+        stmt.get(3).setInt(1, intID);
+        stmt.get(3).setInt(2, intID);
+        stmt.get(3).execute();
+        return new AttendeeSqlImpl(intID, id, name, type, intID, this);
+      } else {
+        return new AttendeeSqlImpl(intID, id, name, type, null, this);
+      }
     } catch (Exception e) {
       e.printStackTrace();
     } finally {
@@ -49,12 +59,19 @@ public class AttendeeExtentSqlImpl implements AttendeeExtent {
   public Attendee find(String id) {
     SqlApi con = SqlApi.create();
     try {
-      PreparedStatement stmt = con.prepareScript("SELECT id, name, type FROM Attendee WHERE uid=?").get(0);
+      PreparedStatement stmt = con.prepareScript("SELECT id, name, type, group_id FROM Attendee WHERE uid=?").get(0);
       stmt.setString(1, id);
       ResultSet resultFind = stmt.executeQuery();
       if (resultFind.next()) {
-        return new AttendeeSqlImpl(resultFind.getInt(1), id, resultFind.getString(2),
-            Type.values()[resultFind.getInt(3)], this);
+        int intID = resultFind.getInt("id");
+        String name = resultFind.getString("name");
+        Type type = Type.values()[resultFind.getInt("type")];
+        int group_id = resultFind.getInt("group_id");
+        if ((group_id == 0) && (type != Type.ACADEMIC_GROUP) && (type == Type.CHAIR) && (type == Type.FREE_FORM_GROUP)) {
+          return new AttendeeSqlImpl(intID, id, name, type, null, this);
+        } else {
+          return new AttendeeSqlImpl(intID, id, name, type, group_id, this);
+        }
       }
     } catch (SQLException e) {
       e.printStackTrace();
