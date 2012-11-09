@@ -21,6 +21,7 @@ public class AttendeeSqlImpl implements Attendee {
   private String myUID;
   private String myName;
   private Type myType;
+  private Integer myGroupId;
   private final AttendeeExtent myExtent;
 
   // constructor
@@ -29,7 +30,26 @@ public class AttendeeSqlImpl implements Attendee {
     myUID = uid;
     myName = name;
     myType = type;
+    myGroupId = null;
     myExtent = extent;
+    // set group_id for group members
+    if (this.isGroup()) {
+      SqlApi con = SqlApi.create();
+      try {
+        List<PreparedStatement> stmt = con.prepareScript("INSERT INTO AttendeeGroup SET id=?; \n "
+            + "UPDATE Attendee SET group_id = ? WHERE id = ?;");
+        stmt.get(0).setInt(1, myID);
+        stmt.get(0).execute();
+        stmt.get(1).setInt(1, myID);
+        stmt.get(1).setInt(2, myID);
+        stmt.get(1).execute();
+        myGroupId = myID;
+      } catch (SQLException e) {
+        e.printStackTrace();
+      } finally {
+        con.dispose();
+      }
+    }
   }
 
   @Override
@@ -80,14 +100,19 @@ public class AttendeeSqlImpl implements Attendee {
     try {
       Collection<Attendee> members = new ArrayList<Attendee>();
       // find out data about members of this group
-      List<PreparedStatement> stmt = con.prepareScript("SELECT id, uid, name, type FROM Attendee JOIN "
-          + "GroupMember ON GroupMember.group_id=? AND GroupMember.attendee_id = id");
-      stmt.get(0).setInt(1, myID); // group_id == myID for attendee who is
-      // a group
+      String query = "SELECT A_member.id, A_member.uid, A_member.name, A_member.type "
+          + "FROM Attendee A_group JOIN AttendeeGroup AG ON (A_group.group_id = AG.id) "
+          + "JOIN GroupMember GM ON (GM.group_id = AG.id) JOIN Attendee A_member "
+          + "ON (A_member.id = GM.attendee_id) WHERE A_group.id = ?;";
+      List<PreparedStatement> stmt = con.prepareScript(query);
+      stmt.get(0).setInt(1, myID);
       ResultSet result = stmt.get(0).executeQuery();
       while (result.next()) {
-        Attendee groupAttendee = new AttendeeSqlImpl(result.getInt(1), result.getString(2), result.getString(3),
-            Type.values()[result.getInt(4)], myExtent);
+        int id = result.getInt(1);
+        String uid = result.getString(2);
+        String name = result.getString(3);
+        Type type = Type.values()[result.getInt(4)];
+        Attendee groupAttendee = new AttendeeSqlImpl(id, uid, name, type, myExtent);
         members.add(groupAttendee);
       }
       return members;
@@ -112,7 +137,7 @@ public class AttendeeSqlImpl implements Attendee {
       // adding a new group member
       ResultSet result = stmt.get(0).executeQuery();
       result.next();
-      stmt.get(1).setInt(1, myID); // group_id == myID for attendee who is a group
+      stmt.get(1).setInt(1, myGroupId); // set group_id
       stmt.get(1).setInt(2, result.getInt(1)); // set attendee_id
       stmt.get(1).execute();
     } catch (SQLException e) {
