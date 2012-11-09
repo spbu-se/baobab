@@ -24,8 +24,7 @@ public class AttendeeExtentSqlImpl implements AttendeeExtent {
     SqlApi con = SqlApi.create();
     try {
       List<PreparedStatement> stmt = con.prepareScript("INSERT INTO Attendee SET uid=?, name=?, type=?; \n"
-          + "SELECT id FROM Attendee WHERE uid=?; \n" + "INSERT INTO AttendeeGroup SET id=?; \n "
-          + "UPDATE Attendee SET group_id = ? WHERE id = ?;");
+          + "SELECT id FROM Attendee WHERE uid=?;");
       // insert new Attendee into Attendee table
       stmt.get(0).setString(1, id);
       stmt.get(0).setString(2, name);
@@ -37,14 +36,6 @@ public class AttendeeExtentSqlImpl implements AttendeeExtent {
       result.next();
       int intID = result.getInt(1);
       Attendee attendee = new AttendeeSqlImpl(intID, id, name, type, this);
-      // set group_id for group members
-      if (attendee.isGroup()) {
-        stmt.get(2).setInt(1, intID);
-        stmt.get(2).execute();
-        stmt.get(3).setInt(1, intID);
-        stmt.get(3).setInt(2, intID);
-        stmt.get(3).execute();
-      }
       return attendee;
     } catch (Exception e) {
       e.printStackTrace();
