@@ -9,13 +9,13 @@ import ru.spbu.math.baobab.server.TimeSlotExtentImpl;
  * 
  * @author vloginova
  */
-
 public class ScriptInterpreterTest extends TestCase {
   public void testCommandCorrectnessEng() {
     TimeSlotExtent timeSlotExtent = new TimeSlotExtentImpl();
     try {
-      ScriptInterpreter interpteter = new ScriptInterpreter(timeSlotExtent);
-      interpteter.process("define timeslot 1st_try 12:12 to 12:40 on even Monday");
+      ScriptInterpreter interpreter = new ScriptInterpreter(timeSlotExtent);
+      interpreter.process("define timeslot 1st_try 12:12 to 12:40 on even Monday");
+      assertTrue(timeSlotExtent.findByWeekDay(1).size() == 1);
     } catch (Exception e) {
       fail("command's not correct");
     }
@@ -24,23 +24,24 @@ public class ScriptInterpreterTest extends TestCase {
   public void testCommandCorrectnessRus() {
     TimeSlotExtent timeSlotExtent = new TimeSlotExtentImpl();
     try {
-      ScriptInterpreter interpteter = new ScriptInterpreter(timeSlotExtent);
-      interpteter.process("определить интервал 1st_try от 1:00 до 3:00 в нечетный вт");
+      ScriptInterpreter interpreter = new ScriptInterpreter(timeSlotExtent);
+      interpreter.process("РѕРїСЂРµРґРµР»РёС‚СЊ РёРЅС‚РµСЂРІР°Р» 1st_try РѕС‚ 1:00 РґРѕ 3:00 РІ РЅРµС‡РµС‚РЅС‹Р№ РІС‚");
+      assertTrue(timeSlotExtent.findByWeekDay(2).size() == 1);
     } catch (Exception e) {
       fail("command's not correct");
     }
   }
 
   public void testIncorrectCommand() {
-    boolean isExceptionCatched = false;
+    boolean isExceptionCaught = false;
     TimeSlotExtent timeSlotExtent = new TimeSlotExtentImpl();
     try {
-      ScriptInterpreter interpteter = new ScriptInterpreter(timeSlotExtent);
-      interpteter.process("define timeslot 1st_try to 12:40 on even Monday");
+      ScriptInterpreter interpreter = new ScriptInterpreter(timeSlotExtent);
+      interpreter.process("define timeslot 1st_try to 12:40 on even Monday");
     } catch (Exception e) {
-      isExceptionCatched = true;
+      isExceptionCaught = true;
     } finally {
-      assertTrue(isExceptionCatched);
+      assertTrue(isExceptionCaught);
     }
   }
 }

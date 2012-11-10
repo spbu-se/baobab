@@ -10,7 +10,6 @@ import ru.spbu.math.baobab.model.*;
  * 
  * @author Ragozina Anastasiya, Loginova Vita
  */
-
 public class ScriptInterpreter {
 
   private final static String RUSSIAN_VERSION = "Rus";
