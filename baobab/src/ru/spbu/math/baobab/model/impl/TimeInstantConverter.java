@@ -9,7 +9,6 @@ import java.util.regex.Pattern;
  * 
  * @author vloginova
  */
-
 public class TimeInstantConverter {
 
   private final static Pattern TIME_PATTERN = Pattern.compile("(\\d{1,2}):(\\d{2})");

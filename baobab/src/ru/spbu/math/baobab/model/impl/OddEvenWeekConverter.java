@@ -1,6 +1,8 @@
 package ru.spbu.math.baobab.model.impl;
 
 import java.util.Arrays;
+import java.util.List;
+
 import ru.spbu.math.baobab.model.EvenOddWeek;
 
 /**
@@ -8,10 +10,10 @@ import ru.spbu.math.baobab.model.EvenOddWeek;
  * 
  * @author vloginova
  */
-
 public class OddEvenWeekConverter {
-  private static final String[] ODD = { "odd", "нечетный" };
-  private static final String[] EVEN = { "even", "четный" };
+  
+  private static final List<String> ODD = Arrays.asList("odd", "нечетный");
+  private static final List<String> EVEN = Arrays.asList("even", "четный");
 
   /**
    * converts string to EvenOddWeek
@@ -21,10 +23,10 @@ public class OddEvenWeekConverter {
    * @return converted EvenOddWeek
    */
   public static EvenOddWeek convertToOddEvenWeek(String value) throws Exception {
-    if (Arrays.asList(ODD).contains(value)) {
+    if (ODD.contains(value)) {
       return EvenOddWeek.ODD;
     }
-    if (Arrays.asList(EVEN).contains(value)) {
+    if (EVEN.contains(value)) {
       return EvenOddWeek.EVEN;
     }
     throw new Exception("convertToOddEvenWeek: Incorrect value");
