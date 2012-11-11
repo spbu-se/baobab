@@ -10,6 +10,7 @@ import com.google.common.collect.Lists;
 
 import ru.spbu.math.baobab.model.Attendee;
 import ru.spbu.math.baobab.model.Auditorium;
+import ru.spbu.math.baobab.model.EvenOddWeek;
 import ru.spbu.math.baobab.model.Event;
 import ru.spbu.math.baobab.model.TimeSlot;
 import ru.spbu.math.baobab.model.Topic;
@@ -55,20 +56,31 @@ public class TopicImpl implements Topic {
 
   @Override
   public Collection<Event> addAllEvents(Date start, Date finish, TimeSlot timeSlot, @Nullable Auditorium auditorium) {
-    Calendar calStart = Calendar.getInstance();
-    Calendar calFinish = Calendar.getInstance();
-    
-    calStart.setTime(start);
-    calFinish.setTime(finish);
-    
+    Collection<Date> dates = Utils.datesRange(start, finish, 1);
     Collection<Event> events = Lists.newArrayList();
-    
-    for (; !calStart.after(calFinish); calStart.add(Calendar.DATE, 1)) {
-      Date current = calStart.getTime();
-      Event event = addEvent(current, timeSlot, auditorium);
-      events.add(event);
+
+    int day = timeSlot.getDayOfWeek();
+    boolean isEven = timeSlot.getEvenOddWeek().equals(EvenOddWeek.EVEN);
+    boolean isAll = timeSlot.getEvenOddWeek().equals(EvenOddWeek.ALL);
+
+    for (Date date : dates) {
+      Calendar cal = Calendar.getInstance();
+      cal.setTime(date);
+
+      // Calendar.DAY_OF_WEEK == 1:Sunday, 2:Monday, ...
+      int weekDay = (cal.get(Calendar.DAY_OF_WEEK) + 6) % 7;
+      if (weekDay == 0) {
+        weekDay = 7;
+      }
+      if ((weekDay == day) &&
+          (isAll ||
+          isEven && cal.get(Calendar.WEEK_OF_YEAR) % 2 == 0 ||
+          !isEven && cal.get(Calendar.WEEK_OF_YEAR) % 2 == 1)) {
+        Event event = addEvent(date, timeSlot, auditorium);
+        events.add(event);
+      }
     }
-    
+
     return events;
   }
 
