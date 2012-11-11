@@ -63,15 +63,8 @@ public class AttendeeExtentSqlImpl implements AttendeeExtent {
       stmt.setString(1, id);
       ResultSet resultFind = stmt.executeQuery();
       if (resultFind.next()) {
-        int intID = resultFind.getInt("id");
-        String name = resultFind.getString("name");
-        Type type = Type.values()[resultFind.getInt("type")];
-        int group_id = resultFind.getInt("group_id");
-        if ((group_id == 0) && (type != Type.ACADEMIC_GROUP) && (type == Type.CHAIR) && (type == Type.FREE_FORM_GROUP)) {
-          return new AttendeeSqlImpl(intID, id, name, type, null, this);
-        } else {
-          return new AttendeeSqlImpl(intID, id, name, type, group_id, this);
-        }
+        return new AttendeeSqlImpl(resultFind.getInt("id"), id, resultFind.getString("name"),
+            Type.values()[resultFind.getInt("type")], resultFind.getInt("group_id"), this);
       }
     } catch (SQLException e) {
       e.printStackTrace();
