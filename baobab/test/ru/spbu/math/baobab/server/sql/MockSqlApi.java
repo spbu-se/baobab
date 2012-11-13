@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 
 import org.mockito.invocation.InvocationOnMock;
@@ -160,6 +161,7 @@ public class MockSqlApi extends SqlApi {
 
   private ResultSet mockResultSet(final List<Map<String, Object>> data) throws SQLException {
     final AtomicInteger idx = new AtomicInteger(-1);
+    final AtomicReference<Object> lastValue = new AtomicReference<Object>(null);
     ResultSet mock = mock(ResultSet.class);
     when(mock.next()).then(new Answer<Boolean>() {
       @Override
@@ -171,13 +173,23 @@ public class MockSqlApi extends SqlApi {
     when(mock.getString(anyString())).thenAnswer(new Answer<String>() {
       @Override
       public String answer(InvocationOnMock invocation) throws Throwable {
-        return data.get(idx.get()).get(String.valueOf(invocation.getArguments()[0])).toString();
+        Object mockValue = data.get(idx.get()).get(String.valueOf(invocation.getArguments()[0]));
+        lastValue.set(mockValue);
+        return mockValue == null ? null : mockValue.toString();
       }
     });
     when(mock.getInt(anyString())).thenAnswer(new Answer<Integer>() {
       @Override
       public Integer answer(InvocationOnMock invocation) throws Throwable {
-        return Integer.parseInt(data.get(idx.get()).get(String.valueOf(invocation.getArguments()[0])).toString());
+        Object mockValue = data.get(idx.get()).get(String.valueOf(invocation.getArguments()[0]));
+        lastValue.set(mockValue);
+        return mockValue == null ? 0 : Integer.parseInt(mockValue.toString());
+      }
+    });
+    when(mock.wasNull()).then(new Answer<Boolean>() {
+      @Override
+      public Boolean answer(InvocationOnMock arg0) throws Throwable {
+        return lastValue.get() == null;
       }
     });
     return mock;
