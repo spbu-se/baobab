@@ -24,7 +24,7 @@ public class AttendeeExtentSqlImpl implements AttendeeExtent {
     SqlApi con = SqlApi.create();
     try {
       List<PreparedStatement> stmt = con.prepareScript("INSERT INTO Attendee SET uid=?, name=?, type=?; \n"
-          + "SELECT id FROM Attendee WHERE uid=?; \n" + "INSERT INTO AttendeeGroup SET id=?; \n "
+          + "SELECT id FROM Attendee WHERE uid=?; \n" + "INSERT INTO AttendeeGroup SET id=?; \n"
           + "UPDATE Attendee SET group_id = ? WHERE id = ?;");
       // insert new Attendee into Attendee table
       stmt.get(0).setString(1, id);
@@ -63,8 +63,15 @@ public class AttendeeExtentSqlImpl implements AttendeeExtent {
       stmt.setString(1, id);
       ResultSet resultFind = stmt.executeQuery();
       if (resultFind.next()) {
-        return new AttendeeSqlImpl(resultFind.getInt("id"), id, resultFind.getString("name"),
-            Type.values()[resultFind.getInt("type")], resultFind.getInt("group_id"), this);
+        int intID = resultFind.getInt("id");
+        String name = resultFind.getString("name");
+        Type type = Type.values()[resultFind.getInt("type")];
+        int group_id = resultFind.getInt("group_id");
+        if ((group_id == 0) && (type != Type.ACADEMIC_GROUP) && (type == Type.CHAIR) && (type == Type.FREE_FORM_GROUP)) {
+          return new AttendeeSqlImpl(intID, id, name, type, null, this);
+        } else {
+          return new AttendeeSqlImpl(intID, id, name, type, group_id, this);
+        }
       }
     } catch (SQLException e) {
       e.printStackTrace();
