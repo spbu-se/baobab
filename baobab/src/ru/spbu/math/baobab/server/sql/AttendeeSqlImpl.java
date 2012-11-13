@@ -23,7 +23,7 @@ public class AttendeeSqlImpl implements Attendee {
   private Type myType;
   private Integer myGroupId;
   private final AttendeeExtent myExtent;
-  private static final String query = "SELECT A_member.id, A_member.uid, A_member.name, A_member.type, A_member.group_id"
+  private static final String query = "SELECT A_member.id, A_member.uid, A_member.name, A_member.type, A_member.group_id "
       + "FROM Attendee A_group JOIN AttendeeGroup AG ON (A_group.group_id = AG.id) "
       + "JOIN GroupMember GM ON (GM.group_id = AG.id) JOIN Attendee A_member "
       + "ON (A_member.id = GM.attendee_id) WHERE A_group.id = ?;";
@@ -111,7 +111,7 @@ public class AttendeeSqlImpl implements Attendee {
     }
     SqlApi con = SqlApi.create();
     try {
-      List<PreparedStatement> stmt = con.prepareScript("SELECT id FROM Attendee WHERE uid = ?; \n "
+      List<PreparedStatement> stmt = con.prepareScript("SELECT id FROM Attendee WHERE uid = ?; \n"
           + "INSERT INTO GroupMember SET group_id=?, attendee_id = ?;");
       stmt.get(0).setString(1, member.getID());
       // adding a new group member
