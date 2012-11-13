@@ -84,4 +84,18 @@ public class SqlApiTest extends SqlTestCase {
       }      
     }
   }
+  
+  public void testMockNullValues() throws SQLException {
+    SqlApi sqlApi = SqlApi.create();
+    expectQuery("SELECT * FROM Foo", row("id", null, "value1", null, "value2", "foobar"));
+    List<PreparedStatement> script = sqlApi.prepareScript("SELECT * FROM Foo;");
+    ResultSet resultSet = script.get(0).executeQuery();
+    assertTrue(resultSet.next());
+    assertEquals(0, resultSet.getInt("id"));
+    assertTrue(resultSet.wasNull());
+    assertNull(resultSet.getString("value1"));
+    assertTrue(resultSet.wasNull());
+    assertEquals("foobar", resultSet.getString("value2"));
+    assertFalse(resultSet.wasNull());
+  }
 }
