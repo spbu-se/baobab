@@ -4,10 +4,12 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.TimeZone;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
@@ -40,6 +42,8 @@ import static org.mockito.Mockito.*;
  * @author dbarashev
  */
 public class MockSqlApi extends SqlApi {
+  private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+  
   private static final Function<String, String> ESCAPE_REGEX = new Function<String, String>() {
     @Override
     public String apply(String value) {
@@ -105,6 +109,9 @@ public class MockSqlApi extends SqlApi {
     }
   }
 
+  static {
+    DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
+  }
   private final Queue<Expectations> myExpectedData = Queues.newArrayDeque();
 
   public MockSqlApi() {
@@ -184,6 +191,17 @@ public class MockSqlApi extends SqlApi {
         Object mockValue = data.get(idx.get()).get(String.valueOf(invocation.getArguments()[0]));
         lastValue.set(mockValue);
         return mockValue == null ? 0 : Integer.parseInt(mockValue.toString());
+      }
+    });
+    when(mock.getDate(anyString())).thenAnswer(new Answer<Date>() {
+      @Override
+      public Date answer(InvocationOnMock invocation) throws Throwable {
+        Object mockValue = data.get(idx.get()).get(String.valueOf(invocation.getArguments()[0]));
+        lastValue.set(mockValue);
+        if (mockValue == null) {
+          return null;
+        }
+        return new Date(DATE_FORMAT.parse(mockValue.toString()).getTime());
       }
     });
     when(mock.wasNull()).then(new Answer<Boolean>() {
