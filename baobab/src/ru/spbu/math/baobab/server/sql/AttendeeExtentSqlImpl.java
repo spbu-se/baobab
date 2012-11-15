@@ -67,7 +67,7 @@ public class AttendeeExtentSqlImpl implements AttendeeExtent {
         String name = resultFind.getString("name");
         Type type = Type.values()[resultFind.getInt("type")];
         int group_id = resultFind.getInt("group_id");
-        if ((group_id == 0) && (type != Type.ACADEMIC_GROUP) && (type == Type.CHAIR) && (type == Type.FREE_FORM_GROUP)) {
+        if (resultFind.wasNull()) {
           return new AttendeeSqlImpl(intID, id, name, type, null, this);
         } else {
           return new AttendeeSqlImpl(intID, id, name, type, group_id, this);

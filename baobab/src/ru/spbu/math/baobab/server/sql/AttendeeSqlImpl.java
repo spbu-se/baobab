@@ -9,6 +9,7 @@ import java.util.List;
 
 import ru.spbu.math.baobab.model.Attendee;
 import ru.spbu.math.baobab.model.AttendeeExtent;
+import ru.spbu.math.baobab.model.Attendee.Type;
 
 /**
  * SQL-based implementation of Attendee
@@ -90,10 +91,18 @@ public class AttendeeSqlImpl implements Attendee {
       stmt.get(0).setInt(1, myID);
       ResultSet result = stmt.get(0).executeQuery();
       while (result.next()) {
-        Attendee groupAttendee = new AttendeeSqlImpl(result.getInt("A_member.id"), result.getString("A_member.uid"),
-            result.getString("A_member.name"), Type.values()[result.getInt("A_member.type")],
-            result.getInt("A_member.group_id"), myExtent);
-        members.add(groupAttendee);
+        int intID = result.getInt("A_member.id");
+        String uid = result.getString("A_member.uid");
+        String name = result.getString("A_member.name");
+        Type type = Type.values()[result.getInt("A_member.type")];
+        int group_id = result.getInt("A_member.group_id");
+        if (result.wasNull()) {
+          Attendee groupAttendee = new AttendeeSqlImpl(intID, uid, name, type, null, myExtent);
+          members.add(groupAttendee);
+        } else {
+          Attendee groupAttendee = new AttendeeSqlImpl(intID, uid, name, type, group_id, myExtent);
+          members.add(groupAttendee);
+        }
       }
       return members;
     } catch (SQLException e) {
@@ -106,7 +115,7 @@ public class AttendeeSqlImpl implements Attendee {
 
   @Override
   public void addGroupMember(Attendee member) {
-    if (!member.isGroup()) {
+    if (!isGroup()) {
       throw new IllegalStateException("The attendee is not a group.");
     }
     SqlApi con = SqlApi.create();

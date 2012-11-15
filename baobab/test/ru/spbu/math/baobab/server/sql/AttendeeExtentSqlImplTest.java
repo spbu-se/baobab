@@ -3,7 +3,6 @@ package ru.spbu.math.baobab.server.sql;
 import ru.spbu.math.baobab.model.Attendee.Type;
 import ru.spbu.math.baobab.model.AttendeeExtent;
 import ru.spbu.math.baobab.model.Attendee;
-import junit.framework.TestCase;
 
 /**
  * Tests for AttendeeExtentSqlImpl.
@@ -59,15 +58,15 @@ public class AttendeeExtentSqlImplTest extends SqlTestCase {
         Type.STUDENT.ordinal());
     expectSql("SELECT id FROM Attendee WHERE uid").withParameters(1, "student").withResult(row("id", 1));
     expectSql("INSERT INTO AttendeeGroup SET id").withParameters(1, 1);
-    expectSql("UPDATE Attendee SET group_id WHERE id").withParameters(1, 1, 2, 1);
+    expectSql("UPDATE Attendee SET group_id WHERE id").withParameters(1, null, 2, 1);
     attendeeExtent.create("student", "Test1", Type.STUDENT);
     //create another attendee
     expectSql("SELECT id name type group_id FROM Attendee WHERE uid").withParameters(1, "teacher");
     expectSql("INSERT INTO Attendee SET uid name type").withParameters(1, "teacher", 2, "Test2", 3,
         Type.TEACHER.ordinal());
     expectSql("SELECT id FROM Attendee WHERE uid").withParameters(1, "teacher").withResult(row("id", 2));
-    expectSql("INSERT INTO AttendeeGroup SET id").withParameters(1, 2);
-    expectSql("UPDATE Attendee SET group_id WHERE id").withParameters(1, 2, 2, 2);
+    expectSql("INSERT INTO AttendeeGroup SET id").withParameters(1, null);
+    expectSql("UPDATE Attendee SET group_id WHERE id").withParameters(1, null, 2, 2);
     Attendee teacher = attendeeExtent.create("teacher", "Test2", Type.TEACHER);
     //create third attendee
     expectSql("SELECT id name type group_id FROM Attendee WHERE uid").withParameters(1, "group");
@@ -82,7 +81,7 @@ public class AttendeeExtentSqlImplTest extends SqlTestCase {
     assertNull(attendeeExtent.find("blablabla"));
     //test find method when attendee with the given id exists
     expectSql("SELECT id name type group_id FROM Attendee WHERE uid").withParameters(1, "teacher").withResult(
-        row("id", 2, "name", "Test2", "type", Type.TEACHER.ordinal(),"group_id", 0));
-    assertEquals(attendeeExtent.find("teacher"), teacher);
+        row("id", 2, "name", "Test2", "type", Type.TEACHER.ordinal(),"group_id", null));
+    assertEquals(attendeeExtent.find("teacher"),teacher);
   }
 }
