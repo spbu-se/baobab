@@ -147,8 +147,8 @@ public class AttendeeSqlImplTest extends SqlTestCase {
     expectSql("INSERT INTO Attendee SET uid name type").withParameters(1, "teacher", 2, "Test2", 3,
         Type.TEACHER.ordinal());
     expectSql("SELECT id FROM Attendee WHERE uid").withParameters(1, "teacher").withResult(row("id", 2));
-    expectSql("INSERT INTO AttendeeGroup SET id").withParameters(1, 2);
-    expectSql("UPDATE Attendee SET group_id WHERE id").withParameters(1, 2, 2, 2);
+    expectSql("INSERT INTO AttendeeGroup SET id").withParameters(1, null);
+    expectSql("UPDATE Attendee SET group_id WHERE id").withParameters(1, null, 2, 2);
     Attendee teacher = attendeeExtent.create("teacher", "Test2", Type.TEACHER);
     // create Group
     expectSql("SELECT id name type group_id FROM Attendee WHERE uid").withParameters(1, "group");
@@ -159,13 +159,13 @@ public class AttendeeSqlImplTest extends SqlTestCase {
     expectSql("UPDATE Attendee SET group_id WHERE id").withParameters(1, 3, 2, 3);
     Attendee group = attendeeExtent.create("group", "Test3", Type.FREE_FORM_GROUP);
     assertEquals(group.isGroup(), true);
-    /*
-     * expectSql("SELECT A_member.id A_member.uid A_member.name A_member.type A_member.group_id " +
-     * "FROM Attendee A_group JOIN AttendeeGroup AG ON (A_group.group_id = AG.id) " +
-     * "JOIN GroupMember GM ON (GM.group_id = AG.id) JOIN Attendee A_member " +
-     * "ON (A_member.id = GM.attendee_id) WHERE A_group.id").withParameters(1, 3);
-     * assertTrue(group.getGroupMembers().isEmpty());
-     */
+    expectSql(
+        "SELECT A_member.id A_member.uid A_member.name A_member.type A_member.group_id "
+            + "FROM Attendee A_group JOIN AttendeeGroup AG ON (A_group.group_id = AG.id) "
+            + "JOIN GroupMember GM ON (GM.group_id = AG.id) JOIN Attendee A_member "
+            + "ON (A_member.id = GM.attendee_id) WHERE A_group.id").withParameters(1, 3);
+    assertTrue(group.getGroupMembers().isEmpty());
+
     // Test for addGroupMember
     expectSql("SELECT id FROM Attendee WHERE uid").withParameters(1, "teacher").withResult(row("id", 2));
     expectSql("INSERT INTO GroupMember SET group_id attendee_id").withParameters(1, 3, 2, 2);
@@ -174,8 +174,8 @@ public class AttendeeSqlImplTest extends SqlTestCase {
     expectSql("INSERT INTO GroupMember SET group_id attendee_id").withParameters(1, 3, 2, 1);
     group.addGroupMember(student);
     Collection<Attendee> members = new ArrayList<Attendee>();
-    members.add(teacher);
     members.add(student);
+    members.add(teacher);
     //
     expectSql(
         "SELECT A_member.id A_member.uid A_member.name A_member.type A_member.group_id "
@@ -186,7 +186,7 @@ public class AttendeeSqlImplTest extends SqlTestCase {
             Type.STUDENT.ordinal(), "A_member.group_id", 0),
         row("A_member.id", 2, "A_member.uid", "teacher", "A_member.name", "Test2", "A_member.type",
             Type.TEACHER.ordinal(), "A_member.group_id", 0));
-    assertEquals(group.getGroupMembers(), members);
+    assertTrue(group.getGroupMembers().equals(members));
     // Test for attendee who is not a group
     // this query will never be used if everything is working good:
     // expectSql(
