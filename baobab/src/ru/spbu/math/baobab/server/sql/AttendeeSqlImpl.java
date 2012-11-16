@@ -9,7 +9,6 @@ import java.util.List;
 
 import ru.spbu.math.baobab.model.Attendee;
 import ru.spbu.math.baobab.model.AttendeeExtent;
-import ru.spbu.math.baobab.model.Attendee.Type;
 
 /**
  * SQL-based implementation of Attendee
@@ -83,6 +82,9 @@ public class AttendeeSqlImpl implements Attendee {
 
   @Override
   public Collection<Attendee> getGroupMembers() {
+    if (!isGroup()) {
+      return null;
+    }
     SqlApi con = SqlApi.create();
     try {
       Collection<Attendee> members = new ArrayList<Attendee>();
@@ -134,5 +136,22 @@ public class AttendeeSqlImpl implements Attendee {
     } finally {
       con.dispose();
     }
+  }
+
+  @Override
+  public int hashCode() {
+    return (myGroupId == null ? myID * 31 : myGroupId * 13 + myID * 29);
+  }
+
+  @Override
+  public boolean equals(Object instance) {
+    if (instance instanceof Attendee) {
+      Attendee attendee = (Attendee) instance;
+      if ((getID() == attendee.getID()) && (getName() == attendee.getName()) && (getType() == attendee.getType())
+          && (hashCode() == attendee.hashCode())) {
+        return true;
+      }
+    }
+    return false;
   }
 }

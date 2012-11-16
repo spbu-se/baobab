@@ -2,7 +2,6 @@ package ru.spbu.math.baobab.server.sql;
 
 import java.util.ArrayList;
 import java.util.Collection;
-
 import org.junit.Test;
 
 import ru.spbu.math.baobab.model.Attendee;
@@ -139,8 +138,8 @@ public class AttendeeSqlImplTest extends SqlTestCase {
     expectSql("INSERT INTO Attendee SET uid name type").withParameters(1, "student", 2, "Test1", 3,
         Type.STUDENT.ordinal());
     expectSql("SELECT id FROM Attendee WHERE uid").withParameters(1, "student").withResult(row("id", 1));
-    expectSql("INSERT INTO AttendeeGroup SET id").withParameters(1, 1);
-    expectSql("UPDATE Attendee SET group_id WHERE id").withParameters(1, 1, 2, 1);
+    expectSql("INSERT INTO AttendeeGroup SET id").withParameters(1, null);
+    expectSql("UPDATE Attendee SET group_id WHERE id").withParameters(1, null, 2, 1);
     Attendee student = attendeeExtent.create("student", "Test1", Type.STUDENT);
     // create teacher
     expectSql("SELECT id name type group_id FROM Attendee WHERE uid").withParameters(1, "teacher");
@@ -173,27 +172,26 @@ public class AttendeeSqlImplTest extends SqlTestCase {
     expectSql("SELECT id FROM Attendee WHERE uid").withParameters(1, "student").withResult(row("id", 1));
     expectSql("INSERT INTO GroupMember SET group_id attendee_id").withParameters(1, 3, 2, 1);
     group.addGroupMember(student);
-    Collection<Attendee> members = new ArrayList<Attendee>();
-    members.add(student);
-    members.add(teacher);
-    //
     expectSql(
         "SELECT A_member.id A_member.uid A_member.name A_member.type A_member.group_id "
             + "FROM Attendee A_group JOIN AttendeeGroup AG ON (A_group.group_id = AG.id) "
             + "JOIN GroupMember GM ON (GM.group_id = AG.id) JOIN Attendee A_member "
             + "ON (A_member.id = GM.attendee_id) WHERE A_group.id").withParameters(1, 3).withResult(
         row("A_member.id", 1, "A_member.uid", "student", "A_member.name", "Test1", "A_member.type",
-            Type.STUDENT.ordinal(), "A_member.group_id", 0),
+            Type.STUDENT.ordinal(), "A_member.group_id", null),
         row("A_member.id", 2, "A_member.uid", "teacher", "A_member.name", "Test2", "A_member.type",
-            Type.TEACHER.ordinal(), "A_member.group_id", 0));
-    assertTrue(group.getGroupMembers().equals(members));
+            Type.TEACHER.ordinal(), "A_member.group_id", null));
+    Collection<Attendee> attendees = new ArrayList<Attendee>();
+    attendees.add(student);
+    attendees.add(teacher);
+    assertEquals(group.getGroupMembers(), attendees);
     // Test for attendee who is not a group
     // this query will never be used if everything is working good:
-    // expectSql(
-    // "SELECT A_member.id A_member.uid A_member.name A_member.type A_member.group_id "
-    // + "FROM Attendee A_group JOIN AttendeeGroup AG ON (A_group.group_id = AG.id) "
-    // + "JOIN GroupMember GM ON (GM.group_id = AG.id) JOIN Attendee A_member "
-    // + "ON (A_member.id = GM.attendee_id) WHERE A_group.id").withParameters(1, 2);
-    // assertNull(teacher.getGroupMembers());
+    expectSql(
+        "SELECT A_member.id A_member.uid A_member.name A_member.type A_member.group_id "
+            + "FROM Attendee A_group JOIN AttendeeGroup AG ON (A_group.group_id = AG.id) "
+            + "JOIN GroupMember GM ON (GM.group_id = AG.id) JOIN Attendee A_member "
+            + "ON (A_member.id = GM.attendee_id) WHERE A_group.id").withParameters(1, 2);
+    assertNull(teacher.getGroupMembers());
   }
 }
