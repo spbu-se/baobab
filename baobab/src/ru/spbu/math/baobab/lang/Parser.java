@@ -3,7 +3,7 @@ package ru.spbu.math.baobab.lang;
 /**
  * Abstract class for all command parsers
  * 
- * @author Vita
+ * @author vloginova
  */
 public abstract class Parser {
   // group patterns
