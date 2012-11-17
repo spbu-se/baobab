@@ -1,5 +1,7 @@
 package ru.spbu.math.baobab.server;
 
+import com.google.appengine.api.search.checkers.Preconditions;
+
 import ru.spbu.math.baobab.model.Auditorium;
 
 /**
@@ -15,6 +17,7 @@ public class AuditoriumImpl implements Auditorium {
   // constructor
   public AuditoriumImpl(String id, int capacity) {
     myID = id;
+    Preconditions.checkArgument(capacity >= 0, "Capacity must be >= 0");
     if (capacity < 0) {
       capacity = 0;
     }
@@ -31,4 +34,19 @@ public class AuditoriumImpl implements Auditorium {
     return myCapacity;
   }
 
+  @Override
+  public int hashCode() {
+    return myID.hashCode();
+  }
+
+  @Override
+  public boolean equals(Object instance) {
+    if (instance instanceof Auditorium) {
+      Auditorium auditorium = (Auditorium) instance;
+      if (getID().equals(auditorium.getID())) {
+        return true;
+      }
+    }
+    return false;
+  }
 }
