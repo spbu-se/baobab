@@ -17,11 +17,11 @@ import ru.spbu.math.baobab.model.EvenOddWeek;
 public class TimeSlotCommandParser extends Parser {
 
   private static final Pattern PATTERN_ENG = Pattern.compile(String.format(
-      "^\\s?define\\s+timeslot\\s+(%s)\\s+(%s)\\s+to\\s+(%s)\\s+on\\s+(%s)\\s+(%s)\\s?$", ID_PATTERN, TIME_PATTERN,
+      "^\\s*define\\s+timeslot\\s+(%s)\\s+(%s)\\s+to\\s+(%s)\\s+on(\\s+(%s))?\\s+(%s)\\s*$", ID_PATTERN, TIME_PATTERN,
       TIME_PATTERN, EVEN_ODD_PATTERN_ENG, WEEKDAY_PATTERN_ENG));
   private static final Pattern PATTERN_RUS = Pattern.compile(String.format(
-      "^\\s?определить\\s+интервал\\s+(%s)\\s+от\\s+(%s)\\s+до\\s+(%s)\\s+в\\s+(%s)\\s+(%s)\\s?$", ID_PATTERN, TIME_PATTERN,
-      TIME_PATTERN, EVEN_ODD_PATTERN_RUS, WEEKDAY_PATTERN_RUS));
+      "^\\s*определить\\s+интервал\\s+(%s)\\s+от\\s+(%s)\\s+до\\s+(%s)\\s+в(\\s+(%s))?\\s+(%s)\\s*$", ID_PATTERN,
+      TIME_PATTERN, TIME_PATTERN, EVEN_ODD_PATTERN_RUS, WEEKDAY_PATTERN_RUS));
 
   private final TimeSlotExtent myTimeSlotExtent;
 
@@ -51,8 +51,8 @@ public class TimeSlotCommandParser extends Parser {
     String id = match.group(1);
     TimeInstant start = TimeInstantConverter.convertToTimeInstant(match.group(2));
     TimeInstant finish = TimeInstantConverter.convertToTimeInstant(match.group(3));
-    EvenOddWeek flashing = OddEvenWeekConverter.convertToOddEvenWeek(match.group(4));
-    Integer weekday = WeekDayConverter.convertToInt(match.group(5));
+    EvenOddWeek flashing = OddEvenWeekConverter.convertToOddEvenWeek(match.group(5) == null ? "" : match.group(5));
+    Integer weekday = WeekDayConverter.convertToInt(match.group(6));
     myTimeSlotExtent.create(id, start, finish, weekday, flashing);
   }
 }
