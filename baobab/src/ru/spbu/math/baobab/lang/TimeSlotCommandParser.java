@@ -17,13 +17,13 @@ import ru.spbu.math.baobab.model.EvenOddWeek;
 public class TimeSlotCommandParser extends Parser {
 
   private static final Pattern PATTERN_ENG = Pattern.compile(String.format(
-      "^define\\s+timeslot\\s+(%s)\\s+(%s)\\s+to\\s+(%s)\\s+on\\s+(%s)\\s+(%s)$", ID_PATTERN, TIME_PATTERN,
+      "^\\s?define\\s+timeslot\\s+(%s)\\s+(%s)\\s+to\\s+(%s)\\s+on\\s+(%s)\\s+(%s)\\s?$", ID_PATTERN, TIME_PATTERN,
       TIME_PATTERN, EVEN_ODD_PATTERN_ENG, WEEKDAY_PATTERN_ENG));
   private static final Pattern PATTERN_RUS = Pattern.compile(String.format(
-      "^определить\\s+интервал\\s+(%s)\\s+от\\s+(%s)\\s+до\\s+(%s)\\s+в\\s+(%s)\\s+(%s)$", ID_PATTERN, TIME_PATTERN,
+      "^\\s?определить\\s+интервал\\s+(%s)\\s+от\\s+(%s)\\s+до\\s+(%s)\\s+в\\s+(%s)\\s+(%s)\\s?$", ID_PATTERN, TIME_PATTERN,
       TIME_PATTERN, EVEN_ODD_PATTERN_RUS, WEEKDAY_PATTERN_RUS));
 
-  private TimeSlotExtent myTimeSlotExtent;
+  private final TimeSlotExtent myTimeSlotExtent;
 
   public TimeSlotCommandParser(TimeSlotExtent timeSlotExtent) {
     myTimeSlotExtent = timeSlotExtent;
@@ -45,8 +45,7 @@ public class TimeSlotCommandParser extends Parser {
   /**
    * defines time slot using TimeSlotExtent
    * 
-   * @param match
-   *          matcher with matched command string
+   * @param match matcher with matched command string
    */
   private void execute(Matcher match) {
     String id = match.group(1);

@@ -18,8 +18,7 @@ public class OddEvenWeekConverter {
   /**
    * converts string to EvenOddWeek
    * 
-   * @param value
-   *          string to convert
+   * @param value string to convert
    * @return converted EvenOddWeek
    */
   public static EvenOddWeek convertToOddEvenWeek(String value) {
