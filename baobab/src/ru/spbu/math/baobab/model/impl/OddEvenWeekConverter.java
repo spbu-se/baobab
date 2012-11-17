@@ -6,7 +6,7 @@ import java.util.List;
 import ru.spbu.math.baobab.model.EvenOddWeek;
 
 /**
- * Converts odd/even lexeme on Baobab language to convenient type
+ * Converts odd/even lexeme on Baobab language to convenient type. Empty string converts to EvenOddWeek.ALL
  * 
  * @author vloginova
  */
@@ -22,6 +22,9 @@ public class OddEvenWeekConverter {
    * @return converted EvenOddWeek
    */
   public static EvenOddWeek convertToOddEvenWeek(String value) {
+    if (value.equals("")) {
+      return EvenOddWeek.ALL;
+    }
     if (ODD.contains(value)) {
       return EvenOddWeek.ODD;
     }

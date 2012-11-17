@@ -41,4 +41,13 @@ public class TimeSlotCommandParserTest extends TestCase {
     TimeSlotCommandParser parser = new TimeSlotCommandParser(timeSlotExtent);
     assertFalse(parser.parse("define timeslot 1st_try 12:12 to on even Monday"));
   }
+
+  public void testCommandCorrectnessNoFlashing() {
+    TimeSlotExtent timeSlotExtent = new TimeSlotExtentImpl();
+    TimeSlotCommandParser parser = new TimeSlotCommandParser(timeSlotExtent);
+    assertTrue(parser.parse("define timeslot 1st_try 11:15 to 12:50 on Wednesday"));
+    List<TimeSlot> timeSlots = timeSlotExtent.findByWeekDay(3);
+    assertTrue(timeSlots.size() == 1);
+    assertTrue(timeSlots.get(0).getEvenOddWeek() == EvenOddWeek.ALL);
+  }
 }
