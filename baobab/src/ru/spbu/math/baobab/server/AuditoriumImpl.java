@@ -1,6 +1,6 @@
 package ru.spbu.math.baobab.server;
 
-import com.google.appengine.api.search.checkers.Preconditions;
+import com.google.common.base.Preconditions;
 
 import ru.spbu.math.baobab.model.Auditorium;
 
