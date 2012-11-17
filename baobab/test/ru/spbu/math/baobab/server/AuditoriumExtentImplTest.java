@@ -45,7 +45,7 @@ public class AuditoriumExtentImplTest extends TestCase {
     extent.create("1", 20);
     extent.create("2", 30);
     Auditorium auditorium = extent.create("3", 12);
-    assertTrue(extent.find("3").equals(auditorium));
+    assertEquals(extent.find("3"), auditorium);
     assertNull(extent.find("4"));
   }
 }
