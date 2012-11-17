@@ -18,9 +18,6 @@ public class AuditoriumImpl implements Auditorium {
   public AuditoriumImpl(String id, int capacity) {
     myID = id;
     Preconditions.checkArgument(capacity >= 0, "Capacity must be >= 0");
-    if (capacity < 0) {
-      capacity = 0;
-    }
     myCapacity = capacity;
   }
 
