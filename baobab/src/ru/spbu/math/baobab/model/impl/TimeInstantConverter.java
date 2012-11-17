@@ -20,13 +20,13 @@ public class TimeInstantConverter {
    *          string to convert
    * @return converted TimeInstant
    */
-  public static TimeInstant convertToTimeInstant(String value) throws Exception {
+  public static TimeInstant convertToTimeInstant(String value) {
     Matcher commandMatch = TIME_PATTERN.matcher(value);
     if (commandMatch.matches()) {
       int hour = Integer.parseInt(commandMatch.group(1));
       int minute = Integer.parseInt(commandMatch.group(2));
       return new TimeInstant(hour, minute);
     }
-    throw new Exception("convertToTimeInstant: Incorrect value");
+    throw new IllegalArgumentException("convertToTimeInstant: Incorrect value");
   }
 }
