@@ -25,7 +25,7 @@ public class WeekdayConverter {
    *          string to convert
    * @return converted int
    */
-  public static int convertToInt(String value) throws Exception {
+  public static int convertToInt(String value) {
     if (MONDAY.contains(value)) {
       return 1;
     }
@@ -47,6 +47,6 @@ public class WeekdayConverter {
     if (SUNDAY.contains(value)) {
       return 7;
     }
-    throw new Exception("convertToInt: Incorrect value");
+    throw new IllegalArgumentException("convertToInt: Incorrect value");
   }
 }

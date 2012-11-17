@@ -11,7 +11,7 @@ import ru.spbu.math.baobab.model.EvenOddWeek;
  * @author vloginova
  */
 public class OddEvenWeekConverter {
-  
+
   private static final List<String> ODD = Arrays.asList("odd", "нечетный");
   private static final List<String> EVEN = Arrays.asList("even", "четный");
 
@@ -22,13 +22,13 @@ public class OddEvenWeekConverter {
    *          string to convert
    * @return converted EvenOddWeek
    */
-  public static EvenOddWeek convertToOddEvenWeek(String value) throws Exception {
+  public static EvenOddWeek convertToOddEvenWeek(String value) {
     if (ODD.contains(value)) {
       return EvenOddWeek.ODD;
     }
     if (EVEN.contains(value)) {
       return EvenOddWeek.EVEN;
     }
-    throw new Exception("convertToOddEvenWeek: Incorrect value");
+    throw new IllegalArgumentException("convertToOddEvenWeek: Incorrect value");
   }
 }
