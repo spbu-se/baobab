@@ -21,8 +21,7 @@ public class WeekDayConverter {
   /**
    * converts string to int (weekday in [1..7] range)
    * 
-   * @param value
-   *          string to convert
+   * @param value string to convert
    * @return converted int
    */
   public static int convertToInt(String value) {

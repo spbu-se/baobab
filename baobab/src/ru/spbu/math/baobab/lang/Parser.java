@@ -17,8 +17,7 @@ public abstract class Parser {
   /**
    * parses command in baobab language and executes it
    * 
-   * @param command
-   *          command in baobab language
+   * @param command command in baobab language
    * @return true in case of success parsing
    */
   public abstract boolean parse(String command);

@@ -16,8 +16,7 @@ public class TimeInstantConverter {
   /**
    * converts string to TimeInstant
    * 
-   * @param value
-   *          string to convert
+   * @param value string to convert
    * @return converted TimeInstant
    */
   public static TimeInstant convertToTimeInstant(String value) {
