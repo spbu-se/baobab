@@ -19,11 +19,11 @@ public class AttendeeSqlImpl implements Attendee {
 
   private final int myID; // unique id for every Attendee in Attendee table
   private String myUID;
-  private String myName;
-  private Type myType;
-  private Integer myGroupId;
+  private final String myName;
+  private final Type myType;
+  private final Integer myGroupId;
   private final AttendeeExtent myExtent;
-  private static final String query = "SELECT A_member.id, A_member.uid, A_member.name, A_member.type, A_member.group_id "
+  private static final String GET_GROUP_MEMBERS_QUERY = "SELECT A_member.id, A_member.uid, A_member.name, A_member.type, A_member.group_id "
       + "FROM Attendee A_group JOIN AttendeeGroup AG ON (A_group.group_id = AG.id) "
       + "JOIN GroupMember GM ON (GM.group_id = AG.id) JOIN Attendee A_member "
       + "ON (A_member.id = GM.attendee_id) WHERE A_group.id = ?;";
@@ -89,7 +89,7 @@ public class AttendeeSqlImpl implements Attendee {
     try {
       Collection<Attendee> members = new ArrayList<Attendee>();
       // find out data about members of this group
-      List<PreparedStatement> stmt = con.prepareScript(query);
+      List<PreparedStatement> stmt = con.prepareScript(GET_GROUP_MEMBERS_QUERY);
       stmt.get(0).setInt(1, myID);
       ResultSet result = stmt.get(0).executeQuery();
       while (result.next()) {
@@ -118,7 +118,7 @@ public class AttendeeSqlImpl implements Attendee {
   @Override
   public void addGroupMember(Attendee member) {
     if (!isGroup()) {
-      throw new IllegalStateException("The attendee is not a group.");
+      throw new IllegalStateException("This attendee is not a group.");
     }
     SqlApi con = SqlApi.create();
     try {
@@ -127,7 +127,9 @@ public class AttendeeSqlImpl implements Attendee {
       stmt.get(0).setString(1, member.getID());
       // adding a new group member
       ResultSet result = stmt.get(0).executeQuery();
-      result.next();
+      if (!result.next()) {
+        throw new RuntimeException();
+      }
       stmt.get(1).setInt(1, myGroupId); // set group_id
       stmt.get(1).setInt(2, result.getInt("id")); // set attendee_id
       stmt.get(1).execute();
@@ -140,15 +142,14 @@ public class AttendeeSqlImpl implements Attendee {
 
   @Override
   public int hashCode() {
-    return (myGroupId == null ? myID * 31 : myGroupId * 13 + myID * 29);
+    return myID;
   }
 
   @Override
   public boolean equals(Object instance) {
     if (instance instanceof Attendee) {
       Attendee attendee = (Attendee) instance;
-      if ((getID() == attendee.getID()) && (getName() == attendee.getName()) && (getType() == attendee.getType())
-          && (hashCode() == attendee.hashCode())) {
+      if ((getID().equals(attendee.getID())) && (hashCode() == attendee.hashCode())) {
         return true;
       }
     }

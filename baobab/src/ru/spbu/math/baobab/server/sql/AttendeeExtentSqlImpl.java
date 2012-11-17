@@ -34,14 +34,16 @@ public class AttendeeExtentSqlImpl implements AttendeeExtent {
       // set unique id for created Attendee
       stmt.get(1).setString(1, id);
       ResultSet result = stmt.get(1).executeQuery();
-      result.next();
+      if (!result.next()) {
+        throw new RuntimeException();
+      }
       int intID = result.getInt("id");
       if ((type == Type.ACADEMIC_GROUP) || (type == Type.CHAIR) || (type == Type.FREE_FORM_GROUP)) {
         // set group_id for group members
         stmt.get(2).setInt(1, intID);
-        stmt.get(2).execute();
         stmt.get(3).setInt(1, intID);
         stmt.get(3).setInt(2, intID);
+        stmt.get(2).execute();
         stmt.get(3).execute();
         return new AttendeeSqlImpl(intID, id, name, type, intID, this);
       } else {
