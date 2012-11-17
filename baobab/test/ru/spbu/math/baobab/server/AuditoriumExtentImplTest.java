@@ -23,8 +23,12 @@ public class AuditoriumExtentImplTest extends TestCase {
     } catch (RuntimeException e) {
       // OK: can't create new Auditorium with ID which already exists.
     }
-    Auditorium auditorium = extent.create("3", -1);
-    assertEquals(auditorium.getCapacity(), 0);
+    try {
+      extent.create("3", -1);
+      fail("Expected IllegalArgumentException.");
+    } catch (IllegalArgumentException e) {
+      // OK: can't create new Auditorium with capacity < 0.
+    }
   }
 
   public void testGetAll() {
@@ -33,7 +37,7 @@ public class AuditoriumExtentImplTest extends TestCase {
     auditoriums.add(extent.create("1", 20));
     auditoriums.add(extent.create("2", 15));
     auditoriums.add(extent.create("3", 2));
-    assertEquals(auditoriums, extent.getAll());
+    assertTrue(auditoriums.containsAll(extent.getAll()));
   }
 
   public void testFind() {
@@ -41,9 +45,7 @@ public class AuditoriumExtentImplTest extends TestCase {
     extent.create("1", 20);
     extent.create("2", 30);
     Auditorium auditorium = extent.create("3", 12);
-    assertEquals(extent.find("3"), auditorium);
-    assertEquals(extent.find("4"), null);
-
+    assertTrue(extent.find("3").equals(auditorium));
+    assertNull(extent.find("4"));
   }
-
 }

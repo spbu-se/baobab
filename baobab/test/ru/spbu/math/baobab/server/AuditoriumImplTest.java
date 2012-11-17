@@ -20,8 +20,5 @@ public class AuditoriumImplTest extends TestCase {
     assertEquals(auditorium1.getCapacity(), 20);
     Auditorium auditorium2 = new AuditoriumImpl("2", 0);
     assertEquals(auditorium2.getCapacity(), 0);
-    Auditorium auditorium3 = new AuditoriumImpl("3", -1);
-    assertEquals(auditorium3.getCapacity(), 0);
   }
-
 }
