@@ -2,17 +2,17 @@ package ru.spbu.math.baobab.lang;
 
 import java.util.Arrays;
 import java.util.List;
-import ru.spbu.math.baobab.model.*;
+import ru.spbu.math.baobab.model.TimeSlotExtent;
 import ru.spbu.math.baobab.server.TimeSlotExtentImpl;
 
 /**
  * Script interpreter processes the lines satisfying specifications of the Baobab language and executes them
  * 
- * @author Ragozina Anastasiya, Loginova Vita
+ * @author ragozina.anastasiya, vloginova
  */
 public class ScriptInterpreter {
   private final TimeSlotExtent myTimeSlotExtent = new TimeSlotExtentImpl();
-  private final List<Parser> parsers = Arrays.asList((Parser)new TimeSlotCommandParser(getTimeslotExtent()));
+  private final List<Parser> parsers = Arrays.asList((Parser) new TimeSlotCommandParser(getTimeSlotExtent()));
 
   /**
    * Receive command and process it
@@ -29,7 +29,7 @@ public class ScriptInterpreter {
     throw new IllegalArgumentException("Incorrect command");
   }
 
-  public TimeSlotExtent getTimeslotExtent() {
+  private TimeSlotExtent getTimeSlotExtent() {
     return myTimeSlotExtent;
   }
 }

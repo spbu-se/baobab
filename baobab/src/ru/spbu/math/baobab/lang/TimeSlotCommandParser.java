@@ -2,21 +2,25 @@ package ru.spbu.math.baobab.lang;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import ru.spbu.math.baobab.model.impl.*;
-import ru.spbu.math.baobab.model.*;
+import ru.spbu.math.baobab.model.impl.OddEvenWeekConverter;
+import ru.spbu.math.baobab.model.impl.TimeInstantConverter;
+import ru.spbu.math.baobab.model.impl.WeekDayConverter;
+import ru.spbu.math.baobab.model.TimeSlotExtent;
+import ru.spbu.math.baobab.model.TimeInstant;
+import ru.spbu.math.baobab.model.EvenOddWeek;
 
 /**
  * Parser for define timeslot command
  * 
- * @author Vita
+ * @author vloginova
  */
 public class TimeSlotCommandParser extends Parser {
 
-  private static final Pattern PATTERN_RUS = Pattern.compile(String.format(
-      "^define\\stimeslot\\s(%s)\\s(%s)\\sto\\s(%s)\\son\\s(%s)\\s(%s)$", ID_PATTERN, TIME_PATTERN, TIME_PATTERN,
-      EVEN_ODD_PATTERN_ENG, WEEKDAY_PATTERN_ENG));
   private static final Pattern PATTERN_ENG = Pattern.compile(String.format(
-      "^определить\\sинтервал\\s(%s)\\sот\\s(%s)\\sдо\\s(%s)\\sв\\s(%s)\\s(%s)$", ID_PATTERN, TIME_PATTERN,
+      "^define\\s+timeslot\\s+(%s)\\s+(%s)\\s+to\\s+(%s)\\s+on\\s+(%s)\\s+(%s)$", ID_PATTERN, TIME_PATTERN,
+      TIME_PATTERN, EVEN_ODD_PATTERN_ENG, WEEKDAY_PATTERN_ENG));
+  private static final Pattern PATTERN_RUS = Pattern.compile(String.format(
+      "^определить\\s+интервал\\s+(%s)\\s+от\\s+(%s)\\s+до\\s+(%s)\\s+в\\s+(%s)\\s+(%s)$", ID_PATTERN, TIME_PATTERN,
       TIME_PATTERN, EVEN_ODD_PATTERN_RUS, WEEKDAY_PATTERN_RUS));
 
   private TimeSlotExtent myTimeSlotExtent;
@@ -49,7 +53,7 @@ public class TimeSlotCommandParser extends Parser {
     TimeInstant start = TimeInstantConverter.convertToTimeInstant(match.group(2));
     TimeInstant finish = TimeInstantConverter.convertToTimeInstant(match.group(3));
     EvenOddWeek flashing = OddEvenWeekConverter.convertToOddEvenWeek(match.group(4));
-    Integer weekday = WeekdayConverter.convertToInt(match.group(5));
+    Integer weekday = WeekDayConverter.convertToInt(match.group(5));
     myTimeSlotExtent.create(id, start, finish, weekday, flashing);
   }
 }

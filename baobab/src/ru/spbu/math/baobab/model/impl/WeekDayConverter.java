@@ -8,7 +8,7 @@ import java.util.List;
  * 
  * @author vloginova
  */
-public class WeekdayConverter {
+public class WeekDayConverter {
 
   private static final List<String> MONDAY = Arrays.asList("Monday", "Mo", "понедельник", "пн");
   private static final List<String> TUESDAY = Arrays.asList("Tuesday", "Tu", "вторник", "вт");
