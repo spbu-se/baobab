@@ -18,7 +18,7 @@ import com.google.common.collect.Lists;
  * 
  * @author dbarashev
  */
-public class SqlApi {
+public abstract class SqlApi {
   private static final Logger LOGGER = Logger.getLogger("SqlService");
   private static final String CONNECTION_SPEC = "jdbc:google:rdbms://barashev.net:baobab:baobab/";
   private static final Pattern PATTERN_COMMENT = Pattern.compile("^\\p{Blank}*--[^\\n]+(\\n|$)");
@@ -33,13 +33,47 @@ public class SqlApi {
     }    
   }
 
-  private final Connection myConnection;
-
+  public static interface Factory {
+    SqlApi create();
+  }
+  
+  private static Factory ourFactory = new Factory() {
+    @Override
+    public SqlApi create() {
+      return new SqlApi() {
+        private final Connection myConnection = createConnection("prod", "frontend");
+        
+        @Override
+        protected PreparedStatement prepareCall(String stmt) throws SQLException {
+          return myConnection.prepareCall(stmt);
+        }
+        
+        public void dispose() {
+          if (myConnection != null) {
+            try {
+              myConnection.close();
+            } catch (SQLException e) {
+              LOGGER.log(Level.SEVERE, "Failed to close connection", e);
+            }
+          }
+        }
+      };
+    }
+  };
+  
+  protected static void setFactory(Factory factory) {
+    ourFactory = factory;
+  }
+  
+  public static SqlApi create() {
+    assert ourFactory != null;
+    return ourFactory.create();
+  }
+  
   /**
    * Creates an instance with default database and username parameters
    */
-  public SqlApi() {
-    this("prod", "frontend");
+  protected SqlApi() {
   }
   
   /**
@@ -48,28 +82,20 @@ public class SqlApi {
    * @param database database name
    * @param username user name
    */
-  public SqlApi(String database, String username) {
+  private static Connection createConnection(String database, String username) {
     Connection c = null;
     try {
       c = DriverManager.getConnection(CONNECTION_SPEC + database, username, null);
     } catch (SQLException e) {
       LOGGER.log(Level.SEVERE, "Failed to create connection", e);
     }
-    myConnection = c;
+    return c;
   }
   
   /**
    * Disposes this API instance and releases all resources.
    */
-  public void dispose() {
-    if (myConnection != null) {
-      try {
-        myConnection.close();
-      } catch (SQLException e) {
-        LOGGER.log(Level.SEVERE, "Failed to close connection", e);
-      }
-    }
-  }
+  public abstract void dispose();
   
   /**
    * Splits the given text to a list of SQL statements, striping out comments, and creates
@@ -109,8 +135,10 @@ public class SqlApi {
   private List<PreparedStatement> createPreparedStatements(List<String> stmts) throws SQLException {
     List<PreparedStatement> result = Lists.newArrayList();
     for (String s : stmts) {
-      result.add(myConnection.prepareCall(s));
+      result.add(prepareCall(s));
     }    
     return result;
   }
+  
+  protected abstract PreparedStatement prepareCall(String stmt) throws SQLException;
 }
