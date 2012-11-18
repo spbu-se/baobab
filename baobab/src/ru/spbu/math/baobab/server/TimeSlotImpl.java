@@ -79,7 +79,7 @@ public class TimeSlotImpl implements TimeSlot {
         && Objects.equal(myFinish, other.myFinish)
         && Objects.equal(myFlashing, other.myFlashing)
         && Objects.equal(myName, other.myName)
-        && Objects.equal(myStart, other.myStart)
-        && Objects.equal(myTimeSlotExtent, other.myTimeSlotExtent);
+        && Objects.equal(myStart, other.myStart);
+        //&& Objects.equal(myTimeSlotExtent, other.myTimeSlotExtent);
   }
 }

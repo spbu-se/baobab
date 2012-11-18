@@ -58,12 +58,10 @@ CREATE TABLE Topic(
 
 CREATE TABLE Event(
   id INT PRIMARY KEY AUTO_INCREMENT,
-  start_date DATE NOT NULL,
-  finish_date DATE NOT NULL,
+  `date` DATE NOT NULL,
   time_slot_id INT NOT NULL,
   topic_id INT NOT NULL,
   auditorium_num VARCHAR(10),
-  CHECK (finish_date >= start_date),
   FOREIGN KEY (time_slot_id) REFERENCES TimeSlot(id),
   FOREIGN KEY (auditorium_num) REFERENCES Auditorium(num),
   FOREIGN KEY (topic_id) REFERENCES Topic(id)
