@@ -1,9 +1,12 @@
 package ru.spbu.math.baobab.server.sql;
 
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Calendar;
 import java.util.List;
+import java.util.TimeZone;
 
 import com.google.common.collect.ImmutableList;
 
@@ -83,5 +86,35 @@ public class SqlApiTest extends SqlTestCase {
         fail("Should've failed because actual SQL statement doesn't match the expected pattern");
       }      
     }
+  }
+  
+  public void testMockNullValues() throws SQLException {
+    SqlApi sqlApi = SqlApi.create();
+    expectQuery("SELECT * FROM Foo", row("id", null, "value1", null, "value2", "foobar"));
+    List<PreparedStatement> script = sqlApi.prepareScript("SELECT * FROM Foo;");
+    ResultSet resultSet = script.get(0).executeQuery();
+    assertTrue(resultSet.next());
+    assertEquals(0, resultSet.getInt("id"));
+    assertTrue(resultSet.wasNull());
+    assertNull(resultSet.getString("value1"));
+    assertTrue(resultSet.wasNull());
+    assertEquals("foobar", resultSet.getString("value2"));
+    assertFalse(resultSet.wasNull());
+  }
+  
+  public void testDateValue() throws SQLException {
+    SqlApi sqlApi = SqlApi.create();
+    expectQuery("SELECT * FROM Foo", row("date", "2012-11-14"));
+    List<PreparedStatement> script = sqlApi.prepareScript("SELECT * FROM Foo;");
+    ResultSet resultSet = script.get(0).executeQuery();
+    assertTrue(resultSet.next());
+    
+    Calendar c = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+    c.clear();
+    c.set(Calendar.YEAR, 2012);
+    c.set(Calendar.MONTH, Calendar.NOVEMBER);
+    c.set(Calendar.DAY_OF_MONTH, 14);
+    
+    assertEquals(new Date(c.getTime().getTime()), resultSet.getDate("date"));    
   }
 }
