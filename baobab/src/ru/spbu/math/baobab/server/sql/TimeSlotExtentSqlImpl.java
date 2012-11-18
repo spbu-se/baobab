@@ -46,7 +46,7 @@ public class TimeSlotExtentSqlImpl implements TimeSlotExtent {
   @Override
   public Collection<TimeSlot> getAll() {
     List<TimeSlot> timeSlots = Lists.newArrayList();
-    SqlApi sqlApi = new SqlApi();
+    SqlApi sqlApi = SqlApi.create();
 
     try {
       List<PreparedStatement> stmts = sqlApi.prepareScript("SELECT * FROM TimeSlot ORDER BY start_min;");
@@ -67,7 +67,7 @@ public class TimeSlotExtentSqlImpl implements TimeSlotExtent {
   @Override
   public List<TimeSlot> findByWeekDay(int day) {
     List<TimeSlot> timeSlots = Lists.newArrayList();
-    SqlApi sqlApi = new SqlApi();
+    SqlApi sqlApi = SqlApi.create();
 
     try {
       List<PreparedStatement> stmts = sqlApi.prepareScript("SELECT * FROM TimeSlot WHERE day=? ORDER BY start_min");
@@ -89,7 +89,7 @@ public class TimeSlotExtentSqlImpl implements TimeSlotExtent {
   @Override
   public List<TimeSlot> findByDate(Date date) {
     List<TimeSlot> timeSlots = Lists.newArrayList();
-    SqlApi sqlApi = new SqlApi();
+    SqlApi sqlApi = SqlApi.create();
 
     Calendar calendar = GregorianCalendar.getInstance();
     calendar.setTime(date);
@@ -117,7 +117,7 @@ public class TimeSlotExtentSqlImpl implements TimeSlotExtent {
 
   @Override
   public TimeSlot create(String name, TimeInstant start, TimeInstant finish, int day, EvenOddWeek flashing) {
-    SqlApi sqlApi = new SqlApi();
+    SqlApi sqlApi = SqlApi.create();
 
     try {
       PreparedStatement stmt = sqlApi.prepareScript(

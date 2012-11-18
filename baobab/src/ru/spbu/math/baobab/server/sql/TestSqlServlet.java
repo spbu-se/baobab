@@ -24,7 +24,7 @@ public class TestSqlServlet extends HttpServlet {
   
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-    SqlApi sqlApi = new SqlApi();
+    SqlApi sqlApi = SqlApi.create();
     try {
       List<PreparedStatement> stmts = sqlApi.prepareScript("SELECT * FROM TimeSlot;");
       assert stmts.size() == 1;
