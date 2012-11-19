@@ -54,7 +54,7 @@ public class TopicImplTest {
     TimeInstant start = new TimeInstant(9, 30);
     TimeInstant finish = new TimeInstant(11, 5);
     TimeSlotExtent tsExtent = new TimeSlotExtentImpl();
-    TimeSlot ts = tsExtent.create("first double class", start, finish, 2, EvenOddWeek.EVEN);
+    TimeSlot ts = tsExtent.create("first double class", start, finish, 2, EvenOddWeek.ODD);
 
     Calendar cal = Calendar.getInstance(new Locale("ru", "RU"));
     cal.set(2012, Calendar.NOVEMBER, 11);

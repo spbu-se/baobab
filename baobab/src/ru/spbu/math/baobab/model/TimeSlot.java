@@ -5,9 +5,9 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Locale;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
-import com.google.gwt.thirdparty.guava.common.base.Predicate;
-import com.google.gwt.thirdparty.guava.common.collect.Collections2;
 
 /**
  * TimeSlot is a predefined named time interval. Most of the events will take place at one of 
@@ -61,8 +61,8 @@ public interface TimeSlot {
      */
     public static Collection<Date> datesRange(Date start, Date finish) {
       Collection<Date> dates = Lists.newArrayList();
-      Calendar calStart = Calendar.getInstance();
-      Calendar calFinish = Calendar.getInstance();
+      Calendar calStart = Calendar.getInstance(new Locale("ru", "RU"));
+      Calendar calFinish = (Calendar)calStart.clone();
 
       calStart.setTime(start);
       calFinish.setTime(finish);
@@ -88,12 +88,17 @@ public interface TimeSlot {
           int day = timeSlot.getDayOfWeek();
           boolean isEven = timeSlot.getEvenOddWeek().equals(EvenOddWeek.EVEN);
           boolean isAll = timeSlot.getEvenOddWeek().equals(EvenOddWeek.ALL);
-          
-          Locale locale = new Locale("ru", "RU");
-          Calendar cal = Calendar.getInstance(locale);
+
+          Calendar cal = Calendar.getInstance(new Locale("ru", "RU"));
           cal.setTime(date);
 
-          if ((cal.get(Calendar.DAY_OF_WEEK) == day) &&
+          // XXX: setting locale doesn't work for me, but with this hack everything is OK
+          int weekDay = (cal.get(Calendar.DAY_OF_WEEK) + 6) % 7;
+          if (weekDay == 0) {
+            weekDay = 7;
+          }
+
+          if ((weekDay == day) &&
               (isAll ||
               isEven && cal.get(Calendar.WEEK_OF_YEAR) % 2 == 0 ||
               !isEven && cal.get(Calendar.WEEK_OF_YEAR) % 2 == 1)) {
