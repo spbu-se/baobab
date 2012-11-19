@@ -75,10 +75,8 @@ public class AttendeeSqlImplTest extends SqlTestCase {
     attendees.add(student);
     attendees.add(teacher);
     expectSql(GET_GROUP_MEMBERS_QUERY).withParameters(1, 3).withResult(
-        row("A_member.id", 1, "A_member.uid", "student", "A_member.name", "Test1", "A_member.type",
-            Type.STUDENT.ordinal(), "A_member.group_id", null),
-        row("A_member.id", 2, "A_member.uid", "teacher", "A_member.name", "Test2", "A_member.type",
-            Type.TEACHER.ordinal(), "A_member.group_id", null));
+        row("id", 1, "uid", "student", "name", "Test1", "type", Type.STUDENT.ordinal(), "group_id", null),
+        row("id", 2, "uid", "teacher", "name", "Test2", "type", Type.TEACHER.ordinal(), "group_id", null));
     assertEquals(group.getGroupMembers(), attendees);
     // Test for attendee who is not a group
     assertNull(teacher.getGroupMembers());

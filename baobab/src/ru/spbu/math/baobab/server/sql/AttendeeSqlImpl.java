@@ -93,11 +93,11 @@ public class AttendeeSqlImpl implements Attendee {
       stmt.get(0).setInt(1, myIntID);
       ResultSet result = stmt.get(0).executeQuery();
       while (result.next()) {
-        int intID = result.getInt("A_member.id");
-        String uid = result.getString("A_member.uid");
-        String name = result.getString("A_member.name");
-        Type type = Type.values()[result.getInt("A_member.type")];
-        int group_id = result.getInt("A_member.group_id");
+        int intID = result.getInt("id");
+        String uid = result.getString("uid");
+        String name = result.getString("name");
+        Type type = Type.values()[result.getInt("type")];
+        int group_id = result.getInt("group_id");
         if (result.wasNull()) {
           Attendee groupAttendee = new AttendeeSqlImpl(intID, uid, name, type, null, myExtent);
           members.add(groupAttendee);
@@ -142,7 +142,7 @@ public class AttendeeSqlImpl implements Attendee {
 
   @Override
   public int hashCode() {
-    return myUID.hashCode() * 31 + myName.hashCode() * 13 + myType.ordinal() * 29;
+    return myUID.hashCode();
   }
 
   @Override
