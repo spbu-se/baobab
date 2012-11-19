@@ -81,23 +81,18 @@ public interface TimeSlot {
      * @return series of dates whenever time slot is applicable
      */
     public static Collection<Date> getFilteredRangeOfDates(Collection<Date> dates, final TimeSlot timeSlot) {
+      final int day = timeSlot.getDayOfWeek();
+      final boolean isEven = timeSlot.getEvenOddWeek().equals(EvenOddWeek.EVEN);
+      final boolean isAll = timeSlot.getEvenOddWeek().equals(EvenOddWeek.ALL);
+      final Calendar cal = Calendar.getInstance(new Locale("ru", "RU"));
+
       return Collections2.filter(dates, new Predicate<Date>() {
 
         @Override
         public boolean apply(Date date) {
-          int day = timeSlot.getDayOfWeek();
-          boolean isEven = timeSlot.getEvenOddWeek().equals(EvenOddWeek.EVEN);
-          boolean isAll = timeSlot.getEvenOddWeek().equals(EvenOddWeek.ALL);
-
-          Calendar cal = Calendar.getInstance(new Locale("ru", "RU"));
           cal.setTime(date);
 
-          // XXX: setting locale doesn't work for me, but with this hack everything is OK
-          int weekDay = (cal.get(Calendar.DAY_OF_WEEK) + 6) % 7;
-          if (weekDay == 0) {
-            weekDay = 7;
-          }
-
+          int weekDay = (cal.get(Calendar.DAY_OF_WEEK) + 7 - cal.getFirstDayOfWeek()) % 7 + 1;
           if ((weekDay == day) &&
               (isAll ||
               isEven && cal.get(Calendar.WEEK_OF_YEAR) % 2 == 0 ||

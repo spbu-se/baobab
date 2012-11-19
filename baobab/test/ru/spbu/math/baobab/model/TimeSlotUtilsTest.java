@@ -21,14 +21,14 @@ import ru.spbu.math.baobab.server.TimeSlotExtentImpl;
  * 
  * @author agudulin
  */
-public class TimeSlotUnitTest extends TestCase {
+public class TimeSlotUtilsTest extends TestCase {
 
   @Test
   public void testDatesRange() {
     Calendar cal = Calendar.getInstance(new Locale("ru", "RU"));
     cal.set(2012, Calendar.JANUARY, 1);
     Date startDate = cal.getTime();
-    cal.set(2012, Calendar.DECEMBER, 31);
+    cal.set(2012, Calendar.JANUARY, 7);
     Date finishDate = cal.getTime();
 
     List<Date> dates = Lists.newArrayList(Utils.datesRange(startDate, finishDate));
@@ -36,17 +36,23 @@ public class TimeSlotUnitTest extends TestCase {
     Collections.sort(datesSorted);
     assertEquals(datesSorted, dates);
 
-    assertEquals(dates.size(), 366);
-    assertEquals(dates.get(0), startDate);
-    assertEquals(dates.get(dates.size() - 1), finishDate);
+    assertEquals(dates.size(), 7);
+
+    List<Date> datesToTest = Lists.newArrayList();
+    for (int i = 1; i <= dates.size(); ++i) {
+      cal.set(2012, Calendar.JANUARY, i);
+      datesToTest.add(cal.getTime());
+    }
+
+    assertEquals(dates, datesToTest);
   }
 
   @Test
   public void testGetFilteredRangeOfDates() {
     Calendar cal = Calendar.getInstance(new Locale("ru", "RU"));
-    cal.set(2012, Calendar.JANUARY, 1); //ÊSunday
+    cal.set(2012, Calendar.JANUARY, 1);
     Date startDate = cal.getTime();
-    cal.set(2012, Calendar.DECEMBER, 31); // Monday
+    cal.set(2012, Calendar.DECEMBER, 31);
     Date finishDate = cal.getTime();
 
     // Get series of dates: <Sun, 1 Jan 2012> -- <Mon, 31 Dec 2012>
@@ -75,11 +81,13 @@ public class TimeSlotUnitTest extends TestCase {
     assertEquals(filteredDates.size(), 26);
     // In filtered range of dates:
     //    First day is Tue, 03 Jan 2012
-    //    Last day is  Tue, 25 Dec 2012
+    //    Last day is  Tue, 18 Dec 2012
     cal.set(2012, Calendar.JANUARY, 3);
     startTimeSlotDate = cal.getTime();
-    cal.set(2012, Calendar.DECEMBER, 25);
+    cal.set(2012, Calendar.DECEMBER, 18);
     finishTimeSlotDate = cal.getTime();
+    assertEquals(filteredDates.get(0), startTimeSlotDate);
+    assertEquals(filteredDates.get(filteredDates.size() - 1), finishTimeSlotDate);
 
     // Create time slot: every odd week, every Sunday, 9:30 - 11:05
     timeSlot = tsExtent.create("3", start, finish, 7, EvenOddWeek.ODD);
@@ -92,5 +100,7 @@ public class TimeSlotUnitTest extends TestCase {
     startTimeSlotDate = cal.getTime();
     cal.set(2012, Calendar.DECEMBER, 30);
     finishTimeSlotDate = cal.getTime();
+    assertEquals(filteredDates.get(0), startTimeSlotDate);
+    assertEquals(filteredDates.get(filteredDates.size() - 1), finishTimeSlotDate);
   }
 }
