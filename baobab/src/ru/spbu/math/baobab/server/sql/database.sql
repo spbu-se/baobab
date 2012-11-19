@@ -30,8 +30,8 @@ CREATE TABLE AttendeeGroup(id INT PRIMARY KEY AUTO_INCREMENT);
 -- name: attendee name
 -- type: attendee type, constants correspond to Attendee.Type enum
 -- group_id: reference to group member list which may exist only if attendee type is a group type 
-CREATE TABLE Attendee(
-  uid VARCHAR(64) PRIMARY KEY NOT NULL UNIQUE,
+CREATE TABLE Attendee(id INT PRIMARY KEY AUTO_INCREME
+  uid VARCHAR(64) NOT NULL UNIQUE,
   name VARCHAR(256) NOT NULL,
   type INT NOT NULL CHECK(type >= 0 AND type <= 4) ,
   group_id INT,
