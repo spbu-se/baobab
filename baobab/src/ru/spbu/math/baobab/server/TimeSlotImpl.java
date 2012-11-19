@@ -13,6 +13,7 @@ import ru.spbu.math.baobab.model.TimeSlotExtent;
  * @author dageev
  */
 public class TimeSlotImpl implements TimeSlot {
+  private final String myID;
   private final String myName;
   private final int myDay;
   private final EvenOddWeek myFlashing;
@@ -20,8 +21,9 @@ public class TimeSlotImpl implements TimeSlot {
   private final TimeInstant myFinish;
   private final TimeSlotExtent myTimeSlotExtent;
 
-  public TimeSlotImpl(String name, TimeInstant start, TimeInstant finish, int day, EvenOddWeek flashing,
+  public TimeSlotImpl(String id, String name, TimeInstant start, TimeInstant finish, int day, EvenOddWeek flashing,
       TimeSlotExtent timeslotextent) {
+    myID = id;
     myTimeSlotExtent = timeslotextent;
     myName = name;
     myDay = day;
@@ -58,6 +60,11 @@ public class TimeSlotImpl implements TimeSlot {
   @Override
   public TimeSlotExtent getExtent() {
     return myTimeSlotExtent;
+  }
+
+  @Override
+  public String getID() {
+    return myID;
   }
 
   @Override

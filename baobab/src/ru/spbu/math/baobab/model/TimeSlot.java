@@ -36,4 +36,9 @@ public interface TimeSlot {
    * @return extent associated with this time slot
    */
   TimeSlotExtent getExtent();
+  
+  /**
+   * @return time slot id
+   */
+  String getID();
 }
