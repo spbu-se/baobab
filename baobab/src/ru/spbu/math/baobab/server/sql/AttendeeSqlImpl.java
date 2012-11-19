@@ -17,7 +17,7 @@ import ru.spbu.math.baobab.model.AttendeeExtent;
  */
 public class AttendeeSqlImpl implements Attendee {
 
-  private final int myID; // unique id for every Attendee in Attendee table
+  private final int myIntID; // unique id for every Attendee in Attendee table
   private String myUID;
   private final String myName;
   private final Type myType;
@@ -30,7 +30,7 @@ public class AttendeeSqlImpl implements Attendee {
 
   // constructor
   public AttendeeSqlImpl(int id, String uid, String name, Type type, Integer group_id, AttendeeExtent extent) {
-    myID = id;
+    myIntID = id;
     myUID = uid;
     myName = name;
     myType = type;
@@ -57,7 +57,7 @@ public class AttendeeSqlImpl implements Attendee {
     try {
       PreparedStatement stmt = con.prepareScript("UPDATE Attendee SET uid = ? WHERE id = ?").get(0);
       stmt.setString(1, id);
-      stmt.setInt(2, myID);
+      stmt.setInt(2, myIntID);
       stmt.execute();
       myUID = id;
     } catch (SQLException e) {
@@ -90,7 +90,7 @@ public class AttendeeSqlImpl implements Attendee {
       Collection<Attendee> members = new ArrayList<Attendee>();
       // find out data about members of this group
       List<PreparedStatement> stmt = con.prepareScript(GET_GROUP_MEMBERS_QUERY);
-      stmt.get(0).setInt(1, myID);
+      stmt.get(0).setInt(1, myIntID);
       ResultSet result = stmt.get(0).executeQuery();
       while (result.next()) {
         int intID = result.getInt("A_member.id");
@@ -142,14 +142,14 @@ public class AttendeeSqlImpl implements Attendee {
 
   @Override
   public int hashCode() {
-    return myID;
+    return myUID.hashCode()*31 + myName.hashCode()*13 + myType.ordinal()*29;
   }
 
   @Override
   public boolean equals(Object instance) {
     if (instance instanceof Attendee) {
       Attendee attendee = (Attendee) instance;
-      if ((getID().equals(attendee.getID())) && (hashCode() == attendee.hashCode())) {
+      if (this.getID().equals(attendee.getID())) {
         return true;
       }
     }
