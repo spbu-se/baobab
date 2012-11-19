@@ -142,7 +142,7 @@ public class AttendeeSqlImpl implements Attendee {
 
   @Override
   public int hashCode() {
-    return myUID.hashCode()*31 + myName.hashCode()*13 + myType.ordinal()*29;
+    return myUID.hashCode() * 31 + myName.hashCode() * 13 + myType.ordinal() * 29;
   }
 
   @Override
