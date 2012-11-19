@@ -5,12 +5,11 @@ import static org.junit.Assert.*;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.Locale;
 
 import org.junit.Test;
 
-import com.google.gwt.thirdparty.guava.common.collect.Lists;
+import com.google.common.collect.Lists;
 
 import ru.spbu.math.baobab.model.EvenOddWeek;
 import ru.spbu.math.baobab.model.Event;
@@ -57,7 +56,7 @@ public class TopicImplTest {
     TimeSlotExtent tsExtent = new TimeSlotExtentImpl();
     TimeSlot ts = tsExtent.create("first double class", start, finish, 2, EvenOddWeek.EVEN);
 
-    Calendar cal = GregorianCalendar.getInstance(Locale.US);
+    Calendar cal = Calendar.getInstance(new Locale("ru", "RU"));
     cal.set(2012, Calendar.NOVEMBER, 11);
     Date startDate = cal.getTime();
     cal.set(2012, Calendar.DECEMBER, 3);
@@ -65,6 +64,10 @@ public class TopicImplTest {
 
     Collection<Event> events = topic.addAllEvents(startDate, finishDate, ts, null);
     assertEquals(events.size(), 2);
-    assertEquals(events, topic.getEvents());
+    
+    for (Event event : events) {
+      assertTrue(event.getStartDate().after(startDate));
+      assertTrue(event.getStartDate().before(finishDate));
+    }
   }
 }
