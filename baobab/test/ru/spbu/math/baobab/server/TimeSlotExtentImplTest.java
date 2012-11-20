@@ -26,9 +26,9 @@ public class TimeSlotExtentImplTest extends TestCase {
     TimeInstant start1 = new TimeInstant(13, 40);
     TimeInstant finish1 = new TimeInstant(15, 15);
     TimeSlotExtent timeSlotExtent = new TimeSlotExtentImpl();
-    TimeSlot ts1 = timeSlotExtent.create("1", "first double class", start, finish, 2, EvenOddWeek.ALL);
-    TimeSlot ts2 = timeSlotExtent.create("2", "second double class", start1, finish1, 2, EvenOddWeek.ALL);
-    TimeSlot ts3 = timeSlotExtent.create("3", "third double class", start1, finish1, 2, EvenOddWeek.ALL);
+    TimeSlot ts1 = timeSlotExtent.create("first double class", start, finish, 2, EvenOddWeek.ALL);
+    TimeSlot ts2 = timeSlotExtent.create("second double class", start1, finish1, 2, EvenOddWeek.ALL);
+    TimeSlot ts3 = timeSlotExtent.create("third double class", start1, finish1, 2, EvenOddWeek.ALL);
     Collection<TimeSlot> timeSlots = Lists.newArrayList();
     timeSlots.add(ts1);
     timeSlots.add(ts2);
@@ -40,20 +40,14 @@ public class TimeSlotExtentImplTest extends TestCase {
     TimeSlotExtent timeSlotExtent = new TimeSlotExtentImpl();
     TimeInstant start = new TimeInstant(9, 30);
     TimeInstant finish = new TimeInstant(11, 5);
-    timeSlotExtent.create("1", "first double class", start, finish, 2, EvenOddWeek.ALL);
+    timeSlotExtent.create("first double class", start, finish, 2, EvenOddWeek.ALL);
     TimeInstant start1 = new TimeInstant(13, 40);
     TimeInstant finish1 = new TimeInstant(15, 15);
     try {
-      timeSlotExtent.create("2", "first double class", start1, finish1, 5, EvenOddWeek.ODD);
+      timeSlotExtent.create("first double class", start1, finish1, 5, EvenOddWeek.ODD);
       fail("Expected IllegalArgumentException");
     } catch (IllegalStateException e) {
       // can't create with existing name
-    }
-    try {
-      timeSlotExtent.create("1", "second double class", start1, finish1, 5, EvenOddWeek.ODD);
-      fail("Expected IllegalArgumentException");
-    } catch (IllegalStateException e) {
-      // can't create with existing id
     }
   }
 
@@ -63,10 +57,10 @@ public class TimeSlotExtentImplTest extends TestCase {
     TimeInstant finish = new TimeInstant(11, 5);
     TimeInstant start1 = new TimeInstant(13, 40);
     TimeInstant finish1 = new TimeInstant(15, 15);
-    timeSlotExtent.create("1", "first double class", start, finish, 2, EvenOddWeek.ALL);
-    timeSlotExtent.create("2", "second double class", start, finish, 3, EvenOddWeek.ALL);
-    timeSlotExtent.create("3", "third double class", start1, finish1, 4, EvenOddWeek.ALL);
-    timeSlotExtent.create("4", "fourth double class", start, finish, 4, EvenOddWeek.ALL);
+    timeSlotExtent.create("first double class", start, finish, 2, EvenOddWeek.ALL);
+    timeSlotExtent.create("second double class", start, finish, 3, EvenOddWeek.ALL);
+    timeSlotExtent.create("third double class", start1, finish1, 4, EvenOddWeek.ALL);
+    timeSlotExtent.create("fourth double class", start, finish, 4, EvenOddWeek.ALL);
     List<TimeSlot> list = timeSlotExtent.findByWeekDay(4);
     assertEquals(list.get(0).getName(), "fourth double class");
     assertEquals(list.get(1).getName(), "third double class");
@@ -84,9 +78,9 @@ public class TimeSlotExtentImplTest extends TestCase {
     Date date1 = c.getTime();
     c.set(Calendar.WEEK_OF_YEAR, 3);
     Date date2 = c.getTime();
-    timeSlotExtent.create("1", "first double class", start1, finish1, 4, EvenOddWeek.ALL);
-    timeSlotExtent.create("2", "second double class", start, finish, 4, EvenOddWeek.EVEN);
-    timeSlotExtent.create("3", "third double class", start1, finish1, 4, EvenOddWeek.ODD);
+    timeSlotExtent.create("first double class", start1, finish1, 4, EvenOddWeek.ALL);
+    timeSlotExtent.create("second double class", start, finish, 4, EvenOddWeek.EVEN);
+    timeSlotExtent.create("third double class", start1, finish1, 4, EvenOddWeek.ODD);
     List<TimeSlot> list = timeSlotExtent.findByDate(date1);
     List<TimeSlot> list1 = timeSlotExtent.findByDate(date2);
     assertEquals(list, list1);
@@ -94,18 +88,5 @@ public class TimeSlotExtentImplTest extends TestCase {
     date1 = c.getTime();
     list1 = timeSlotExtent.findByDate(date1);
     assertFalse(list.equals(list1));
-  }
-
-  public void testFindById() {
-    TimeSlotExtent timeSlotExtent = new TimeSlotExtentImpl();
-    TimeInstant start = new TimeInstant(9, 30);
-    TimeInstant finish = new TimeInstant(11, 5);
-    TimeInstant start1 = new TimeInstant(13, 40);
-    TimeInstant finish1 = new TimeInstant(15, 15);
-    timeSlotExtent.create("1", "first double class", start, finish, 2, EvenOddWeek.ALL);
-    timeSlotExtent.create("2", "second double class", start, finish, 3, EvenOddWeek.ALL);
-    TimeSlot ts = timeSlotExtent.create("3", "third double class", start1, finish1, 4, EvenOddWeek.ALL);
-    timeSlotExtent.create("4", "fourth double class", start, finish, 4, EvenOddWeek.ALL);
-    assertEquals(timeSlotExtent.findById("3"), ts);
   }
 }

@@ -40,5 +40,5 @@ public interface TimeSlot {
   /**
    * @return time slot id
    */
-  String getID();
+  int getID();
 }
