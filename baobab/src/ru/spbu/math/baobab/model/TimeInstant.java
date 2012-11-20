@@ -32,7 +32,7 @@ public class TimeInstant {
   
   @Override
   public int hashCode() {
-    return com.google.common.base.Objects.hashCode(myHour, myMinute);
+    return Objects.hashCode(myHour, myMinute);
   }
 
   @Override
@@ -40,12 +40,10 @@ public class TimeInstant {
     if (this == obj) {
       return true;
     }
-    if (obj == null) {
+    if (obj instanceof TimeInstant == false) {
       return false;
     }
-    if (getClass() != obj.getClass()) {
-      return false;
-    }
+    
     TimeInstant other = (TimeInstant) obj;
     return Objects.equal(myHour, other.myHour)
         && Objects.equal(myMinute, other.myMinute);
