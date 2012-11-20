@@ -79,6 +79,15 @@
     <url-pattern>/_ah/test_schedule</url-pattern>
   </servlet-mapping>
   
+  <servlet>
+    <servlet-name>test_pdf_schedule</servlet-name>
+    <servlet-class>ru.spbu.math.baobab.server.SimpleSchedulePdfDemoServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>test_pdf_schedule</servlet-name>
+    <url-pattern>/_ah/test_pdf_schedule</url-pattern>
+  </servlet-mapping>
+  
   <!-- GWT -->
   <servlet>
     <servlet-name>greetServlet</servlet-name>
