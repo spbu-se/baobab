@@ -30,10 +30,13 @@ public class TimeSlotExtentSqlImplTest extends SqlTestCase {
 
     expectQuery("SELECT * FROM TimeSlot");
     expectInsert("INSERT INTO TimeSlot");
+    expectQuery("SELECT id FROM TimeSlot"); 
     expectQuery("SELECT * FROM TimeSlot");
     expectInsert("INSERT INTO TimeSlot");
+    expectQuery("SELECT id FROM TimeSlot");
     expectQuery("SELECT * FROM TimeSlot");
     expectInsert("INSERT INTO TimeSlot");
+    expectQuery("SELECT id FROM TimeSlot");
     TimeSlotExtent timeSlotExtentSql = new TimeSlotExtentSqlImpl();
     TimeSlot ts1 = timeSlotExtentSql.create("first double class", start, finish, 2, EvenOddWeek.ALL);
     TimeSlot ts2 = timeSlotExtentSql.create("second double class", start1, finish1, 2, EvenOddWeek.EVEN);
@@ -168,6 +171,11 @@ public class TimeSlotExtentSqlImplTest extends SqlTestCase {
         .withParameters(1, "first double class", 2, 2, 3, EvenOddWeek.ODD.ordinal(), 4, EvenOddWeek.ALL.ordinal());
     expectSql("INSERT TimeSlot name start_min finish_min day is_odd")
         .withParameters(1, "first double class", 2, start.getDayMinute(), 3, finish.getDayMinute(), 4, 2, 5, EvenOddWeek.ODD.ordinal());
+    expectSql("SELECT TimeSlot WHERE name day is_odd is_odd")
+    .withParameters(1, "first double class", 2, 2, 3, EvenOddWeek.ODD.ordinal(), 4, EvenOddWeek.ALL.ordinal())
+    .withResult(
+        row(1, 1)
+        );
     timeSlotExtent.create("first double class", start, finish, 2, EvenOddWeek.ODD);
 
     TimeInstant start1 = new TimeInstant(13, 40);

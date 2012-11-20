@@ -73,11 +73,10 @@ public class TimeSlotExtentImpl implements TimeSlotExtent {
       if (ts.getName().equals(name)) {
         throw new IllegalStateException("The TimeSlot with this name is already exist");
       }
-    }
-    TimeSlot timeslot = new TimeSlotImpl(name, start, finish, day, flashing, this);
+    }  
+    TimeSlot timeslot = new TimeSlotImpl(myTimeSlots.size()+1, name, start, finish, day, flashing, this);
     myTimeSlots.add(timeslot);
     return timeslot;
-
   }
 
   private static Comparator<TimeSlot> DATE_COMPARATOR = new Comparator<TimeSlot>() {

@@ -13,6 +13,7 @@ import ru.spbu.math.baobab.model.TimeSlotExtent;
  * @author dageev
  */
 public class TimeSlotImpl implements TimeSlot {
+  private final int myID;
   private final String myName;
   private final int myDay;
   private final EvenOddWeek myFlashing;
@@ -20,8 +21,9 @@ public class TimeSlotImpl implements TimeSlot {
   private final TimeInstant myFinish;
   private final TimeSlotExtent myTimeSlotExtent;
 
-  public TimeSlotImpl(String name, TimeInstant start, TimeInstant finish, int day, EvenOddWeek flashing,
+  public TimeSlotImpl(int id, String name, TimeInstant start, TimeInstant finish, int day, EvenOddWeek flashing,
       TimeSlotExtent timeslotextent) {
+    myID = id;
     myTimeSlotExtent = timeslotextent;
     myName = name;
     myDay = day;
@@ -75,11 +77,14 @@ public class TimeSlotImpl implements TimeSlot {
     }
 
     TimeSlotImpl other = (TimeSlotImpl) obj;
-    return Objects.equal(myDay, other.myDay)
-        && Objects.equal(myFinish, other.myFinish)
-        && Objects.equal(myFlashing, other.myFlashing)
-        && Objects.equal(myName, other.myName)
-        && Objects.equal(myStart, other.myStart)
-        && Objects.equal(myTimeSlotExtent, other.myTimeSlotExtent);
+    return Objects.equal(myDay, other.myDay) && Objects.equal(myFinish, other.myFinish)
+        && Objects.equal(myFlashing, other.myFlashing) && Objects.equal(myName, other.myName)
+        && Objects.equal(myStart, other.myStart);
+    // && Objects.equal(myTimeSlotExtent, other.myTimeSlotExtent);
+  }
+
+  @Override
+  public int getID() {
+    return myID;
   }
 }

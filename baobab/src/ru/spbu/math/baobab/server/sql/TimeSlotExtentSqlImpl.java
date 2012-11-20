@@ -26,6 +26,7 @@ public class TimeSlotExtentSqlImpl implements TimeSlotExtent {
 
   private void fetchTimeSlots(ResultSet rs, List<TimeSlot> timeSlots) throws SQLException {
     for (boolean hasRow = rs.next(); hasRow; hasRow = rs.next()) {
+      int id = rs.getInt("id");
       String name = rs.getString("name");
 
       Integer startInMinutes = rs.getInt("start_min");
@@ -38,7 +39,7 @@ public class TimeSlotExtentSqlImpl implements TimeSlotExtent {
 
       EvenOddWeek flashing = EvenOddWeek.values()[rs.getInt("is_odd")];
 
-      TimeSlot ts = new TimeSlotImpl(name, start, finish, day, flashing, this);
+      TimeSlot ts = new TimeSlotImpl(id, name, start, finish, day, flashing, this);
       timeSlots.add(ts);
     }
   }
@@ -138,7 +139,6 @@ public class TimeSlotExtentSqlImpl implements TimeSlotExtent {
 
       stmt = sqlApi.prepareScript("INSERT INTO TimeSlot SET name=?, start_min=?, finish_min=?, day=?, is_odd=?;")
           .get(0);
-
       stmt.setString(1, name);
       stmt.setInt(2, start.getHour() * 60 + start.getMinute());
       stmt.setInt(3, finish.getHour() * 60 + finish.getMinute());
@@ -146,8 +146,18 @@ public class TimeSlotExtentSqlImpl implements TimeSlotExtent {
       stmt.setInt(5, flashing.ordinal());
 
       stmt.execute();
-
-      TimeSlot ts = new TimeSlotImpl(name, start, finish, day, flashing, this);
+      stmt = sqlApi.prepareScript("SELECT id FROM TimeSlot WHERE name=? AND day=? AND (is_odd=? OR is_odd=?);").get(0);
+      stmt.setString(1, name);
+      stmt.setInt(2, day);
+      stmt.setInt(3, flashing.ordinal());
+      stmt.setInt(4, 0);
+      resultSet = stmt.executeQuery();
+      int id = -1;
+      for (boolean hasRow = resultSet.next(); hasRow; hasRow = resultSet.next()) {
+        id = resultSet.getInt(1);
+      }
+           
+      TimeSlot ts = new TimeSlotImpl(id, name, start, finish, day, flashing, this);
       return ts;
 
     } catch (SQLException e) {
