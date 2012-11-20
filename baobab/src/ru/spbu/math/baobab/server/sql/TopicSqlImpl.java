@@ -76,13 +76,15 @@ public class TopicSqlImpl implements Topic {
       }
 
       Event event = new EventSqlImpl(date, timeSlot, auditorium, this);
-      stmt = sqlApi.prepareScript("INSERT INTO Event SET date=?,  time_slot_id=?,  topic_id=?,  auditorium_num=?;")
+      stmt = sqlApi.prepareScript(
+          "INSERT INTO Event SET start_date=?,  finish_date=?,  time_slot_id=?,  topic_id=?,  auditorium_num=?;")
           .get(0);
       java.sql.Date sqlDate = new java.sql.Date(date.getTime());
       stmt.setDate(1, sqlDate);
-      stmt.setInt(2, timeSlotId);
-      stmt.setInt(3, topicId);
-      stmt.setString(4, "");
+      stmt.setDate(2, sqlDate);
+      stmt.setInt(3, timeSlotId);
+      stmt.setInt(4, topicId);
+      stmt.setString(5, "");
       stmt.execute();
 
       return event;
@@ -106,7 +108,8 @@ public class TopicSqlImpl implements Topic {
       List<PreparedStatement> stmts = sqlApi.prepareScript("SELECT * FROM Event");
       ResultSet rs = stmts.get(0).executeQuery();
       for (boolean hasRow = rs.next(); hasRow; hasRow = rs.next()) {
-        java.sql.Date sqlDate = rs.getDate("date");
+        java.sql.Date sqlDate = rs.getDate("start_date");
+        java.sql.Date sqlDate1 = rs.getDate("finish_date");
         Date date = new Date(sqlDate.getTime());
         int timeSlotId = rs.getInt("time_slot_id");
         int topicId = rs.getInt("topic_id");
@@ -201,6 +204,7 @@ public class TopicSqlImpl implements Topic {
       stmt.setString(1, num);
       ResultSet rs = stmt.executeQuery();
       for (boolean hasRow = rs.next(); hasRow; hasRow = rs.next()) {
+        String auditorium_num = rs.getString("num");
         int capacity = rs.getInt("capacity");
         // AuditoriumExtent audExtent = new AuditoriumExtentImpl();
         // auditorium = audExtent.create(auditorium_num, capacity);
