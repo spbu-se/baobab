@@ -1,9 +1,14 @@
 package ru.spbu.math.baobab.server.sql;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import org.junit.Test;
 
@@ -15,6 +20,8 @@ import ru.spbu.math.baobab.model.TimeSlot;
 import ru.spbu.math.baobab.model.TimeSlotExtent;
 import ru.spbu.math.baobab.model.Topic;
 import ru.spbu.math.baobab.model.TopicExtent;
+import ru.spbu.math.baobab.server.TimeSlotExtentImpl;
+import ru.spbu.math.baobab.server.TopicExtentImpl;
 
 /**
  * Tests for SQL-based implementation of Event
@@ -119,4 +126,44 @@ public class EventSqlImplTest extends SqlTestCase {
                 ));
     assertEquals(events, topic.getEvents());      
   }
+  
+  @Test
+  public void testAddAllEvents() {
+    TopicExtent topicExtent = new TopicExtentSqlImpl();
+    expectSql("SELECT Topic WHERE uid").withParameters(1, "CS101-2012");
+    expectSql("INSERT Topic uid name type").withParameters(1, "CS101-2012", 2,
+        "Computer Science introduction course in year 2012", 3, Type.LECTURE_COURSE.ordinal());
+    Topic topic = topicExtent.createTopic("CS101-2012", Type.LECTURE_COURSE,
+        "Computer Science introduction course in year 2012");
+
+    TimeSlotExtent timeSlotExtent = new TimeSlotExtentSqlImpl();
+    TimeInstant start = new TimeInstant(9, 30);
+    TimeInstant finish = new TimeInstant(11, 5);
+    expectSql("SELECT TimeSlot WHERE name day is_odd is_odd").withParameters(1, "first double class", 2, 2, 3,
+        EvenOddWeek.ODD.ordinal(), 4, EvenOddWeek.ALL.ordinal());
+    expectSql("INSERT TimeSlot name start_min finish_min day is_odd").withParameters(1, "first double class", 2,
+        start.getDayMinute(), 3, finish.getDayMinute(), 4, 2, 5, EvenOddWeek.ODD.ordinal());
+    expectSql("SELECT TimeSlot WHERE name day is_odd is_odd")
+    .withParameters(1, "first double class", 2, 2, 3, EvenOddWeek.ODD.ordinal(), 4, EvenOddWeek.ALL.ordinal())
+    .withResult(
+        row(1, 1)
+        );
+    TimeSlot ts = timeSlotExtent.create("first double class", start, finish, 2, EvenOddWeek.ODD);
+
+    Calendar cal = Calendar.getInstance(new Locale("ru", "RU"));
+    cal.set(2012, Calendar.NOVEMBER, 11);
+    Date startDate = cal.getTime();
+    cal.set(2012, Calendar.DECEMBER, 3);
+    Date finishDate = cal.getTime();
+    expectInsert("INSERT INTO Event");
+    expectInsert("INSERT INTO Event");
+
+    Collection<Event> events = topic.addAllEvents(startDate, finishDate, ts, null);
+    assertEquals(events.size(), 2);
+    
+    for (Event event : events) {
+      assertTrue(event.getStartDate().after(startDate));
+      assertTrue(event.getStartDate().before(finishDate));
+    }
+  } 
 }
