@@ -59,32 +59,16 @@ public class TopicSqlImpl implements Topic {
   public Event addEvent(Date date, TimeSlot timeSlot, @Nullable Auditorium auditorium) {
     SqlApi sqlApi = SqlApi.create();
     try {
-      PreparedStatement stmt = sqlApi.prepareScript("SELECT * FROM TimeSlot WHERE name=?").get(0);
-      stmt.setString(2, timeSlot.getName());
-      ResultSet rs = stmt.executeQuery();
-      int timeSlotId = 100;
-      for (boolean hasRow = rs.next(); hasRow; hasRow = rs.next()) {
-        timeSlotId = rs.getInt("id");
-      }
-
-      stmt = sqlApi.prepareScript("SELECT FROM Topic WHERE uid=?;").get(0);
-      stmt.setString(2, this.getID());
-      rs = stmt.executeQuery();
-      int topicId = 100;
-      for (boolean hasRow = rs.next(); hasRow; hasRow = rs.next()) {
-        topicId = rs.getInt("id");
-      }
-
-      Event event = new EventSqlImpl(date, timeSlot, auditorium, this);
-      stmt = sqlApi.prepareScript("INSERT INTO Event SET date=?,  time_slot_id=?,  topic_id=?,  auditorium_num=?;")
-          .get(0);
+      PreparedStatement stmt = sqlApi.prepareScript(
+          "INSERT INTO Event SET date=?,  time_slot_id=?,  topic_id=?,  auditorium_num=?;").get(0);
       java.sql.Date sqlDate = new java.sql.Date(date.getTime());
       stmt.setDate(1, sqlDate);
-      stmt.setInt(2, timeSlotId);
-      stmt.setInt(3, topicId);
-      stmt.setString(4, "");
+      stmt.setInt(2, timeSlot.getID());
+      stmt.setString(3, this.getID());
+      // stmt.setString(4, auditorium.getID());
       stmt.execute();
 
+      Event event = new EventSqlImpl(date, timeSlot, auditorium, this);
       return event;
     } catch (SQLException e) {
     } finally {
@@ -103,19 +87,12 @@ public class TopicSqlImpl implements Topic {
     List<Event> events = Lists.newArrayList();
     SqlApi sqlApi = SqlApi.create();
     try {
-      List<PreparedStatement> stmts = sqlApi.prepareScript("SELECT * FROM Event");
-      ResultSet rs = stmts.get(0).executeQuery();
-      for (boolean hasRow = rs.next(); hasRow; hasRow = rs.next()) {
-        java.sql.Date sqlDate = rs.getDate("date");
-        Date date = new Date(sqlDate.getTime());
-        int timeSlotId = rs.getInt("time_slot_id");
-        int topicId = rs.getInt("topic_id");
-        String auditorium_num = rs.getString("auditorium_num");
-        Event event = new EventSqlImpl(date, fetchTimeSlot(timeSlotId), fetchAuditorium(auditorium_num),
-            fetchTopic(topicId));
-        events.add(event);
-      }
-
+      List<PreparedStatement> stmts = sqlApi.prepareScript("SELECT * FROM Event WHERE topic_id=?" +
+        "INNER JOIN TimeSlot ON (Event.timeslot_id = TimeSlot.id)" +
+        "INNER JOIN Topic ON (Event.topic_id = Topic.uid);");
+      stmts.get(0).setString(1, this.getID());
+      ResultSet rs = stmts.get(0).executeQuery();    
+      fetchEvents(rs, events);
       return events;
     } catch (SQLException e) {
       e.printStackTrace();
@@ -167,13 +144,11 @@ public class TopicSqlImpl implements Topic {
         && Objects.equal(myName, other.myName);
   }
 
-  private TimeSlot fetchTimeSlot(int timeslot_id) throws SQLException {
+  private void fetchEvents(ResultSet rs, List<Event> events) throws SQLException {
     SqlApi sqlApi = SqlApi.create();
     try {
-      PreparedStatement stmt = sqlApi.prepareScript("SELECT * FROM TimeSlot WHERE id=?").get(0);
-      stmt.setInt(1, timeslot_id);
-      ResultSet rs = stmt.executeQuery();
       for (boolean hasRow = rs.next(); hasRow; hasRow = rs.next()) {
+        Date date = new Date(rs.getDate("date").getTime());
         String name = rs.getString("name");
         Integer startInMinutes = rs.getInt("start_min");
         TimeInstant start = new TimeInstant(startInMinutes / 60, startInMinutes % 60);
@@ -183,53 +158,17 @@ public class TopicSqlImpl implements Topic {
         EvenOddWeek flashing = EvenOddWeek.values()[rs.getInt("is_odd")];
         TimeSlotExtent tsExtent = new TimeSlotExtentImpl();
         TimeSlot ts = tsExtent.create(name, start, finish, day, flashing);
-        return ts;
+        //String num = rs.getString("auditorium_num");
+        //int capacity = rs.getInt("capacity");
+        // AuditoriumExtent audExtent = new AuditoriumExtentImpl();
+        // auditorium = audExtent.create(num, capacity);
+        Event event = new EventSqlImpl(date, ts, null, this);
+        events.add(event);   
       }
     } catch (SQLException e) {
       e.printStackTrace();
     } finally {
       sqlApi.dispose();
     }
-    return null;
-  }
-
-  private Auditorium fetchAuditorium(String num) throws SQLException {
-
-    SqlApi sqlApi = SqlApi.create();
-    try {
-      PreparedStatement stmt = sqlApi.prepareScript("SELECT * FROM Auditorium WHERE num=?").get(0);
-      stmt.setString(1, num);
-      ResultSet rs = stmt.executeQuery();
-      for (boolean hasRow = rs.next(); hasRow; hasRow = rs.next()) {
-        int capacity = rs.getInt("capacity");
-        // AuditoriumExtent audExtent = new AuditoriumExtentImpl();
-        // auditorium = audExtent.create(auditorium_num, capacity);
-        // return auditorium;
-      }
-    } catch (SQLException e) {
-    } finally {
-      sqlApi.dispose();
-    }
-    return null;
-  }
-
-  private Topic fetchTopic(int topic_id) throws SQLException {
-    SqlApi sqlApi = SqlApi.create();
-    try {
-      PreparedStatement stmt = sqlApi.prepareScript("SELECT * FROM Topic WHERE id=?").get(0);
-      stmt.setInt(1, topic_id);
-      ResultSet rs = stmt.executeQuery();
-      for (boolean hasRow = rs.next(); hasRow; hasRow = rs.next()) {
-        String id = rs.getString("uid");
-        Type type = Type.values()[rs.getInt("type")];
-        String name = rs.getString("name");
-        Topic topic = new TopicSqlImpl(id, type, name);
-        return topic;
-      }
-    } catch (SQLException e) {
-    } finally {
-      sqlApi.dispose();
-    }
-    return null;
   }
 }

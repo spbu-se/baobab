@@ -26,8 +26,9 @@ public class TimeSlotExtentSqlImpl implements TimeSlotExtent {
 
   private void fetchTimeSlots(ResultSet rs, List<TimeSlot> timeSlots) throws SQLException {
     for (boolean hasRow = rs.next(); hasRow; hasRow = rs.next()) {
-      String id = rs.getString("id");
+      int id = rs.getInt("id");
       String name = rs.getString("name");
+
       Integer startInMinutes = rs.getInt("start_min");
       TimeInstant start = new TimeInstant(startInMinutes / 60, startInMinutes % 60);
 
@@ -116,7 +117,7 @@ public class TimeSlotExtentSqlImpl implements TimeSlotExtent {
   }
 
   @Override
-  public TimeSlot create(String id, String name, TimeInstant start, TimeInstant finish, int day, EvenOddWeek flashing) {
+  public TimeSlot create(String name, TimeInstant start, TimeInstant finish, int day, EvenOddWeek flashing) {
     SqlApi sqlApi = SqlApi.create();
 
     try {
@@ -135,65 +136,30 @@ public class TimeSlotExtentSqlImpl implements TimeSlotExtent {
       if (rowCount > 0) {
         throw new IllegalStateException("The TimeSlot with this name is already exists");
       }
-      stmt = sqlApi.prepareScript("SELECT * FROM TimeSlot WHERE id=?;").get(0);
-      stmt.setString(1, id);
-      rowCount = 0;
-      resultSet = stmt.executeQuery();
-      for (boolean hasRow = resultSet.next(); hasRow; hasRow = resultSet.next()) {
-        rowCount++;
-      }
 
-      if (rowCount > 0) {
-        throw new IllegalStateException("The TimeSlot with this id is already exists");
-      }
-
-      stmt = sqlApi.prepareScript("INSERT INTO TimeSlot SET id=?, name=?, start_min=?, finish_min=?, day=?, is_odd=?;")
+      stmt = sqlApi.prepareScript("INSERT INTO TimeSlot SET name=?, start_min=?, finish_min=?, day=?, is_odd=?;")
           .get(0);
-
-      stmt.setString(1, id);
-      stmt.setString(2, name);
-      stmt.setInt(3, start.getHour() * 60 + start.getMinute());
-      stmt.setInt(4, finish.getHour() * 60 + finish.getMinute());
-      stmt.setInt(5, day);
-      stmt.setInt(6, flashing.ordinal());
+      stmt.setString(1, name);
+      stmt.setInt(2, start.getHour() * 60 + start.getMinute());
+      stmt.setInt(3, finish.getHour() * 60 + finish.getMinute());
+      stmt.setInt(4, day);
+      stmt.setInt(5, flashing.ordinal());
 
       stmt.execute();
-
+      stmt = sqlApi.prepareScript("SELECT id FROM TimeSlot WHERE name=? AND day=? AND (is_odd=? OR is_odd=?);").get(0);
+      stmt.setString(1, name);
+      stmt.setInt(2, day);
+      stmt.setInt(3, flashing.ordinal());
+      stmt.setInt(4, 0);
+      resultSet = stmt.executeQuery();
+      int id = -1;
+      for (boolean hasRow = resultSet.next(); hasRow; hasRow = resultSet.next()) {
+        id = resultSet.getInt(1);
+      }
+           
       TimeSlot ts = new TimeSlotImpl(id, name, start, finish, day, flashing, this);
       return ts;
 
-    } catch (SQLException e) {
-      e.printStackTrace();
-    } finally {
-      sqlApi.dispose();
-    }
-
-    return null;
-  }
-
-  @Override
-  public TimeSlot findById(String id) {
-    SqlApi sqlApi = SqlApi.create();
-    try {
-      PreparedStatement stmt = sqlApi.prepareScript("SELECT * FROM TimeSlot WHERE id=?;").get(0);
-      stmt.setString(1, id);
-      ResultSet rs = stmt.executeQuery();
-      for (boolean hasRow = rs.next(); hasRow; hasRow = rs.next()) {
-        String name = rs.getString("name");
-
-        Integer startInMinutes = rs.getInt("start_min");
-        TimeInstant start = new TimeInstant(startInMinutes / 60, startInMinutes % 60);
-
-        Integer finishInMinutes = rs.getInt("finish_min");
-        TimeInstant finish = new TimeInstant(finishInMinutes / 60, finishInMinutes % 60);
-
-        Integer day = rs.getInt("day");
-
-        EvenOddWeek flashing = EvenOddWeek.values()[rs.getInt("is_odd")];
-
-        TimeSlot ts = new TimeSlotImpl(id, name, start, finish, day, flashing, this);
-        return ts;
-      }
     } catch (SQLException e) {
       e.printStackTrace();
     } finally {

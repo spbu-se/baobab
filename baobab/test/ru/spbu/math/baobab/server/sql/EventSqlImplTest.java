@@ -39,19 +39,19 @@ public class EventSqlImplTest extends SqlTestCase {
         EvenOddWeek.ODD.ordinal(), 4, EvenOddWeek.ALL.ordinal());
     expectSql("INSERT TimeSlot name start_min finish_min day is_odd").withParameters(1, "first double class", 2,
         start.getDayMinute(), 3, finish.getDayMinute(), 4, 2, 5, EvenOddWeek.ODD.ordinal());
+    expectSql("SELECT TimeSlot WHERE name day is_odd is_odd")
+    .withParameters(1, "first double class", 2, 2, 3, EvenOddWeek.ODD.ordinal(), 4, EvenOddWeek.ALL.ordinal())
+    .withResult(
+        row(1, 1)
+        );
     TimeSlot ts1 = timeSlotExtent.create("first double class", start, finish, 2, EvenOddWeek.ODD);
 
     Calendar cal = Calendar.getInstance();
     Date date = cal.getTime();
-
-    expectSql("SELECT FROM TimeSlot WHERE name").withParameters(2, ts1.getName()).withResult(
-        row("id", 0, "name", ts1.getName(), "start_min", start.getDayMinute(), "finish_min", finish.getDayMinute(),
-            "day", 2, "is_odd", EvenOddWeek.ODD.ordinal()));
-
-    expectSql("SELECT FROM Topic WHERE uid").withParameters(2, topic.getID()).withResult(
-        row("id", 0, "uid", topic.getID(), "name", topic.getName(), "type", Type.LECTURE_COURSE.ordinal()));
-    expectInsert("INSERT INTO Event date time_slot_id topic_id auditorium_num");
-
+    java.sql.Date sqlDate = new java.sql.Date(date.getTime());
+     
+    expectSql("INSERT Event SET date time_slot_id topic_id auditorium_num").withParameters(1, sqlDate , 2,
+        ts1.getID(), 3, topic.getID()); //4, null);
     Event event = topic.addEvent(date, ts1, null);
     Event event1 = new EventSqlImpl(date, ts1, null, topic);
     assertEquals(event, event1);
@@ -73,61 +73,50 @@ public class EventSqlImplTest extends SqlTestCase {
         EvenOddWeek.ODD.ordinal(), 4, EvenOddWeek.ALL.ordinal());
     expectSql("INSERT TimeSlot name start_min finish_min day is_odd").withParameters(1, "first double class", 2,
         start.getDayMinute(), 3, finish.getDayMinute(), 4, 2, 5, EvenOddWeek.ODD.ordinal());
+    expectSql("SELECT TimeSlot WHERE name day is_odd is_odd")
+    .withParameters(1, "first double class", 2, 2, 3, EvenOddWeek.ODD.ordinal(), 4, EvenOddWeek.ALL.ordinal())
+    .withResult(
+        row(1, 1)
+        );
     TimeSlot ts1 = timeSlotExtent.create("first double class", start, finish, 2, EvenOddWeek.ODD);
 
     Calendar cal = Calendar.getInstance();
     cal.set(Calendar.DAY_OF_WEEK, 3);
     Date date = cal.getTime();
-
-    expectSql("SELECT FROM TimeSlot WHERE name").withParameters(2, ts1.getName()).withResult(
-        row("id", 0, "name", ts1.getName(), "start_min", start.getDayMinute(), "finish_min", finish.getDayMinute(),
-            "day", 2, "is_odd", EvenOddWeek.ODD.ordinal()));
-
-    expectSql("SELECT FROM Topic WHERE uid").withParameters(2, topic.getID()).withResult(
-        row("id", 0, "uid", topic.getID(), "name", topic.getName(), "type", Type.LECTURE_COURSE.ordinal()));
-    expectInsert("INSERT INTO date time_slot_id topic_id auditorium_num");
-    Event eventFromDb1 = topic.addEvent(date, ts1, null);
-
-    expectSql("SELECT FROM TimeSlot WHERE name").withParameters(2, ts1.getName()).withResult(
-        row("id", 0, "name", ts1.getName(), "start_min", start.getDayMinute(), "finish_min", finish.getDayMinute(),
-            "day", 2, "is_odd", EvenOddWeek.ODD.ordinal()));
-
-    expectSql("SELECT FROM Topic WHERE uid").withParameters(2, topic.getID()).withResult(
-        row("id", 0, "uid", topic.getID(), "name", topic.getName(), "type", Type.LECTURE_COURSE.ordinal()));
-    expectInsert("INSERT INTO Event date time_slot_id topic_id auditorium_num");
-
-    cal.set(Calendar.DAY_OF_WEEK, 4);
+    java.sql.Date sqlDate = new java.sql.Date(date.getTime());
+     
+    expectSql("INSERT Event SET date time_slot_id topic_id auditorium_num").withParameters(1, sqlDate , 2,
+        ts1.getID(), 3, topic.getID()); //4, null);
+    topic.addEvent(date, ts1, null);
+    
+    cal.set(Calendar.DAY_OF_WEEK, 5);
     Date date1 = cal.getTime();
-    Event eventFromDb2 = topic.addEvent(date1, ts1, null);
-
+    java.sql.Date sqlDate1 = new java.sql.Date(date1.getTime());
+     
+    expectSql("INSERT Event SET date time_slot_id topic_id auditorium_num").withParameters(1, sqlDate1 , 2,
+        ts1.getID(), 3, topic.getID()); //4, null);
+    topic.addEvent(date1, ts1, null);
     Event event = new EventSqlImpl(date, ts1, null, topic);
     Event event1 = new EventSqlImpl(date1, ts1, null, topic);
     List<Event> events = Arrays.asList(event, event1);
-    java.sql.Date sqlDate1 = new java.sql.Date(eventFromDb1.getStartDate().getTime());
-    java.sql.Date sqlDate2 = new java.sql.Date(eventFromDb2.getStartDate().getTime());
-
-    expectQuery("SELECT * FROM Event", row("date", sqlDate1, "time_slot_id", 0, "topic_id", 0, "auditorium_num", ""),
-        row("date", sqlDate2, "time_slot_id", 0, "topic_id", 0, "auditorium_num", ""));
-
-    expectSql("SELECT FROM TimeSlot WHERE id").withParameters(1, 0).withResult(
-        row("name", ts1.getName(), "start_min", ts1.getStart().getDayMinute(), "finish_min", ts1.getFinish()
-            .getDayMinute(), "day", ts1.getDayOfWeek(), "is_odd", EvenOddWeek.ODD.ordinal()));
-
-    expectSql("SELECT FROM Auditorium WHERE num").withParameters(1, "").withResult(row("num", "", "capacity", 15));
-
-    expectSql("SELECT FROM Topic WHERE id").withParameters(1, 0).withResult(
-        row("uid", topic.getID(), "name", topic.getName(), "type", Type.LECTURE_COURSE.ordinal()));
-
-    expectSql("SELECT FROM TimeSlot WHERE id").withParameters(1, 0).withResult(
-        row("name", ts1.getName(), "start_min", start.getDayMinute(), "finish_min", finish.getDayMinute(), "day", 2,
-            "is_odd", EvenOddWeek.ODD.ordinal()));
-    
-    expectSql("SELECT FROM Auditorium WHERE num").withParameters(1, "").withResult(row("num", "", "capacity", 15));
-    
-    expectSql("SELECT FROM Topic WHERE id").withParameters(1, 0).withResult(
-        row("uid", topic.getID(), "name", topic.getName(), "type", Type.LECTURE_COURSE.ordinal()));
-
-    List<Event> eventsFromDb = (List<Event>) topic.getEvents();
-    assertEquals(events, eventsFromDb);
+    expectSql("SELECT Event WHERE topic_id")
+    .withParameters(1, topic.getID())
+    .withResult(row(
+                 "date", sqlDate,
+                 "name", ts1.getName(),
+                 "start_min", ts1.getStart().getDayMinute(),
+                 "finish_min", ts1.getFinish().getDayMinute(),
+                 "day", ts1.getDayOfWeek(),
+                 "is_odd", ts1.getEvenOddWeek().ordinal()
+               ),
+               row(
+                 "date", sqlDate1,
+                 "name", ts1.getName(),
+                 "start_min", ts1.getStart().getDayMinute(),
+                 "finish_min", ts1.getFinish().getDayMinute(),
+                 "day", ts1.getDayOfWeek(),
+                 "is_odd", ts1.getEvenOddWeek().ordinal()                
+                ));
+    assertEquals(events, topic.getEvents());      
   }
 }

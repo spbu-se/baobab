@@ -68,19 +68,15 @@ public class TimeSlotExtentImpl implements TimeSlotExtent {
   }
 
   @Override
-  public TimeSlot create(String id, String name, TimeInstant start, TimeInstant finish, int day, EvenOddWeek flashing) {
+  public TimeSlot create(String name, TimeInstant start, TimeInstant finish, int day, EvenOddWeek flashing) {
     for (TimeSlot ts : myTimeSlots) {
       if (ts.getName().equals(name)) {
         throw new IllegalStateException("The TimeSlot with this name is already exist");
       }
-      if (ts.getID().equals(id)) {
-        throw new IllegalStateException("The TimeSlot with this ID is already exist");
-      }
-    }
-    TimeSlot timeslot = new TimeSlotImpl(id, name, start, finish, day, flashing, this);
+    }  
+    TimeSlot timeslot = new TimeSlotImpl(myTimeSlots.size()+1, name, start, finish, day, flashing, this);
     myTimeSlots.add(timeslot);
     return timeslot;
-
   }
 
   private static Comparator<TimeSlot> DATE_COMPARATOR = new Comparator<TimeSlot>() {
@@ -93,14 +89,4 @@ public class TimeSlotExtentImpl implements TimeSlotExtent {
       return (val1 - val2);
     }
   };
-
-  @Override
-  public TimeSlot findById(String id) {
-    for (TimeSlot ts : myTimeSlots) {
-      if (ts.getID().equals(id)) {
-        return ts;
-      }
-    }
-    return null;
-  }
 }
