@@ -15,6 +15,7 @@ import ru.spbu.math.baobab.model.TimeInstant;
 import ru.spbu.math.baobab.model.TimeSlot;
 import ru.spbu.math.baobab.model.TimeSlotExtent;
 import ru.spbu.math.baobab.model.Topic;
+import ru.spbu.math.baobab.model.TimeSlot.Utils;
 import ru.spbu.math.baobab.server.TimeSlotExtentImpl;
 
 import java.sql.PreparedStatement;
@@ -79,7 +80,14 @@ public class TopicSqlImpl implements Topic {
 
   @Override
   public Collection<Event> addAllEvents(Date start, Date finish, TimeSlot timeSlot, Auditorium auditorium) {
-    return null;
+    Collection<Event> events = Lists.newArrayList();
+
+    for (Date date : Utils.getFilteredRangeOfDates(Utils.datesRange(start, finish), timeSlot)) {
+      Event event = addEvent(date, timeSlot, auditorium);
+      events.add(event);
+    }
+
+    return events;
   }
 
   @Override
