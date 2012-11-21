@@ -17,6 +17,7 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
+import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPCell;
@@ -34,7 +35,7 @@ public abstract class SimpleSchedulePdfServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     resp.setContentType("application/pdf");
-    Document document = new Document();
+    Document document = new Document(PageSize.A0);
 
     try {
       PdfWriter.getInstance(document, resp.getOutputStream());
@@ -50,8 +51,6 @@ public abstract class SimpleSchedulePdfServlet extends HttpServlet {
       int tableWidth = (rows.size() > 1) ? rows.get(0).getCells().size() : 1;
 
       PdfPTable table = new PdfPTable(tableWidth);
-      table.setTotalWidth(480);
-      table.setLockedWidth(true);
 
       for (TableRow row : rows) {
         for (TableCell cell : row.getCells()) {
