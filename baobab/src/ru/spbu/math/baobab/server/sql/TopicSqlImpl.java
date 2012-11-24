@@ -9,20 +9,17 @@ import com.google.common.collect.Lists;
 
 import ru.spbu.math.baobab.model.Attendee;
 import ru.spbu.math.baobab.model.Auditorium;
-import ru.spbu.math.baobab.model.EvenOddWeek;
+import ru.spbu.math.baobab.model.AuditoriumExtent;
 import ru.spbu.math.baobab.model.Event;
-import ru.spbu.math.baobab.model.TimeInstant;
 import ru.spbu.math.baobab.model.TimeSlot;
 import ru.spbu.math.baobab.model.TimeSlotExtent;
 import ru.spbu.math.baobab.model.Topic;
 import ru.spbu.math.baobab.model.TimeSlot.Utils;
-import ru.spbu.math.baobab.server.TimeSlotExtentImpl;
+import ru.spbu.math.baobab.server.EventImpl;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
-import javax.annotation.Nullable;
 
 /**
  * SQL-based implementation of Topic
@@ -34,11 +31,15 @@ public class TopicSqlImpl implements Topic {
   private final String myId;
   private final Type myType;
   private final String myName;
+  private final TimeSlotExtent myTimeSlotExtent;
+  private final AuditoriumExtent myAuditoriumExtent;
 
-  public TopicSqlImpl(String id, Type type, String name) {
+  public TopicSqlImpl(String id, Type type, String name, TimeSlotExtent tsExtent, AuditoriumExtent auditExtent) {
     myId = id;
     myType = type;
     myName = name;
+    myTimeSlotExtent = tsExtent;
+    myAuditoriumExtent = auditExtent;
   }
 
   @Override
@@ -57,7 +58,7 @@ public class TopicSqlImpl implements Topic {
   }
 
   @Override
-  public Event addEvent(Date date, TimeSlot timeSlot, @Nullable Auditorium auditorium) {
+  public Event addEvent(Date date, TimeSlot timeSlot, Auditorium auditorium) {
     SqlApi sqlApi = SqlApi.create();
     try {
       PreparedStatement stmt = sqlApi.prepareScript(
@@ -66,10 +67,10 @@ public class TopicSqlImpl implements Topic {
       stmt.setDate(1, sqlDate);
       stmt.setInt(2, timeSlot.getID());
       stmt.setString(3, this.getID());
-      // stmt.setString(4, auditorium.getID());
+      stmt.setString(4, auditorium.getID());
       stmt.execute();
 
-      Event event = new EventSqlImpl(date, timeSlot, auditorium, this);
+      Event event = new EventImpl(date, timeSlot, auditorium, this);
       return event;
     } catch (SQLException e) {
     } finally {
@@ -95,11 +96,9 @@ public class TopicSqlImpl implements Topic {
     List<Event> events = Lists.newArrayList();
     SqlApi sqlApi = SqlApi.create();
     try {
-      List<PreparedStatement> stmts = sqlApi.prepareScript("SELECT * FROM Event WHERE topic_id=?" +
-        "INNER JOIN TimeSlot ON (Event.timeslot_id = TimeSlot.id)" +
-        "INNER JOIN Topic ON (Event.topic_id = Topic.uid);");
+      List<PreparedStatement> stmts = sqlApi.prepareScript("SELECT * FROM Event WHERE topic_id=?");
       stmts.get(0).setString(1, this.getID());
-      ResultSet rs = stmts.get(0).executeQuery();    
+      ResultSet rs = stmts.get(0).executeQuery();
       fetchEvents(rs, events);
       return events;
     } catch (SQLException e) {
@@ -148,7 +147,8 @@ public class TopicSqlImpl implements Topic {
     }
 
     TopicSqlImpl other = (TopicSqlImpl) obj;
-    return Objects.equal(myId, other.myId) && Objects.equal(myType, other.myType)
+    return Objects.equal(myId, other.myId)
+        && Objects.equal(myType, other.myType)
         && Objects.equal(myName, other.myName);
   }
 
@@ -157,21 +157,10 @@ public class TopicSqlImpl implements Topic {
     try {
       for (boolean hasRow = rs.next(); hasRow; hasRow = rs.next()) {
         Date date = new Date(rs.getDate("date").getTime());
-        String name = rs.getString("name");
-        Integer startInMinutes = rs.getInt("start_min");
-        TimeInstant start = new TimeInstant(startInMinutes / 60, startInMinutes % 60);
-        Integer finishInMinutes = rs.getInt("finish_min");
-        TimeInstant finish = new TimeInstant(finishInMinutes / 60, finishInMinutes % 60);
-        Integer day = rs.getInt("day");
-        EvenOddWeek flashing = EvenOddWeek.values()[rs.getInt("is_odd")];
-        TimeSlotExtent tsExtent = new TimeSlotExtentImpl();
-        TimeSlot ts = tsExtent.create(name, start, finish, day, flashing);
-        //String num = rs.getString("auditorium_num");
-        //int capacity = rs.getInt("capacity");
-        // AuditoriumExtent audExtent = new AuditoriumExtentImpl();
-        // auditorium = audExtent.create(num, capacity);
-        Event event = new EventSqlImpl(date, ts, null, this);
-        events.add(event);   
+        TimeSlot ts = myTimeSlotExtent.findById(rs.getInt("timeslot_id"));
+        Auditorium auditorium = myAuditoriumExtent.find(rs.getString("auditorium_num"));
+        Event event = new EventImpl(date, ts, auditorium, this);
+        events.add(event);
       }
     } catch (SQLException e) {
       e.printStackTrace();

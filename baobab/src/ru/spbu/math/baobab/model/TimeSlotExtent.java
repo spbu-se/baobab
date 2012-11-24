@@ -46,4 +46,11 @@ public interface TimeSlotExtent {
    * @return newly created time slot
    */
   TimeSlot create(String name, TimeInstant start, TimeInstant finish, int day, EvenOddWeek flashing);
+  
+  /**
+   * Finds time slot by its ID
+   * @param id id
+   * @return found time slot or {@code null} if no time slot with such ID exists
+   */
+  TimeSlot findById(int id);
 }
