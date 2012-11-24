@@ -30,13 +30,25 @@ public class TimeSlotExtentSqlImplTest extends SqlTestCase {
 
     expectQuery("SELECT * FROM TimeSlot");
     expectInsert("INSERT INTO TimeSlot");
-    expectQuery("SELECT id FROM TimeSlot"); 
+    expectSql("SELECT TimeSlot WHERE name day is_odd")
+    .withParameters(1, "first double class", 2, 2, 3, EvenOddWeek.ALL.ordinal())
+    .withResult(
+        row(1, 1)
+        );
     expectQuery("SELECT * FROM TimeSlot");
     expectInsert("INSERT INTO TimeSlot");
-    expectQuery("SELECT id FROM TimeSlot");
+    expectSql("SELECT TimeSlot WHERE name day is_odd")
+    .withParameters(1, "second double class", 2, 2, 3, EvenOddWeek.EVEN.ordinal())
+    .withResult(
+        row(1, 2)
+        );
     expectQuery("SELECT * FROM TimeSlot");
     expectInsert("INSERT INTO TimeSlot");
-    expectQuery("SELECT id FROM TimeSlot");
+    expectSql("SELECT TimeSlot WHERE name day is_odd")
+    .withParameters(1, "third double class", 2, 2, 3, EvenOddWeek.ODD.ordinal())
+    .withResult(
+        row(1, 3)
+        );
     TimeSlotExtent timeSlotExtentSql = new TimeSlotExtentSqlImpl();
     TimeSlot ts1 = timeSlotExtentSql.create("first double class", start, finish, 2, EvenOddWeek.ALL);
     TimeSlot ts2 = timeSlotExtentSql.create("second double class", start1, finish1, 2, EvenOddWeek.EVEN);
@@ -171,7 +183,7 @@ public class TimeSlotExtentSqlImplTest extends SqlTestCase {
         .withParameters(1, "first double class", 2, 2, 3, EvenOddWeek.ODD.ordinal(), 4, EvenOddWeek.ALL.ordinal());
     expectSql("INSERT TimeSlot name start_min finish_min day is_odd")
         .withParameters(1, "first double class", 2, start.getDayMinute(), 3, finish.getDayMinute(), 4, 2, 5, EvenOddWeek.ODD.ordinal());
-    expectSql("SELECT TimeSlot WHERE name day is_odd is_odd")
+    expectSql("SELECT TimeSlot WHERE name day is_odd")
     .withParameters(1, "first double class", 2, 2, 3, EvenOddWeek.ODD.ordinal(), 4, EvenOddWeek.ALL.ordinal())
     .withResult(
         row(1, 1)
@@ -195,5 +207,26 @@ public class TimeSlotExtentSqlImplTest extends SqlTestCase {
     } catch (IllegalStateException e) {
       // can't create with existing name
     }
+  }
+  
+  @Test
+  public void testFindId() throws SQLException {
+    TimeSlotExtent timeSlotExtent = new TimeSlotExtentSqlImpl();
+
+    TimeInstant start = new TimeInstant(9, 30);
+    TimeInstant finish = new TimeInstant(11, 5);
+    TimeInstant start1 = new TimeInstant(13, 40);
+    TimeInstant finish1 = new TimeInstant(15, 15);
+
+    expectSql("SELECT TimeSlot WHERE id")
+        .withParameters(1, 1)
+        .withResult(
+            row("name", "fourth double class", 
+                "start_min", start.getDayMinute(), 
+                "finish_min", finish.getDayMinute(), 
+                "day", 4, 
+                "is_odd", EvenOddWeek.ALL.ordinal()));
+    TimeSlot ts = timeSlotExtent.findById(1);
+    assertEquals("fourth double class", ts.getName());
   }
 }

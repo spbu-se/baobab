@@ -49,7 +49,7 @@ public interface Topic {
    * @param auditorium auditorium where event will take place
    * @return new event instance
    */
-  Event addEvent(Date date, TimeSlot timeSlot, @Nullable Auditorium auditorium);
+  Event addEvent(Date date, TimeSlot timeSlot, Auditorium auditorium);
   
   /**
    * Creates a series of events in the specified date interval, whenever time slot is
@@ -61,7 +61,7 @@ public interface Topic {
    * @param auditorium auditorium where events will take place
    * @return a collection of created events
    */
-  Collection<Event> addAllEvents(Date start, Date finish, TimeSlot timeSlot, @Nullable Auditorium auditorium);
+  Collection<Event> addAllEvents(Date start, Date finish, TimeSlot timeSlot, Auditorium auditorium);
   
   /**
    * @return all events when this topic takes place

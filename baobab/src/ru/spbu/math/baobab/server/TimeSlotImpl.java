@@ -75,12 +75,14 @@ public class TimeSlotImpl implements TimeSlot {
     if (obj instanceof TimeSlotImpl == false) {
       return false;
     }
-
+    // we ignore ID because we actually want compare data fields here rather than IDs
     TimeSlotImpl other = (TimeSlotImpl) obj;
-    return Objects.equal(myDay, other.myDay) && Objects.equal(myFinish, other.myFinish)
-        && Objects.equal(myFlashing, other.myFlashing) && Objects.equal(myName, other.myName)
-        && Objects.equal(myStart, other.myStart);
-    // && Objects.equal(myTimeSlotExtent, other.myTimeSlotExtent);
+    return Objects.equal(myDay, other.myDay)
+        && Objects.equal(myFinish, other.myFinish)
+        && Objects.equal(myFlashing, other.myFlashing)
+        && Objects.equal(myName, other.myName)
+        && Objects.equal(myStart, other.myStart)
+        && Objects.equal(myTimeSlotExtent, other.myTimeSlotExtent);
   }
 
   @Override
