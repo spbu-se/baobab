@@ -21,10 +21,13 @@ import ru.spbu.math.baobab.model.TimeSlotExtent;
  */
 public class ScriptFormServlet extends HttpServlet {
   private static final Logger LOGGER = Logger.getLogger("ScriptFormService");
-  private String result = "";
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    process(request, response, "");
+  }
+
+  private void process(HttpServletRequest request, HttpServletResponse response, String result) throws ServletException, IOException {
     request.setCharacterEncoding("UTF-8");
     request.setAttribute("result", result);
     RequestDispatcher scriptForm = request.getRequestDispatcher("/script_form.jsp");
@@ -37,8 +40,8 @@ public class ScriptFormServlet extends HttpServlet {
 
       TimeSlotExtent timeSlotExtent = new TimeSlotExtentImpl();
       TimeSlotCommandParser parser = new TimeSlotCommandParser(timeSlotExtent);
-      result = (parser.parse(scriptText)) ? ":-)" : ":-(";
-      doGet(request, response);
+      String result = (parser.parse(scriptText)) ? ":-)" : ":-(";
+      process(request, response, result);
 
     } catch (IllegalArgumentException e) {
       LOGGER.log(Level.WARNING, "Failed to execute the query", e);
