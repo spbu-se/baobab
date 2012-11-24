@@ -7,7 +7,7 @@
   </head>
 <body>
   <% String result = (String) request.getAttribute("result"); %>
-  <form action="/_ah/script_form" method="post">
+  <form action="/data/edit" method="post">
     <p>
       <label>
         <textarea rows="10" cols="100" name="script"></textarea>

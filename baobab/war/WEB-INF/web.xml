@@ -94,7 +94,7 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>script_form</servlet-name>
-    <url-pattern>/_ah/script_form</url-pattern>
+    <url-pattern>/data/edit</url-pattern>
   </servlet-mapping>
 
   <!-- GWT -->
