@@ -49,6 +49,7 @@ public interface TimeSlotExtent {
   
   /**
    * Finds time slot by its ID
+   * 
    * @param id id
    * @return found time slot or {@code null} if no time slot with such ID exists
    */

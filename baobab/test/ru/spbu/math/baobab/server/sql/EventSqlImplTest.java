@@ -44,10 +44,12 @@ public class EventSqlImplTest extends SqlTestCase {
     expectSql("INSERT TimeSlot name start_min finish_min day is_odd").withParameters(1, "first double class", 2,
         start.getDayMinute(), 3, finish.getDayMinute(), 4, 2, 5, EvenOddWeek.ODD.ordinal());
     expectSql("SELECT TimeSlot WHERE name day is_odd")
-    .withParameters(1, "first double class", 2, 2, 3, EvenOddWeek.ODD.ordinal(), 4, EvenOddWeek.ALL.ordinal())
-    .withResult(
-        row(1, 1)
-        );
+        .withParameters(
+               1, "first double class",
+               2, 2,
+               3, EvenOddWeek.ODD.ordinal())
+        .withResult(
+          row("id", 1));
     TimeSlot ts1 = timeSlotExtent.create("first double class", start, finish, 2, EvenOddWeek.ODD);
     
     AuditoriumExtent auditoriumExtent = new AuditoriumExtentImpl();
@@ -81,10 +83,12 @@ public class EventSqlImplTest extends SqlTestCase {
     expectSql("INSERT TimeSlot name start_min finish_min day is_odd").withParameters(1, "first double class", 2,
         start.getDayMinute(), 3, finish.getDayMinute(), 4, 2, 5, EvenOddWeek.ODD.ordinal());
     expectSql("SELECT TimeSlot WHERE name day is_odd")
-    .withParameters(1, "first double class", 2, 2, 3, EvenOddWeek.ODD.ordinal(), 4, EvenOddWeek.ALL.ordinal())
-    .withResult(
-        row(1, 1)
-        );
+        .withParameters(
+            1, "first double class", 
+            2, 2,
+            3, EvenOddWeek.ODD.ordinal())
+        .withResult(
+           row("id", 1));
     TimeSlot ts1 = timeSlotExtent.create("first double class", start, finish, 2, EvenOddWeek.ODD);
     
     AuditoriumExtent auditoriumExtent = new AuditoriumExtentImpl();
@@ -117,35 +121,33 @@ public class EventSqlImplTest extends SqlTestCase {
     Event event1 = new EventImpl(date1, ts1, auditorium, topic);
     List<Event> events = Arrays.asList(event, event1);
     expectSql("SELECT Event WHERE topic_id")
-    .withParameters(1, topic.getID())
-    .withResult(row(
-                 "date", sqlDate,
-                 "timeslot_id", ts1.getID(),
-                 "auditorium_num", auditorium.getID()
-                ),
-                row(
-                 "date", sqlDate1,
-                 "timeslot_id", ts1.getID(),
-                 "auditorium_num", auditorium.getID()             
-                ));
+       .withParameters(1, topic.getID())
+       .withResult(
+          row("date", sqlDate,
+              "timeslot_id", ts1.getID(),
+              "auditorium_num", auditorium.getID()
+              ),
+          row("date", sqlDate1,
+              "timeslot_id", ts1.getID(),
+              "auditorium_num", auditorium.getID()));
     expectSql("SELECT TimeSlot WHERE id")
-    .withParameters(1, ts1.getID())
-    .withResult(
-            row("name", ts1.getName(), 
+       .withParameters(1, ts1.getID())
+       .withResult(
+            row("id", 1,
+                "name", ts1.getName(), 
                 "start_min", ts1.getStart().getDayMinute(), 
                 "finish_min", ts1.getFinish().getDayMinute(), 
                 "day", 2, 
-                "is_odd", EvenOddWeek.ODD.ordinal())
-           );
+                "is_odd", EvenOddWeek.ODD.ordinal()));
     expectSql("SELECT TimeSlot WHERE id")
-    .withParameters(1, ts1.getID())
-    .withResult(
-            row("name", ts1.getName(), 
+        .withParameters(1, ts1.getID())
+        .withResult(
+            row("id", 1,
+                "name", ts1.getName(), 
                 "start_min", ts1.getStart().getDayMinute(), 
                 "finish_min", ts1.getFinish().getDayMinute(), 
                 "day", 2, 
-                "is_odd", EvenOddWeek.ODD.ordinal())
-           );
+                "is_odd", EvenOddWeek.ODD.ordinal()));
     List<Event> eventsFromDb = (List<Event>) topic.getEvents();
     assertEquals(events, eventsFromDb);      
   }
@@ -160,10 +162,12 @@ public class EventSqlImplTest extends SqlTestCase {
     expectSql("INSERT TimeSlot name start_min finish_min day is_odd").withParameters(1, "first double class", 2,
         start.getDayMinute(), 3, finish.getDayMinute(), 4, 2, 5, EvenOddWeek.ODD.ordinal());
     expectSql("SELECT TimeSlot WHERE name day is_odd")
-    .withParameters(1, "first double class", 2, 2, 3, EvenOddWeek.ODD.ordinal(), 4, EvenOddWeek.ALL.ordinal())
-    .withResult(
-        row(1, 1)
-        );
+       .withParameters(
+           1, "first double class", 
+           2, 2,
+           3, EvenOddWeek.ODD.ordinal())
+       .withResult(
+           row("id", 1));
     TimeSlot ts = timeSlotExtent.create("first double class", start, finish, 2, EvenOddWeek.ODD);
     
     AuditoriumExtent auditoriumExtent = new AuditoriumExtentImpl();

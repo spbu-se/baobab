@@ -153,17 +153,15 @@ public class TimeSlotExtentSqlImpl implements TimeSlotExtent {
       resultSet = stmt.executeQuery();
       int id = -1;
       int rowcount = 0;
-      for (boolean hasRow = resultSet.next(); hasRow; hasRow = resultSet.next()) {
-        id = resultSet.getInt(1);
-        rowcount++;
-      }
-      if (rowcount == 0) {
+      
+      if (!resultSet.next()) {
         throw new IllegalStateException("The TimeSlot with this name is not exist");
-      }
-      if (rowcount > 1) {
+      }      
+      id = resultSet.getInt("id");        
+      if (resultSet.next()) {
         throw new IllegalStateException("There are more than one TimeSlot with this name");
       }
-
+      
       TimeSlot ts = new TimeSlotImpl(id, name, start, finish, day, flashing, this);
       return ts;
 
@@ -185,23 +183,10 @@ public class TimeSlotExtentSqlImpl implements TimeSlotExtent {
       stmts.get(0).setInt(1, id);
 
       ResultSet rs = stmts.get(0).executeQuery();
-      for (boolean hasRow = rs.next(); hasRow; hasRow = rs.next()) {
-        String name = rs.getString("name");
-
-        Integer startInMinutes = rs.getInt("start_min");
-        TimeInstant start = new TimeInstant(startInMinutes / 60, startInMinutes % 60);
-
-        Integer finishInMinutes = rs.getInt("finish_min");
-        TimeInstant finish = new TimeInstant(finishInMinutes / 60, finishInMinutes % 60);
-
-        Integer day = rs.getInt("day");
-
-        EvenOddWeek flashing = EvenOddWeek.values()[rs.getInt("is_odd")];
-
-        TimeSlot ts = new TimeSlotImpl(id, name, start, finish, day, flashing, this);
-        return ts;
-      }
-
+      List<TimeSlot> timeSlots = Lists.newArrayList();
+      fetchTimeSlots(rs, timeSlots);
+      return timeSlots.get(0);
+      
     } catch (SQLException e) {
       e.printStackTrace();
     } finally {

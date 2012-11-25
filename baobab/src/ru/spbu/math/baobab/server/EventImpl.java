@@ -24,7 +24,7 @@ public class EventImpl implements Event {
   private Auditorium myAuditorium;
   private final Topic myTopic;
 
-  public EventImpl(Date date, TimeSlot timeSlot, Auditorium auditorium, Topic topic) {
+  public EventImpl(Date date, TimeSlot timeSlot, @Nullable Auditorium auditorium, Topic topic) {
     myDate = date;
     myTimeSlot = timeSlot;
     myAuditorium = auditorium;
@@ -88,8 +88,7 @@ public class EventImpl implements Event {
     }
 
     EventImpl other = (EventImpl) obj;
-    return Objects.equal(this.getStartDate(), other.getStartDate())
-        && Objects.equal(this.getStartDate(), other.getStartDate())       
+    return Objects.equal(this.getStartDate(), other.getStartDate())       
         && Objects.equal(myTimeSlot, other.myTimeSlot)
         && Objects.equal(myTopic, other.myTopic);
   }
