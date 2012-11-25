@@ -13,6 +13,8 @@ public abstract class Parser {
   protected final static String EVEN_ODD_PATTERN_RUS = "четный|нечетный";
   protected final static String WEEKDAY_PATTERN_ENG = "Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|Mo|Tu|We|Th|Fr|Sa|Su";
   protected final static String WEEKDAY_PATTERN_RUS = "понедельник|вторник|среда|четверг|пятница|суббота|воскресенье|пн|вт|ср|чт|пт|сб|вс";
+  protected final static String ATTENDEE_PATTERN_ENG = "chair|free form group|student|teacher|academic group";
+  protected final static String ATTENDEE_PATTERN_RUS = "студента|преподавателя|учебную группу|кафедру|коллектив";
 
   /**
    * parses command in baobab language and executes it

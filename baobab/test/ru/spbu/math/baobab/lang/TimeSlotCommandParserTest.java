@@ -9,7 +9,7 @@ import ru.spbu.math.baobab.server.TimeSlotExtentImpl;
 import junit.framework.TestCase;
 
 /**
- * Tests for script interpreter
+ * Tests for TimeSlotCommandParser
  * 
  * @author vloginova
  */
