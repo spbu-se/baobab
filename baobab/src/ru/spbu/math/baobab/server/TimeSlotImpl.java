@@ -13,6 +13,7 @@ import ru.spbu.math.baobab.model.TimeSlotExtent;
  * @author dageev
  */
 public class TimeSlotImpl implements TimeSlot {
+  private final int myID;
   private final String myName;
   private final int myDay;
   private final EvenOddWeek myFlashing;
@@ -20,8 +21,9 @@ public class TimeSlotImpl implements TimeSlot {
   private final TimeInstant myFinish;
   private final TimeSlotExtent myTimeSlotExtent;
 
-  public TimeSlotImpl(String name, TimeInstant start, TimeInstant finish, int day, EvenOddWeek flashing,
+  public TimeSlotImpl(int id, String name, TimeInstant start, TimeInstant finish, int day, EvenOddWeek flashing,
       TimeSlotExtent timeslotextent) {
+    myID = id;
     myTimeSlotExtent = timeslotextent;
     myName = name;
     myDay = day;
@@ -73,7 +75,7 @@ public class TimeSlotImpl implements TimeSlot {
     if (obj instanceof TimeSlotImpl == false) {
       return false;
     }
-
+    // we ignore ID because we actually want compare data fields here rather than IDs
     TimeSlotImpl other = (TimeSlotImpl) obj;
     return Objects.equal(myDay, other.myDay)
         && Objects.equal(myFinish, other.myFinish)
@@ -81,5 +83,10 @@ public class TimeSlotImpl implements TimeSlot {
         && Objects.equal(myName, other.myName)
         && Objects.equal(myStart, other.myStart)
         && Objects.equal(myTimeSlotExtent, other.myTimeSlotExtent);
+  }
+
+  @Override
+  public int getID() {
+    return myID;
   }
 }
