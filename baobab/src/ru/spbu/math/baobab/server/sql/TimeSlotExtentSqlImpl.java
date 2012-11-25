@@ -151,13 +151,11 @@ public class TimeSlotExtentSqlImpl implements TimeSlotExtent {
       stmt.setInt(2, day);
       stmt.setInt(3, flashing.ordinal());
       resultSet = stmt.executeQuery();
-      int id = -1;
-      int rowcount = 0;
       
       if (!resultSet.next()) {
         throw new IllegalStateException("The TimeSlot with this name is not exist");
       }      
-      id = resultSet.getInt("id");        
+      int id = resultSet.getInt("id");        
       if (resultSet.next()) {
         throw new IllegalStateException("There are more than one TimeSlot with this name");
       }

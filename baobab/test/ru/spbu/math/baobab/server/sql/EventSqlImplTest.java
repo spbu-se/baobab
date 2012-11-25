@@ -36,31 +36,16 @@ public class EventSqlImplTest extends SqlTestCase {
 
   @Test
   public void testAddEvent() {
-    TimeSlotExtent timeSlotExtent = new TimeSlotExtentSqlImpl();
+    TimeSlotExtent timeSlotExtent = new TimeSlotExtentImpl();
     TimeInstant start = new TimeInstant(9, 30);
     TimeInstant finish = new TimeInstant(11, 5);
-    expectSql("SELECT TimeSlot WHERE name day is_odd is_odd").withParameters(1, "first double class", 2, 2, 3,
-        EvenOddWeek.ODD.ordinal(), 4, EvenOddWeek.ALL.ordinal());
-    expectSql("INSERT TimeSlot name start_min finish_min day is_odd").withParameters(1, "first double class", 2,
-        start.getDayMinute(), 3, finish.getDayMinute(), 4, 2, 5, EvenOddWeek.ODD.ordinal());
-    expectSql("SELECT TimeSlot WHERE name day is_odd")
-        .withParameters(
-               1, "first double class",
-               2, 2,
-               3, EvenOddWeek.ODD.ordinal())
-        .withResult(
-          row("id", 1));
     TimeSlot ts1 = timeSlotExtent.create("first double class", start, finish, 2, EvenOddWeek.ODD);
     
     AuditoriumExtent auditoriumExtent = new AuditoriumExtentImpl();
     Auditorium auditorium = auditoriumExtent.create("1", 20);
     
-    TopicExtent topicExtent = new TopicExtentSqlImpl(timeSlotExtent, auditoriumExtent);
-    expectSql("SELECT Topic WHERE uid").withParameters(1, "CS101-2012");
-    expectSql("INSERT Topic uid name type").withParameters(1, "CS101-2012", 2,
-        "Computer Science introduction course in year 2012", 3, Type.LECTURE_COURSE.ordinal());
-    Topic topic = topicExtent.createTopic("CS101-2012", Type.LECTURE_COURSE,
-        "Computer Science introduction course in year 2012");
+    Topic topic = new TopicSqlImpl("CS101-2012", Type.LECTURE_COURSE,
+        "Computer Science introduction course in year 2012", timeSlotExtent, auditoriumExtent);;
 
     Calendar cal = Calendar.getInstance();
     Date date = cal.getTime();
@@ -75,48 +60,26 @@ public class EventSqlImplTest extends SqlTestCase {
 
   @Test
   public void testGetEvents() {
-    TimeSlotExtent timeSlotExtent = new TimeSlotExtentSqlImpl();
+    TimeSlotExtent timeSlotExtent = new TimeSlotExtentImpl();
     TimeInstant start = new TimeInstant(9, 30);
     TimeInstant finish = new TimeInstant(11, 5);
-    expectSql("SELECT TimeSlot WHERE name day is_odd is_odd").withParameters(1, "first double class", 2, 2, 3,
-        EvenOddWeek.ODD.ordinal(), 4, EvenOddWeek.ALL.ordinal());
-    expectSql("INSERT TimeSlot name start_min finish_min day is_odd").withParameters(1, "first double class", 2,
-        start.getDayMinute(), 3, finish.getDayMinute(), 4, 2, 5, EvenOddWeek.ODD.ordinal());
-    expectSql("SELECT TimeSlot WHERE name day is_odd")
-        .withParameters(
-            1, "first double class", 
-            2, 2,
-            3, EvenOddWeek.ODD.ordinal())
-        .withResult(
-           row("id", 1));
     TimeSlot ts1 = timeSlotExtent.create("first double class", start, finish, 2, EvenOddWeek.ODD);
     
     AuditoriumExtent auditoriumExtent = new AuditoriumExtentImpl();
     Auditorium auditorium = auditoriumExtent.create("1", 20);
  
-    TopicExtent topicExtent = new TopicExtentSqlImpl(timeSlotExtent, auditoriumExtent);
-    expectSql("SELECT Topic WHERE uid").withParameters(1, "CS101-2012");
-    expectSql("INSERT Topic uid name type").withParameters(1, "CS101-2012", 2,
-        "Computer Science introduction course in year 2012", 3, Type.LECTURE_COURSE.ordinal());
-    Topic topic = topicExtent.createTopic("CS101-2012", Type.LECTURE_COURSE,
-        "Computer Science introduction course in year 2012");
+    Topic topic = new TopicSqlImpl("CS101-2012", Type.LECTURE_COURSE,
+        "Computer Science introduction course in year 2012", timeSlotExtent, auditoriumExtent);
     
     Calendar cal = Calendar.getInstance();
     cal.set(Calendar.DAY_OF_WEEK, 3);
     Date date = cal.getTime();
-    java.sql.Date sqlDate = new java.sql.Date(date.getTime());
-     
-    expectSql("INSERT Event SET date time_slot_id topic_id auditorium_num").withParameters(1, sqlDate , 2,
-        ts1.getID(), 3, topic.getID(), 4, auditorium.getID());
-    topic.addEvent(date, ts1, auditorium);
+    java.sql.Date sqlDate = new java.sql.Date(date.getTime());  
     
     cal.set(Calendar.DAY_OF_WEEK, 5);
     Date date1 = cal.getTime();
     java.sql.Date sqlDate1 = new java.sql.Date(date1.getTime());
      
-    expectSql("INSERT Event SET date time_slot_id topic_id auditorium_num").withParameters(1, sqlDate1 , 2,
-        ts1.getID(), 3, topic.getID(), 4, auditorium.getID());
-    topic.addEvent(date1, ts1, auditorium);
     Event event = new EventImpl(date, ts1, auditorium, topic);
     Event event1 = new EventImpl(date1, ts1, auditorium, topic);
     List<Event> events = Arrays.asList(event, event1);
@@ -130,55 +93,22 @@ public class EventSqlImplTest extends SqlTestCase {
           row("date", sqlDate1,
               "timeslot_id", ts1.getID(),
               "auditorium_num", auditorium.getID()));
-    expectSql("SELECT TimeSlot WHERE id")
-       .withParameters(1, ts1.getID())
-       .withResult(
-            row("id", 1,
-                "name", ts1.getName(), 
-                "start_min", ts1.getStart().getDayMinute(), 
-                "finish_min", ts1.getFinish().getDayMinute(), 
-                "day", 2, 
-                "is_odd", EvenOddWeek.ODD.ordinal()));
-    expectSql("SELECT TimeSlot WHERE id")
-        .withParameters(1, ts1.getID())
-        .withResult(
-            row("id", 1,
-                "name", ts1.getName(), 
-                "start_min", ts1.getStart().getDayMinute(), 
-                "finish_min", ts1.getFinish().getDayMinute(), 
-                "day", 2, 
-                "is_odd", EvenOddWeek.ODD.ordinal()));
     List<Event> eventsFromDb = (List<Event>) topic.getEvents();
     assertEquals(events, eventsFromDb);      
   }
   
   @Test
   public void testAddAllEvents() {
-    TimeSlotExtent timeSlotExtent = new TimeSlotExtentSqlImpl();
+    TimeSlotExtent timeSlotExtent = new TimeSlotExtentImpl();
     TimeInstant start = new TimeInstant(9, 30);
     TimeInstant finish = new TimeInstant(11, 5);
-    expectSql("SELECT TimeSlot WHERE name day is_odd is_odd").withParameters(1, "first double class", 2, 2, 3,
-        EvenOddWeek.ODD.ordinal(), 4, EvenOddWeek.ALL.ordinal());
-    expectSql("INSERT TimeSlot name start_min finish_min day is_odd").withParameters(1, "first double class", 2,
-        start.getDayMinute(), 3, finish.getDayMinute(), 4, 2, 5, EvenOddWeek.ODD.ordinal());
-    expectSql("SELECT TimeSlot WHERE name day is_odd")
-       .withParameters(
-           1, "first double class", 
-           2, 2,
-           3, EvenOddWeek.ODD.ordinal())
-       .withResult(
-           row("id", 1));
     TimeSlot ts = timeSlotExtent.create("first double class", start, finish, 2, EvenOddWeek.ODD);
     
     AuditoriumExtent auditoriumExtent = new AuditoriumExtentImpl();
     Auditorium auditorium = auditoriumExtent.create("1", 20);
     
-    TopicExtent topicExtent = new TopicExtentSqlImpl(timeSlotExtent, auditoriumExtent);
-    expectSql("SELECT Topic WHERE uid").withParameters(1, "CS101-2012");
-    expectSql("INSERT Topic uid name type").withParameters(1, "CS101-2012", 2,
-        "Computer Science introduction course in year 2012", 3, Type.LECTURE_COURSE.ordinal());
-    Topic topic = topicExtent.createTopic("CS101-2012", Type.LECTURE_COURSE,
-        "Computer Science introduction course in year 2012");
+    Topic topic = new TopicSqlImpl("CS101-2012", Type.LECTURE_COURSE,
+        "Computer Science introduction course in year 2012", timeSlotExtent, auditoriumExtent);
 
     Calendar cal = Calendar.getInstance(new Locale("ru", "RU"));
     cal.set(2012, Calendar.NOVEMBER, 11);
