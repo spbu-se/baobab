@@ -47,6 +47,11 @@ public interface TimeSlot {
   TimeSlotExtent getExtent();
   
   /**
+   * @return time slot id
+   */
+  int getID();
+  
+  /**
    * A set of tools to work with time slots
    * 
    * @author agudulin

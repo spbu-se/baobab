@@ -7,9 +7,13 @@ import org.junit.Test;
 
 import com.google.common.collect.Lists;
 
+import ru.spbu.math.baobab.model.AuditoriumExtent;
+import ru.spbu.math.baobab.model.TimeSlotExtent;
 import ru.spbu.math.baobab.model.Topic;
 import ru.spbu.math.baobab.model.TopicExtent;
 import ru.spbu.math.baobab.model.Topic.Type;
+import ru.spbu.math.baobab.server.AuditoriumExtentImpl;
+import ru.spbu.math.baobab.server.TimeSlotExtentImpl;
 
 /**
  * Tests for SQL-based implementation of TopicExtent
@@ -20,7 +24,9 @@ public class TopicExtentSqlImplTest extends SqlTestCase {
 
   @Test
   public void testCreateTopic() throws SQLException {
-    TopicExtent topicExtent = new TopicExtentSqlImpl();
+    TimeSlotExtent tsExtent = new TimeSlotExtentImpl();
+    AuditoriumExtent auditExtent = new AuditoriumExtentImpl();
+    TopicExtent topicExtent = new TopicExtentSqlImpl(tsExtent, auditExtent);
 
     expectSql("SELECT Topic WHERE uid").withParameters(1, "CS101-2012");
     expectSql("INSERT Topic uid name type")
@@ -44,7 +50,9 @@ public class TopicExtentSqlImplTest extends SqlTestCase {
 
   @Test
   public void testGetAll() throws SQLException {
-    TopicExtent topicExtent = new TopicExtentSqlImpl();
+    TimeSlotExtent tsExtent = new TimeSlotExtentImpl();
+    AuditoriumExtent auditExtent = new AuditoriumExtentImpl();
+    TopicExtent topicExtent = new TopicExtentSqlImpl(tsExtent, auditExtent);
 
     expectQuery("SELECT * FROM Topic");
     expectInsert("INSERT INTO Topic");
@@ -54,9 +62,9 @@ public class TopicExtentSqlImplTest extends SqlTestCase {
     topicExtent.createTopic("CS102-2012", Type.LECTURE_COURSE, "Computer Science introduction course in year 2012");
 
     Topic topic1 = new TopicSqlImpl("CS101-2012", Type.LECTURE_COURSE,
-        "Computer Science introduction course in year 2012");
+        "Computer Science introduction course in year 2012", tsExtent, auditExtent);
     Topic topic2 = new TopicSqlImpl("CS102-2012", Type.LECTURE_COURSE,
-        "Computer Science introduction course in year 2012");
+        "Computer Science introduction course in year 2012", tsExtent, auditExtent);
 
     expectQuery(
         "SELECT * FROM Topic",

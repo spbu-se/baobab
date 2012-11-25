@@ -88,7 +88,7 @@ public class EventImpl implements Event {
     }
 
     EventImpl other = (EventImpl) obj;
-    return Objects.equal(myDate, other.myDate)
+    return Objects.equal(this.getStartDate(), other.getStartDate())       
         && Objects.equal(myTimeSlot, other.myTimeSlot)
         && Objects.equal(myTopic, other.myTopic);
   }

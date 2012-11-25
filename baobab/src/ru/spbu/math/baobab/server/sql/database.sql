@@ -50,8 +50,7 @@ CREATE TABLE Auditorium(
 );
 
 CREATE TABLE Topic(
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  uid VARCHAR(32) NOT NULL UNIQUE,
+  uid VARCHAR(32) NOT NULL PRIMARY KEY,
   name VARCHAR(256),
   type INT NOT NULL CHECK(type >= 0 AND type <= 5)
 );
@@ -60,23 +59,23 @@ CREATE TABLE Event(
   id INT PRIMARY KEY AUTO_INCREMENT,
   `date` DATE NOT NULL,
   time_slot_id INT NOT NULL,
-  topic_id INT NOT NULL,
+  topic_id VARCHAR(32) NOT NULL,
   auditorium_num VARCHAR(10),
   FOREIGN KEY (time_slot_id) REFERENCES TimeSlot(id),
   FOREIGN KEY (auditorium_num) REFERENCES Auditorium(num),
-  FOREIGN KEY (topic_id) REFERENCES Topic(id)
+  FOREIGN KEY (topic_id) REFERENCES Topic(uid)
 );
 
 CREATE TABLE TopicOwner(
-  topic_id INT,
+  topic_id VARCHAR(32),
   attendee_id INT,
-  FOREIGN KEY (topic_id) REFERENCES Topic(id),
+  FOREIGN KEY (topic_id) REFERENCES Topic(uid),
   FOREIGN KEY (attendee_id) REFERENCES Attendee(id)
 );
 
 CREATE TABLE TopicAttendee(
-  topic_id INT,
+  topic_id VARCHAR(32),
   attendee_id INT,
-  FOREIGN KEY (topic_id) REFERENCES Topic(id),
+  FOREIGN KEY (topic_id) REFERENCES Topic(uid),
   FOREIGN KEY (attendee_id) REFERENCES Attendee(id)  
 );
