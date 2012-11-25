@@ -21,6 +21,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import javax.annotation.Nullable;
+
 /**
  * SQL-based implementation of Topic
  * 
@@ -58,7 +60,7 @@ public class TopicSqlImpl implements Topic {
   }
 
   @Override
-  public Event addEvent(Date date, TimeSlot timeSlot, Auditorium auditorium) {
+  public Event addEvent(Date date, TimeSlot timeSlot, @Nullable Auditorium auditorium) {
     SqlApi sqlApi = SqlApi.create();
     try {
       PreparedStatement stmt = sqlApi.prepareScript(
@@ -80,7 +82,7 @@ public class TopicSqlImpl implements Topic {
   }
 
   @Override
-  public Collection<Event> addAllEvents(Date start, Date finish, TimeSlot timeSlot, Auditorium auditorium) {
+  public Collection<Event> addAllEvents(Date start, Date finish, TimeSlot timeSlot, @Nullable Auditorium auditorium) {
     Collection<Event> events = Lists.newArrayList();
 
     for (Date date : Utils.getFilteredRangeOfDates(Utils.datesRange(start, finish), timeSlot)) {
