@@ -10,7 +10,7 @@ import ru.spbu.math.baobab.server.AuditoriumImpl;
 import ru.spbu.math.baobab.server.TimeSlotExtentImpl;
 
 /**
- * Tests for script interpreter
+ * Tests for AuditoriumCommandParser
  * 
  * @author dageev
  */
