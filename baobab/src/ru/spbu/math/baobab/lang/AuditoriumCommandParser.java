@@ -4,6 +4,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import ru.spbu.math.baobab.model.AuditoriumExtent;
+
 /**
  * Parser for define auditorium command
  * 
