@@ -12,7 +12,7 @@ import ru.spbu.math.baobab.server.TimeSlotExtentImpl;
  * @author ragozina.anastasiya, vloginova
  */
 public class ScriptInterpreter {
-  private final List<Parser> parsers = Arrays.asList(new TimeSlotCommandParser(new TimeSlotExtentImpl()),
+  private final List<Parser> myParsers = Arrays.asList(new TimeSlotCommandParser(new TimeSlotExtentImpl()),
       new AuditoriumCommandParser(new AuditoriumExtentImpl()));
 
   /**
@@ -21,7 +21,7 @@ public class ScriptInterpreter {
    * @param command some command in baobab language
    */
   public void process(String command) {
-    for (Parser p : parsers) {
+    for (Parser p : myParsers) {
       if (p.parse(command)) {
         return;
       }
