@@ -7,7 +7,7 @@ package ru.spbu.math.baobab.lang;
  */
 public abstract class Parser {
   // group patterns
-  protected final static String ID_PATTERN = "\\w+";
+  protected final static String ID_PATTERN = "[\\pL\\pM\\p{Nd}\\p{Nl}\\p{Pc}[\\p{InEnclosedAlphanumerics}&&\\p{So}]]+";
   protected final static String TIME_PATTERN = "\\d{1,2}:\\d{2}";
   protected final static String EVEN_ODD_PATTERN_ENG = "odd|even";
   protected final static String EVEN_ODD_PATTERN_RUS = "четный|нечетный";
