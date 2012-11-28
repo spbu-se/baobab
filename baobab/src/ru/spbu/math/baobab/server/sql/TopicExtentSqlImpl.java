@@ -8,6 +8,8 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
+import ru.spbu.math.baobab.model.AuditoriumExtent;
+import ru.spbu.math.baobab.model.TimeSlotExtent;
 import ru.spbu.math.baobab.model.Topic;
 import ru.spbu.math.baobab.model.Topic.Type;
 import ru.spbu.math.baobab.model.TopicExtent;
@@ -18,6 +20,13 @@ import ru.spbu.math.baobab.model.TopicExtent;
  * @author agudulin
  */
 public class TopicExtentSqlImpl implements TopicExtent {
+  private final TimeSlotExtent myTimeSlotExtent;
+  private final AuditoriumExtent myAuditoriumExtent;
+
+  public TopicExtentSqlImpl(TimeSlotExtent timeSlotExtent, AuditoriumExtent auditoriumExtent) {
+    myTimeSlotExtent = timeSlotExtent;
+    myAuditoriumExtent = auditoriumExtent;
+  }
 
   @Override
   public Topic createTopic(String id, Type type, String name) {
@@ -44,7 +53,7 @@ public class TopicExtentSqlImpl implements TopicExtent {
 
       stmt.execute();
 
-      Topic topic = new TopicSqlImpl(id, type, name);
+      Topic topic = new TopicSqlImpl(id, type, name, myTimeSlotExtent, myAuditoriumExtent);
       return topic;
 
     } catch (SQLException e) {
@@ -71,7 +80,7 @@ public class TopicExtentSqlImpl implements TopicExtent {
         Type type = Type.values()[rs.getInt("type")];
         String name = rs.getString("name");
 
-        Topic topic = new TopicSqlImpl(id, type, name);
+        Topic topic = new TopicSqlImpl(id, type, name, myTimeSlotExtent, myAuditoriumExtent);
         topics.add(topic);
       }
 
