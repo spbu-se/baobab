@@ -94,8 +94,7 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>script_form</servlet-name>
-    <url-pattern>/data/edit
-        </url-pattern>
+    <url-pattern>/data/edit</url-pattern>
   </servlet-mapping>
   
   <servlet>

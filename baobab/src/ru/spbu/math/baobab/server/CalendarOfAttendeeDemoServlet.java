@@ -4,10 +4,13 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
+import ru.spbu.math.baobab.model.Attendee;
+import ru.spbu.math.baobab.model.AttendeeExtent;
 import ru.spbu.math.baobab.model.EvenOddWeek;
 import ru.spbu.math.baobab.model.TimeInstant;
 import ru.spbu.math.baobab.model.TimeSlot;
 import ru.spbu.math.baobab.model.TimeSlotExtent;
+import ru.spbu.math.baobab.model.Attendee.Type;
 
 /**
  * Calendar Of Attendee Demo Servlet
@@ -34,5 +37,10 @@ public class CalendarOfAttendeeDemoServlet extends CalendarOfAttendeeServlet {
     timeSlots.add(timeSlotExtent.create("5 pair", start2, finish2, 7, EvenOddWeek.ALL));
     timeSlots.add(timeSlotExtent.create("6 pair", start2, finish2, 3, EvenOddWeek.ALL));
     return timeSlots;
+  }
+  
+  protected Attendee createAttendee() {
+    AttendeeExtent extent = new AttendeeExtentImpl();
+    return extent.create("Ivan Petrov", "Ivan Petrov", Type.STUDENT);
   }
 }

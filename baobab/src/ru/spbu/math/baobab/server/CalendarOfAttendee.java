@@ -1,5 +1,6 @@
 package ru.spbu.math.baobab.server;
 
+import java.util.Collections;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -30,15 +31,9 @@ public class CalendarOfAttendee {
 
   private List<String> getSortedDaysOfWeek(List<Integer> arrayOfDays) {
     List<String> sortedDaysOfWeek = Lists.newArrayList();
-    while (!arrayOfDays.isEmpty()) {
-      int min = 0;
-      for (int i = 0; i < arrayOfDays.size(); i++) {
-        if (arrayOfDays.get(min) > arrayOfDays.get(i)) {
-          min = i;
-        }
-      }
-      sortedDaysOfWeek.add(myDaysOfWeek[arrayOfDays.get(min) - 1]);
-      arrayOfDays.remove(min);
+    Collections.sort(arrayOfDays);
+    for (int i = 0; i < arrayOfDays.size(); i++) {
+      sortedDaysOfWeek.add(myDaysOfWeek[arrayOfDays.get(i) - 1]);
     }
     return sortedDaysOfWeek;
   }

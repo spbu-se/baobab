@@ -8,7 +8,7 @@
 <body>
 	<% List<TableRow> tableRows= (List<TableRow>) request.getAttribute("tableRows"); %>
 	<table width="100%" border="1" cellpadding="4" cellspacing="0">
-		<caption>Calendar Of Attendee</caption>
+		<caption>Calendar Of Attendee <%=request.getAttribute("AttendeeID")%></caption>
 		<% for (TableRow row : tableRows) { %>
 		<tr>
 		  <% for (TableCell cell : row.getCells()) { %>
