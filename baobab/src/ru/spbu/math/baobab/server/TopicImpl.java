@@ -5,6 +5,7 @@ import java.util.Date;
 
 import javax.annotation.Nullable;
 
+import com.google.common.collect.Sets;
 import com.google.common.collect.Lists;
 
 import ru.spbu.math.baobab.model.Attendee;
@@ -24,8 +25,8 @@ public class TopicImpl implements Topic {
   private final Type myType;
   private final String myId;
   private final Collection<Event> myEvents = Lists.newArrayList();
-  private final Collection<Attendee> myAttendees = Lists.newArrayList();
-  private final Collection<Attendee> myOwners = Lists.newArrayList();
+  private final Collection<Attendee> myAttendees = Sets.newLinkedHashSet();
+  private final Collection<Attendee> myOwners = Sets.newLinkedHashSet();
 
   public TopicImpl(String id, Type type, String name) {
     myId = id;
@@ -74,9 +75,7 @@ public class TopicImpl implements Topic {
 
   @Override
   public void addAttendee(Attendee att) {
-    if (!myAttendees.contains(att)) {
       myAttendees.add(att);
-    }
   }
 
   @Override
@@ -86,9 +85,7 @@ public class TopicImpl implements Topic {
 
   @Override
   public void addOwner(Attendee owner) {
-    if (!myOwners.contains(owner)) {
       myOwners.add(owner);
-    }
   }
 
   @Override

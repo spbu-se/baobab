@@ -84,8 +84,10 @@ public class TopicImplTest {
     topic.addAttendee(student2);
     topic.addAttendee(student3);
     topic.addAttendee(student2);
-    Collection<Attendee> attendees = Lists.newArrayList(student1, student2, student3);
-    assertEquals(attendees, topic.getAttendees());
+    assertEquals(topic.getAttendees().size(), 3);
+    assertTrue(topic.getAttendees().contains(student1));
+    assertTrue(topic.getAttendees().contains(student2));
+    assertTrue(topic.getAttendees().contains(student3));
   }
 
   @Test
@@ -100,7 +102,9 @@ public class TopicImplTest {
     topic.addOwner(owner2);
     topic.addOwner(owner3);
     topic.addOwner(owner1);
-    Collection<Attendee> owners = Lists.newArrayList(owner1, owner2, owner3);
-    assertEquals(owners, topic.getOwners());
+    assertEquals(topic.getOwners().size(), 3);
+    assertTrue(topic.getOwners().contains(owner1));
+    assertTrue(topic.getOwners().contains(owner2));
+    assertTrue(topic.getOwners().contains(owner3));
   }
 }
