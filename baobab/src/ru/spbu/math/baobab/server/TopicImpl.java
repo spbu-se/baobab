@@ -74,7 +74,9 @@ public class TopicImpl implements Topic {
 
   @Override
   public void addAttendee(Attendee att) {
-    myAttendees.add(att);
+    if (!myAttendees.contains(att)) {
+      myAttendees.add(att);
+    }
   }
 
   @Override
@@ -84,7 +86,9 @@ public class TopicImpl implements Topic {
 
   @Override
   public void addOwner(Attendee owner) {
-    myOwners.add(owner);
+    if (!myOwners.contains(owner)) {
+      myOwners.add(owner);
+    }
   }
 
   @Override
