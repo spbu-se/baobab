@@ -10,8 +10,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import ru.spbu.math.baobab.lang.Parser;
+import ru.spbu.math.baobab.lang.ScriptInterpreter;
 import ru.spbu.math.baobab.lang.TimeSlotCommandParser;
 import ru.spbu.math.baobab.model.TimeSlotExtent;
+import ru.spbu.math.baobab.server.sql.TimeSlotExtentSqlImpl;
+
+import com.google.common.collect.Lists;
 
 /**
  * Simple script form handler
@@ -35,17 +40,19 @@ public class ScriptFormServlet extends HttpServlet {
   }
 
   protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    String scriptText = request.getParameter("script");
+
+    TimeSlotExtent timeSlotExtent = new TimeSlotExtentSqlImpl();
+    ScriptInterpreter interpreter = new ScriptInterpreter(Lists.<Parser>newArrayList(
+        new TimeSlotCommandParser(timeSlotExtent)));
+    
+    String result = ":-)";
     try {
-      String scriptText = request.getParameter("script");
-
-      TimeSlotExtent timeSlotExtent = new TimeSlotExtentImpl();
-      TimeSlotCommandParser parser = new TimeSlotCommandParser(timeSlotExtent);
-      String result = (parser.parse(scriptText)) ? ":-)" : ":-(";
-      process(request, response, result);
-
-    } catch (IllegalArgumentException e) {
-      LOGGER.log(Level.WARNING, "Failed to execute the query", e);
-      response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+      interpreter.process(scriptText);
+    } catch (Throwable e) {
+      result = ":-( " + e.getMessage();
+      LOGGER.log(Level.SEVERE, "Failed to execute script", e);
     }
+    process(request, response, result);
   }
 }
