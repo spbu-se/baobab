@@ -24,6 +24,8 @@ public class TopicImpl implements Topic {
   private final Type myType;
   private final String myId;
   private final Collection<Event> myEvents = Lists.newArrayList();
+  private final Collection<Attendee> myAttendees = Lists.newArrayList();
+  private final Collection<Attendee> myOwners = Lists.newArrayList();
 
   public TopicImpl(String id, Type type, String name) {
     myId = id;
@@ -72,23 +74,21 @@ public class TopicImpl implements Topic {
 
   @Override
   public void addAttendee(Attendee att) {
-    // TODO Auto-generated method stub
+    myAttendees.add(att);
   }
 
   @Override
   public Collection<Attendee> getAttendees() {
-    // TODO Auto-generated method stub
-    return null;
+    return myAttendees;
   }
 
   @Override
   public void addOwner(Attendee owner) {
-    // TODO Auto-generated method stub
+    myOwners.add(owner);
   }
 
   @Override
   public Collection<Attendee> getOwners() {
-    // TODO Auto-generated method stub
-    return null;
+    return myOwners;
   }
 }
