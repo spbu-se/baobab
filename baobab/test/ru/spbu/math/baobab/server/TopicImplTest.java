@@ -76,13 +76,14 @@ public class TopicImplTest {
   public void testGetAttendees() {
     Topic topic = new TopicImpl("CS101-2012", Type.LECTURE_COURSE, "Computer Science intro course");
     AttendeeExtentImpl attendeeExtent = new AttendeeExtentImpl();
-    ru.spbu.math.baobab.model.Attendee.Type type = ru.spbu.math.baobab.model.Attendee.Type.STUDENT;
+    Attendee.Type type = Attendee.Type.STUDENT;
     Attendee student1 = attendeeExtent.create("1", "Иван Иванов", type);
     Attendee student2 = attendeeExtent.create("2", "Петр Петров", type);
     Attendee student3 = attendeeExtent.create("3", "Андрей Андреев", type);
     topic.addAttendee(student1);
     topic.addAttendee(student2);
     topic.addAttendee(student3);
+    topic.addAttendee(student2);
     Collection<Attendee> attendees = Lists.newArrayList(student1, student2, student3);
     assertEquals(attendees, topic.getAttendees());
   }
@@ -91,13 +92,14 @@ public class TopicImplTest {
   public void testGetOwners() {
     Topic topic = new TopicImpl("CS101-2012", Type.LECTURE_COURSE, "Computer Science intro course");
     AttendeeExtentImpl attendeeExtent = new AttendeeExtentImpl();
-    ru.spbu.math.baobab.model.Attendee.Type type = ru.spbu.math.baobab.model.Attendee.Type.TEACHER;
+    Attendee.Type type = Attendee.Type.TEACHER;
     Attendee owner1 = attendeeExtent.create("1", "Денис Денисов", type);
     Attendee owner2 = attendeeExtent.create("2", "Яков Яковлев", type);
     Attendee owner3 = attendeeExtent.create("3", "Антон Антонов", type);
     topic.addOwner(owner1);
     topic.addOwner(owner2);
     topic.addOwner(owner3);
+    topic.addOwner(owner1);
     Collection<Attendee> owners = Lists.newArrayList(owner1, owner2, owner3);
     assertEquals(owners, topic.getOwners());
   }
