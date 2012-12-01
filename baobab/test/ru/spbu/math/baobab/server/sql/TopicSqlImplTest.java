@@ -16,6 +16,11 @@ import ru.spbu.math.baobab.model.Topic;
 import ru.spbu.math.baobab.server.AuditoriumExtentImpl;
 import ru.spbu.math.baobab.server.TimeSlotExtentImpl;
 
+/**
+ * Tests for SQL-based implementation of Topic
+ * 
+ * @author agudulin
+ */
 public class TopicSqlImplTest extends SqlTestCase {
 
   @Test
@@ -32,7 +37,7 @@ public class TopicSqlImplTest extends SqlTestCase {
         "Computer Science introduction course in year 2012", timeSlotExtent, auditoriumExtent);
     Attendee student = new AttendeeSqlImpl(1, "student", "Test1", Attendee.Type.STUDENT, null, new AttendeeExtentSqlImpl());
 
-    expectSql("INSERT TopicAttendee SET topic_id attendee_id").withParameters(1, topic.getID(), 2, student.getID());
+    expectSql("INSERT TopicAttendee SET topic_id (SELECT id FROM Attendee WHERE uid)").withParameters(1, topic.getID(), 2, student.getID());
     topic.addAttendee(student);
   }
 
@@ -52,12 +57,12 @@ public class TopicSqlImplTest extends SqlTestCase {
     Attendee student1 = new AttendeeSqlImpl(1, "student1", "Test1", Attendee.Type.STUDENT, null, extent);
     Attendee student2 = new AttendeeSqlImpl(2, "student2", "Test2", Attendee.Type.STUDENT, null, extent);
 
-    expectSql("INSERT TopicAttendee SET topic_id attendee_id").withParameters(1, topic.getID(), 2, student1.getID());
+    expectSql("INSERT TopicAttendee SET topic_id (SELECT id FROM Attendee WHERE uid)").withParameters(1, topic.getID(), 2, student1.getID());
     topic.addAttendee(student1);
-    expectSql("INSERT TopicAttendee SET topic_id attendee_id").withParameters(1, topic.getID(), 2, student2.getID());
+    expectSql("INSERT TopicAttendee SET topic_id (SELECT id FROM Attendee WHERE uid)").withParameters(1, topic.getID(), 2, student2.getID());
     topic.addAttendee(student2);
 
-    expectSql("SELECT * FROM Attendee WHERE topic_id").withParameters(1, topic.getID()).withResult(
+    expectSql("SELECT FROM Attendee a JOIN TopicAttendee ta ON ta.attendee_id = a.id WHERE ta.topic_id").withParameters(1, topic.getID()).withResult(
         row(
             "id", 1,
             "uid", "student1",
