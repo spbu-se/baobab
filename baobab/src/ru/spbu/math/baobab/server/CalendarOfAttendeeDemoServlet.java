@@ -38,9 +38,9 @@ public class CalendarOfAttendeeDemoServlet extends CalendarOfAttendeeServlet {
     timeSlots.add(timeSlotExtent.create("6 pair", start2, finish2, 3, EvenOddWeek.ALL));
     return timeSlots;
   }
-  
-  protected Attendee createAttendee() {
+
+  protected Attendee getAttendee() {
     AttendeeExtent extent = new AttendeeExtentImpl();
-    return extent.create("Ivan Petrov", "Ivan Petrov", Type.STUDENT);
+    return extent.create("Ivan", "Ivan Petrov", Type.STUDENT);
   }
 }

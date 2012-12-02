@@ -32,8 +32,8 @@ public class CalendarOfAttendee {
   private List<String> getSortedDaysOfWeek(List<Integer> arrayOfDays) {
     List<String> sortedDaysOfWeek = Lists.newArrayList();
     Collections.sort(arrayOfDays);
-    for (int i = 0; i < arrayOfDays.size(); i++) {
-      sortedDaysOfWeek.add(myDaysOfWeek[arrayOfDays.get(i) - 1]);
+    for (int day: arrayOfDays) {
+      sortedDaysOfWeek.add(myDaysOfWeek[day - 1]);
     }
     return sortedDaysOfWeek;
   }
@@ -49,9 +49,9 @@ public class CalendarOfAttendee {
       row.addCell(new TableCell(myVertHeaders.get(i)));
     }
     table.add(row);
-    for (int i = 0; i < myHorHeaders.size(); i++) {
+    for (TimeSlot iTimeSlot : myHorHeaders) {
       row = new TableRow();
-      row.addCell(new TableCell(myHorHeaders.get(i).getName()));
+      row.addCell(new TableCell(iTimeSlot.getName()));
       for (int j = 0; j < myVertHeaders.size(); j++) {
         row.addCell(EMPTY_CELL);
       }
