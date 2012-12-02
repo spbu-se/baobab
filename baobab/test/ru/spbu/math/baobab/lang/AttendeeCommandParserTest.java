@@ -16,15 +16,15 @@ public class AttendeeCommandParserTest extends TestCase {
     AttendeeCommandParser parser = new AttendeeCommandParser(attendeeExtent);
     assertTrue(parser.parse("define attendee att1  beeng free form group"));
     Attendee attendee = attendeeExtent.find("att1");
-    assertTrue(attendee.getType() == Attendee.Type.FREE_FORM_GROUP);
+    assertEquals(attendee.getType(), Attendee.Type.FREE_FORM_GROUP);
   }
 
   public void testCommandCorrectnessRus() {
     AttendeeExtent attendeeExtent = new AttendeeExtentImpl();
     AttendeeCommandParser parser = new AttendeeCommandParser(attendeeExtent);
-    assertTrue(parser.parse("определить участника att1 как студента"));
-    Attendee attendee = attendeeExtent.find("att1");
-    assertTrue(attendee.getType() == Attendee.Type.STUDENT);
+    assertTrue(parser.parse("определить участника участник1 как студента"));
+    Attendee attendee = attendeeExtent.find("участник1");
+    assertEquals(attendee.getType(), Attendee.Type.STUDENT);
   }
 
   public void testIncorrectCommand() {

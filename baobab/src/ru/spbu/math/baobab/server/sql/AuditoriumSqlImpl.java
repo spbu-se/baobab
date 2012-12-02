@@ -11,8 +11,8 @@ import ru.spbu.math.baobab.model.Auditorium;
  */
 public class AuditoriumSqlImpl implements Auditorium {
 
-  private String myID;
-  private int myCapacity;
+  private final String myID;
+  private final int myCapacity;
 
   public AuditoriumSqlImpl(String id, int capacity) {
     myID = id;
@@ -31,7 +31,7 @@ public class AuditoriumSqlImpl implements Auditorium {
 
   @Override
   public int hashCode() {
-    return Objects.hashCode(myID, myCapacity);
+    return Objects.hashCode(myID);
   }
 
   @Override
