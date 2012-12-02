@@ -24,12 +24,13 @@ public abstract class CalendarOfAttendeeServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     request.setCharacterEncoding("UTF-8");
     CalendarOfAttendee table = new CalendarOfAttendee(createTimeSlots());
-    request.setAttribute("AttendeeID", createAttendee().getID());
+    request.setAttribute("AttendeeName", getAttendee().getName());
     request.setAttribute("tableRows", table.getTableRows());
     RequestDispatcher view = request.getRequestDispatcher("/calendar_of_attendee.jsp");
     view.forward(request, response);
   }
 
   protected abstract List<TimeSlot> createTimeSlots();
-  protected abstract Attendee createAttendee();
+
+  protected abstract Attendee getAttendee();
 }
