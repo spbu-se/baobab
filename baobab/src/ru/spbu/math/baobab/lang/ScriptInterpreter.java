@@ -2,6 +2,8 @@ package ru.spbu.math.baobab.lang;
 
 import java.util.Arrays;
 import java.util.List;
+
+import ru.spbu.math.baobab.server.AuditoriumExtentImpl;
 import ru.spbu.math.baobab.server.TimeSlotExtentImpl;
 
 /**
@@ -10,7 +12,8 @@ import ru.spbu.math.baobab.server.TimeSlotExtentImpl;
  * @author ragozina.anastasiya, vloginova
  */
 public class ScriptInterpreter {
-  private final List<Parser> parsers = Arrays.asList((Parser) new TimeSlotCommandParser(new TimeSlotExtentImpl()));
+  private final List<Parser> myParsers = Arrays.asList(new TimeSlotCommandParser(new TimeSlotExtentImpl()),
+      new AuditoriumCommandParser(new AuditoriumExtentImpl()));
 
   /**
    * Receive command and process it
@@ -18,7 +21,7 @@ public class ScriptInterpreter {
    * @param command some command in baobab language
    */
   public void process(String command) {
-    for (Parser p : parsers) {
+    for (Parser p : myParsers) {
       if (p.parse(command)) {
         return;
       }

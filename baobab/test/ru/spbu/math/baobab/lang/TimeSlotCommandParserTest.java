@@ -32,7 +32,7 @@ public class TimeSlotCommandParserTest extends TestCase {
   public void testCommandCorrectnessRus() {
     TimeSlotExtent timeSlotExtent = new TimeSlotExtentImpl();
     TimeSlotCommandParser parser = new TimeSlotCommandParser(timeSlotExtent);
-    assertTrue(parser.parse("определить интервал 1st_try от 1:00 до 3:00 в нечетный вт"));
+    assertTrue(parser.parse("определить интервал ПерваяПара от 1:00 до 3:00 в нечетный вт"));
     assertTrue(timeSlotExtent.findByWeekDay(2).size() == 1);
   }
 
