@@ -49,9 +49,9 @@ public class CalendarOfAttendee {
       row.addCell(new TableCell(myVertHeaders.get(i)));
     }
     table.add(row);
-    for (TimeSlot iTimeSlot : myHorHeaders) {
+    for (TimeSlot timeSlot : myHorHeaders) {
       row = new TableRow();
-      row.addCell(new TableCell(iTimeSlot.getName()));
+      row.addCell(new TableCell(timeSlot.getName()));
       for (int j = 0; j < myVertHeaders.size(); j++) {
         row.addCell(EMPTY_CELL);
       }
