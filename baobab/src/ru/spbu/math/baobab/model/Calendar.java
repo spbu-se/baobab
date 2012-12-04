@@ -14,6 +14,13 @@ public interface Calendar {
   Collection<Topic> getAllTopics();
   
   /**
+   * Adds a topic to this calendar. Does nothing if topic is already there
+   * 
+   * @param topic topic instance
+   */
+  void addTopic(Topic topic);
+  
+  /**
    * @return this caledar ID
    */
   String getID();
