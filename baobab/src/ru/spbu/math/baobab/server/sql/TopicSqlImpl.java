@@ -111,27 +111,68 @@ public class TopicSqlImpl implements Topic {
     return null;
   }
 
+  private void insertAttendee(Attendee att, String tableName) {
+    SqlApi sqlApi = SqlApi.create();
+    try {
+      PreparedStatement stmt = sqlApi.prepareScript(
+          "INSERT INTO " + tableName + " SET topic_id=?, attendee_id=(SELECT id FROM Attendee WHERE uid=?);").get(0);
+      stmt.setString(1, this.getID());
+      stmt.setString(2, att.getID());
+      stmt.execute();
+
+    } catch (SQLException e) {
+      e.printStackTrace();
+    } finally {
+      sqlApi.dispose();
+    }
+  }
+
+  private Collection<Attendee> selectAttendee(String tableName) {
+    List<Attendee> attendees = Lists.newArrayList();
+    SqlApi sqlApi = SqlApi.create();
+    try {
+      PreparedStatement stmt = sqlApi.prepareScript(
+          "SELECT * FROM Attendee a JOIN " + tableName + " ta ON ta.attendee_id = a.id " + "WHERE ta.topic_id=?;").get(0);
+      stmt.setString(1, this.getID());
+      ResultSet rs = stmt.executeQuery();
+
+      for (boolean hasRow = rs.next(); hasRow; hasRow = rs.next()) {
+        int id = rs.getInt("id");
+        String uid = rs.getString("uid");
+        String name = rs.getString("name");
+        int group_id = rs.getInt("group_id");
+        int type = rs.getInt("type");
+
+        Attendee attendee = new AttendeeSqlImpl(id, uid, name, Attendee.Type.values()[type], group_id, new AttendeeExtentSqlImpl());
+        attendees.add(attendee);
+      }
+      return attendees;
+    } catch (SQLException e) {
+      e.printStackTrace();
+    } finally {
+      sqlApi.dispose();
+    }
+    return null;
+  }
+
   @Override
   public void addAttendee(Attendee att) {
-    // TODO Auto-generated method stub
-
+    insertAttendee(att, "TopicAttendee");
   }
 
   @Override
   public Collection<Attendee> getAttendees() {
-    // TODO Auto-generated method stub
-    return null;
+    return selectAttendee("TopicAttendee");
   }
 
   @Override
   public void addOwner(Attendee owner) {
-    // TODO Auto-generated method stub
+    insertAttendee(owner, "TopicOwner");
   }
 
   @Override
   public Collection<Attendee> getOwners() {
-    // TODO Auto-generated method stub
-    return null;
+    return selectAttendee("TopicOwner");
   }
 
   @Override
