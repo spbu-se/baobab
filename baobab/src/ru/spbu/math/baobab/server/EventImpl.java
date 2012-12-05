@@ -1,12 +1,14 @@
 package ru.spbu.math.baobab.server;
 
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 
 import javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
 
+import ru.spbu.math.baobab.model.Attendee;
 import ru.spbu.math.baobab.model.Auditorium;
 import ru.spbu.math.baobab.model.Event;
 import ru.spbu.math.baobab.model.TimeInstant;
@@ -91,5 +93,16 @@ public class EventImpl implements Event {
     return Objects.equal(this.getStartDate(), other.getStartDate())       
         && Objects.equal(myTimeSlot, other.myTimeSlot)
         && Objects.equal(myTopic, other.myTopic);
+  }
+
+  @Override
+  public void addAttendee(Attendee att) {
+    // TODO Auto-generated method stub
+  }
+
+  @Override
+  public Collection<Attendee> getAttendees() {
+    // TODO Auto-generated method stub
+    return null;
   }
 }
