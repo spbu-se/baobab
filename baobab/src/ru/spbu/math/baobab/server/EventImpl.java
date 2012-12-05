@@ -7,6 +7,7 @@ import java.util.Date;
 import javax.annotation.Nullable;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.Sets;
 
 import ru.spbu.math.baobab.model.Attendee;
 import ru.spbu.math.baobab.model.Auditorium;
@@ -25,6 +26,7 @@ public class EventImpl implements Event {
   private final TimeSlot myTimeSlot;
   private Auditorium myAuditorium;
   private final Topic myTopic;
+  private final Collection<Attendee> myAttendees = Sets.newLinkedHashSet();
 
   public EventImpl(Date date, TimeSlot timeSlot, @Nullable Auditorium auditorium, Topic topic) {
     myDate = date;
@@ -97,12 +99,11 @@ public class EventImpl implements Event {
 
   @Override
   public void addAttendee(Attendee att) {
-    // TODO Auto-generated method stub
+    myAttendees.add(att);
   }
 
   @Override
   public Collection<Attendee> getAttendees() {
-    // TODO Auto-generated method stub
-    return null;
+    return myAttendees;
   }
 }

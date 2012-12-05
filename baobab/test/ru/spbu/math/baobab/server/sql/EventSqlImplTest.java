@@ -16,6 +16,7 @@ import ru.spbu.math.baobab.model.Auditorium;
 import ru.spbu.math.baobab.model.AuditoriumExtent;
 import ru.spbu.math.baobab.model.Event;
 import ru.spbu.math.baobab.model.Topic.Type;
+import ru.spbu.math.baobab.model.Attendee;
 import ru.spbu.math.baobab.model.EvenOddWeek;
 import ru.spbu.math.baobab.model.TimeInstant;
 import ru.spbu.math.baobab.model.TimeSlot;
@@ -23,6 +24,7 @@ import ru.spbu.math.baobab.model.TimeSlotExtent;
 import ru.spbu.math.baobab.model.Topic;
 import ru.spbu.math.baobab.model.TopicExtent;
 import ru.spbu.math.baobab.server.AuditoriumExtentImpl;
+import ru.spbu.math.baobab.server.AuditoriumImpl;
 import ru.spbu.math.baobab.server.EventImpl;
 import ru.spbu.math.baobab.server.TimeSlotExtentImpl;
 import ru.spbu.math.baobab.server.TopicExtentImpl;
@@ -125,5 +127,69 @@ public class EventSqlImplTest extends SqlTestCase {
       assertTrue(event.getStartDate().after(startDate));
       assertTrue(event.getStartDate().before(finishDate));
     }
-  } 
+  }
+  
+  @Test
+  public void testAddAttendee() {
+    TopicExtent topicExtent = new TopicExtentImpl();
+    Topic topic = topicExtent.createTopic("CS101-2012", Type.LECTURE_COURSE, "Computer Science intro course");
+    TimeInstant start = new TimeInstant(9, 30);
+    TimeInstant finish = new TimeInstant(11, 5);
+    TimeSlotExtent tsExtent = new TimeSlotExtentImpl();
+    TimeSlot ts = tsExtent.create("first double class", start, finish, 2, EvenOddWeek.ALL);
+    Date date = new Date();
+    Auditorium aud = new AuditoriumImpl("1", 1);
+
+    Event event = new EventSqlImpl(date, ts, aud, topic);
+
+    Attendee student = new AttendeeSqlImpl(1, "student", "Test1", Attendee.Type.STUDENT, null, new AttendeeExtentSqlImpl());
+
+    expectSql("INSERT EventAttendee SET attendee_uid (SELECT id FROM Event WHERE date time_slot_id topic_id auditorium_num)")
+        .withParameters(1, student.getID(),
+                        2, new java.sql.Date(date.getTime()),
+                        3, ts.getID(),
+                        4, topic.getID(),
+                        5, aud.getID());
+    event.addAttendee(student);    
+  }
+  
+  @Test
+  public void testGetAttendees() {  
+    TopicExtent topicExtent = new TopicExtentImpl();
+    Topic topic = topicExtent.createTopic("CS101-2012", Type.LECTURE_COURSE, "Computer Science intro course");
+    TimeInstant start = new TimeInstant(9, 30);
+    TimeInstant finish = new TimeInstant(11, 5);
+    TimeSlotExtent tsExtent = new TimeSlotExtentImpl();
+    TimeSlot ts = tsExtent.create("first double class", start, finish, 2, EvenOddWeek.ALL);
+    Date date = new Date();
+    Auditorium aud = new AuditoriumImpl("1", 1);
+
+    Event event = new EventSqlImpl(date, ts, aud, topic);
+    Attendee student1 = new AttendeeSqlImpl(1, "student1", "Test1", Attendee.Type.STUDENT, null, new AttendeeExtentSqlImpl());
+    Attendee student2 = new AttendeeSqlImpl(2, "student2", "Test2", Attendee.Type.STUDENT, null, new AttendeeExtentSqlImpl());
+    
+    expectSql("SELECT FROM Attendee a JOIN EventAttendee ea ON ea.attendee_uid = a.uid WHERE ea.event_id")
+      .withParameters(1, new java.sql.Date(date.getTime()),
+                      2, ts.getID(),
+                      3, topic.getID(),
+                      4, aud.getID())
+     .withResult(
+        row(
+            "id", 1,
+            "uid", "student1",
+            "name", "Test1",
+            "type", Attendee.Type.STUDENT.ordinal(),
+            "group_id", null),
+        row(
+            "id", 2,
+            "uid", "student2",
+            "name", "Test2",
+            "type", Attendee.Type.STUDENT.ordinal(),
+            "group_id", null)
+    );
+
+    List<Attendee> attendeesFromDb = (List<Attendee>) event.getAttendees();
+    List<Attendee> attendees = Arrays.asList(student1, student2);
+    assertEquals(attendees, attendeesFromDb);
+  }
 }
