@@ -36,7 +36,7 @@ public class EventImplTest {
     Date date = new Date();
     Auditorium aud = new AuditoriumImpl("1", 1);
 
-    Event event = new EventImpl(date, ts, aud, topic);
+    Event event = new EventImpl(1, date, ts, aud, topic);
     AttendeeExtentImpl attendeeExtent = new AttendeeExtentImpl();
     Attendee.Type type = Attendee.Type.STUDENT;
     Attendee student1 = attendeeExtent.create("1", "Иван Иванов", type);

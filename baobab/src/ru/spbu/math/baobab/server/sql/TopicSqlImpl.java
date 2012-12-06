@@ -71,8 +71,23 @@ public class TopicSqlImpl implements Topic {
       stmt.setString(3, this.getID());
       stmt.setString(4, auditorium.getID());
       stmt.execute();
+      
+      stmt = sqlApi.prepareScript("SELECT id FROM Event WHERE date=?, time_slot_id=?, topic_id=?, auditorium_num=?").get(0);
+      stmt.setDate(1, sqlDate);
+      stmt.setInt(2, timeSlot.getID());
+      stmt.setString(3, this.getID());
+      stmt.setString(4, auditorium.getID());
 
-      Event event = new EventImpl(date, timeSlot, auditorium, this);
+      ResultSet rs = stmt.executeQuery();
+      if (!rs.next()) {
+        throw new IllegalStateException("The  Event with this parametres is not exist");
+      } 
+      int id = rs.getInt("id");
+      if (rs.next()) {
+        throw new IllegalStateException("The Event with this parametres is not exist");
+      } 
+     
+      Event event = new EventSqlImpl(id, date, timeSlot, auditorium, this);
       return event;
     } catch (SQLException e) {
     } finally {
@@ -199,10 +214,11 @@ public class TopicSqlImpl implements Topic {
     SqlApi sqlApi = SqlApi.create();
     try {
       for (boolean hasRow = rs.next(); hasRow; hasRow = rs.next()) {
+        int id = rs.getInt("id");
         Date date = new Date(rs.getDate("date").getTime());
         TimeSlot ts = myTimeSlotExtent.findById(rs.getInt("timeslot_id"));
         Auditorium auditorium = myAuditoriumExtent.find(rs.getString("auditorium_num"));
-        Event event = new EventImpl(date, ts, auditorium, this);
+        Event event = new EventSqlImpl(id, date, ts, auditorium, this);
         events.add(event);
       }
     } catch (SQLException e) {
