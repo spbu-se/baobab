@@ -7,6 +7,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import ru.spbu.math.baobab.model.Attendee;
 import ru.spbu.math.baobab.model.AttendeeExtent;
 import ru.spbu.math.baobab.model.Auditorium;
@@ -23,7 +25,7 @@ import com.google.common.collect.Lists;
  */
 public class EventSqlImpl extends AbstractEvent {
 
-  public EventSqlImpl(int id, Date date, TimeSlot timeSlot, Auditorium auditorium, Topic topic) {
+  public EventSqlImpl(int id, Date date, TimeSlot timeSlot, @Nullable Auditorium auditorium, Topic topic) {
     super(id, date, timeSlot, auditorium, topic);
   }
 

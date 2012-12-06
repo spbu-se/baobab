@@ -3,6 +3,8 @@ package ru.spbu.math.baobab.server;
 import java.util.Collection;
 import java.util.Date;
 
+import javax.annotation.Nullable;
+
 import com.google.common.collect.Sets;
 
 import ru.spbu.math.baobab.model.Attendee;
@@ -18,7 +20,7 @@ import ru.spbu.math.baobab.model.Topic;
 public class EventImpl extends AbstractEvent {
   private final Collection<Attendee> myAttendees = Sets.newLinkedHashSet();
 
-  public EventImpl(int id, Date date, TimeSlot timeSlot, Auditorium auditorium, Topic topic) {
+  public EventImpl(int id, Date date, TimeSlot timeSlot, @Nullable Auditorium auditorium, Topic topic) {
     super(id, date, timeSlot, auditorium, topic);
   }
 
