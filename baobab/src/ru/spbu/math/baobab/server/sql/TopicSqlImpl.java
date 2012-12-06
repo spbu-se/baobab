@@ -72,19 +72,18 @@ public class TopicSqlImpl implements Topic {
       stmt.setString(4, auditorium.getID());
       stmt.execute();
       
-      stmt = sqlApi.prepareScript("SELECT id FROM Event WHERE date=?, time_slot_id=?, topic_id=?, auditorium_num=?").get(0);
+      stmt = sqlApi.prepareScript("SELECT id FROM Event WHERE date=?, time_slot_id=?, topic_id=?").get(0);
       stmt.setDate(1, sqlDate);
       stmt.setInt(2, timeSlot.getID());
       stmt.setString(3, this.getID());
-      stmt.setString(4, auditorium.getID());
 
       ResultSet rs = stmt.executeQuery();
       if (!rs.next()) {
-        throw new IllegalStateException("The  Event with this parametres is not exist");
+        throw new IllegalStateException("Event identified by this date,  timeslot,  topic does not exist");
       } 
       int id = rs.getInt("id");
       if (rs.next()) {
-        throw new IllegalStateException("The Event with this parametres is not exist");
+        throw new IllegalStateException("There are too many events identified by this date, timeslot, topic");
       } 
      
       Event event = new EventSqlImpl(id, date, timeSlot, auditorium, this);

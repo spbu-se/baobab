@@ -10,13 +10,10 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import ru.spbu.math.baobab.model.Attendee;
-import ru.spbu.math.baobab.model.AttendeeExtent;
 import ru.spbu.math.baobab.model.Auditorium;
 import ru.spbu.math.baobab.model.TimeSlot;
 import ru.spbu.math.baobab.model.Topic;
 import ru.spbu.math.baobab.server.AbstractEvent;
-import ru.spbu.math.baobab.server.AttendeeExtentImpl;
-import com.google.common.collect.Lists;
 
 /**
  * Implementation of Event
@@ -55,7 +52,8 @@ public class EventSqlImpl extends AbstractEvent {
       stmt.setInt(1, this.getID());
 
       ResultSet rs = stmt.executeQuery();
-      return fetchAttendees(rs);
+      
+      return new AttendeeExtentSqlImpl().fetchAttendees(rs);
       
     } catch (SQLException e) {
       e.printStackTrace();
@@ -63,20 +61,5 @@ public class EventSqlImpl extends AbstractEvent {
       sqlApi.dispose();
     }
     return null;
-  }
-
-  private Collection<Attendee> fetchAttendees(ResultSet rs) throws SQLException {
-    List<Attendee> attendees = Lists.newArrayList();
-    AttendeeExtent attExtent = new AttendeeExtentImpl();
-    for (boolean hasRow = rs.next(); hasRow; hasRow = rs.next()) {
-      int id = rs.getInt("id");
-      String uid = rs.getString("uid");
-      String name = rs.getString("name");
-      int group_id = rs.getInt("group_id");
-      int type = rs.getInt("type");
-      Attendee attendee = new AttendeeSqlImpl(id, uid, name, Attendee.Type.values()[type], group_id, attExtent);
-      attendees.add(attendee);
-    }
-    return attendees;
   }
 }

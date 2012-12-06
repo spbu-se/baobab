@@ -55,11 +55,10 @@ public class EventSqlImplTest extends SqlTestCase {
      
     expectSql("INSERT Event SET date time_slot_id topic_id auditorium_num").withParameters(1, sqlDate , 2,
         ts1.getID(), 3, topic.getID(), 4, auditorium.getID());
-    expectSql("SELECT FROM Event WHERE date time_slot_id topic_id auditorium_num")
+    expectSql("SELECT FROM Event WHERE date time_slot_id topic_id")
        .withParameters(1, sqlDate,
                        2, ts1.getID(),
-                       3, topic.getID(),
-                       4, auditorium.getID())
+                       3, topic.getID())
        .withResult(row("id", 1));
        
     Event event = topic.addEvent(date, ts1, auditorium);
@@ -130,18 +129,16 @@ public class EventSqlImplTest extends SqlTestCase {
     Date date1 = cal.getTime();
     
     expectInsert("INSERT INTO Event"); 
-    expectSql("SELECT FROM Event WHERE date time_slot_id topic_id auditorium_num")
+    expectSql("SELECT FROM Event WHERE date time_slot_id topic_id")
        .withParameters(1, new java.sql.Date(date.getTime()),
                        2, ts.getID(),
-                       3, topic.getID(),
-                       4, auditorium.getID())
+                       3, topic.getID())
        .withResult(row("id", 1));
     expectInsert("INSERT INTO Event");
-    expectSql("SELECT FROM Event WHERE date time_slot_id topic_id auditorium_num")
+    expectSql("SELECT FROM Event WHERE date time_slot_id topic_id")
     .withParameters(1, new java.sql.Date(date1.getTime()),
                     2, ts.getID(),
-                    3, topic.getID(),
-                    4, auditorium.getID())
+                    3, topic.getID())
     .withResult(row("id", 2));
 
     Collection<Event> events = topic.addAllEvents(startDate, finishDate, ts, auditorium);
