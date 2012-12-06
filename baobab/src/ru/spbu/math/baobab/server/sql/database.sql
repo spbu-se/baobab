@@ -64,6 +64,7 @@ CREATE TABLE Event(
   time_slot_id INT NOT NULL,
   topic_id VARCHAR(32) NOT NULL,
   auditorium_num VARCHAR(10),
+  UNIQUE(`date`, time_slot_id, topic_id),
   FOREIGN KEY (time_slot_id) REFERENCES TimeSlot(id),
   FOREIGN KEY (auditorium_num) REFERENCES Auditorium(num),
   FOREIGN KEY (topic_id) REFERENCES Topic(uid)

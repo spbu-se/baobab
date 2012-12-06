@@ -3,7 +3,10 @@ package ru.spbu.math.baobab.server.sql;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 import ru.spbu.math.baobab.model.Attendee;
 import ru.spbu.math.baobab.model.AttendeeExtent;
@@ -81,5 +84,19 @@ public class AttendeeExtentSqlImpl implements AttendeeExtent {
       con.dispose();
     }
     return null;
+  }
+  
+  public Collection<Attendee> fetchAttendees(ResultSet rs) throws SQLException {
+    List<Attendee> attendees = Lists.newArrayList();
+    for (boolean hasRow = rs.next(); hasRow; hasRow = rs.next()) {
+      int id = rs.getInt("id");
+      String uid = rs.getString("uid");
+      String name = rs.getString("name");
+      int group_id = rs.getInt("group_id");
+      int type = rs.getInt("type");
+      Attendee attendee = new AttendeeSqlImpl(id, uid, name, Attendee.Type.values()[type], group_id, this);
+      attendees.add(attendee);
+    }
+    return attendees;
   }
 }

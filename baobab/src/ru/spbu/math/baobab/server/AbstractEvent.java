@@ -21,11 +21,11 @@ import com.google.common.base.Objects;
  * @author dageev
  */
 public abstract class AbstractEvent implements Event {
-  protected final Date myDate;
-  protected final TimeSlot myTimeSlot;
-  protected Auditorium myAuditorium;
-  protected final Topic myTopic;
-  protected final int myID;
+  private final Date myDate;
+  private final TimeSlot myTimeSlot;
+  private Auditorium myAuditorium;
+  private final Topic myTopic;
+  private final int myID;
 
   public AbstractEvent(int id, Date date, TimeSlot timeSlot, @Nullable Auditorium auditorium, Topic topic) {
     myID = id;
