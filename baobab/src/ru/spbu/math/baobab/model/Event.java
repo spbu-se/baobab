@@ -53,4 +53,9 @@ public interface Event {
    * @return all attendees of this event
    */
   Collection<Attendee> getAttendees();
+  
+  /**
+   * @return event id
+   */
+  int getID();
 }
