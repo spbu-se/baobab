@@ -51,7 +51,7 @@ public class TopicImpl implements Topic {
 
   @Override
   public Event addEvent(Date date, TimeSlot timeSlot, @Nullable Auditorium auditorium) {
-    Event event = new EventImpl(date, timeSlot, auditorium, this);
+    Event event = new EventImpl(myEvents.size() + 1, date, timeSlot, auditorium, this);
     myEvents.add(event);
     return event;
   }
