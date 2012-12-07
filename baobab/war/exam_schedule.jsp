@@ -8,8 +8,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <!-- Le styles -->
-    <link href="bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <style type="text/css">
       body {
         padding-top: 10px;
@@ -31,11 +30,11 @@
         color: #999;
       }
     </style>
-    <link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
-      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+      <script src="bootstrap/js/html5.js"></script>
     <![endif]-->
   </head>
 
@@ -95,9 +94,7 @@
 
     </div><!--/.fluid-container-->
 
-    <!-- Le javascript
-    ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script src="bootstrap/js/jquery.min.js"></script>
   </body>
 </html>
