@@ -79,11 +79,13 @@ public class TopicSqlImpl implements Topic {
 
       ResultSet rs = stmt.executeQuery();
       if (!rs.next()) {
-        throw new IllegalStateException("Event identified by this date,  timeslot,  topic does not exist");
+        throw new IllegalStateException("Event identified by this date: " + date.toString() +
+        		", timeslot: " + timeSlot.getName() + ",  topic: " + this.getName() + " does not exist");
       } 
       int id = rs.getInt("id");
       if (rs.next()) {
-        throw new IllegalStateException("There are too many events identified by this date, timeslot, topic");
+        throw new IllegalStateException("There are too many events identified by this date: " + sqlDate.toString() +
+                ", timeslot: " + timeSlot.getName() + ",  topic: " + this.getName());
       } 
      
       Event event = new EventSqlImpl(id, date, timeSlot, auditorium, this);
@@ -149,18 +151,8 @@ public class TopicSqlImpl implements Topic {
           "SELECT * FROM Attendee a JOIN " + tableName + " ta ON ta.attendee_id = a.id " + "WHERE ta.topic_id=?;").get(0);
       stmt.setString(1, this.getID());
       ResultSet rs = stmt.executeQuery();
-
-      for (boolean hasRow = rs.next(); hasRow; hasRow = rs.next()) {
-        int id = rs.getInt("id");
-        String uid = rs.getString("uid");
-        String name = rs.getString("name");
-        int group_id = rs.getInt("group_id");
-        int type = rs.getInt("type");
-
-        Attendee attendee = new AttendeeSqlImpl(id, uid, name, Attendee.Type.values()[type], group_id, new AttendeeExtentSqlImpl());
-        attendees.add(attendee);
-      }
-      return attendees;
+      
+      return new AttendeeExtentSqlImpl().fetchAttendees(rs);
     } catch (SQLException e) {
       e.printStackTrace();
     } finally {
