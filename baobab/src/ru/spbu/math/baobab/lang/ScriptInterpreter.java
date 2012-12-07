@@ -12,9 +12,16 @@ import ru.spbu.math.baobab.server.TimeSlotExtentImpl;
  * @author ragozina.anastasiya, vloginova
  */
 public class ScriptInterpreter {
-  private final List<Parser> myParsers = Arrays.asList(new TimeSlotCommandParser(new TimeSlotExtentImpl()),
-      new AuditoriumCommandParser(new AuditoriumExtentImpl()));
+  private final List<Parser> myParsers;
 
+  public ScriptInterpreter() {
+    this(Arrays.asList(new TimeSlotCommandParser(new TimeSlotExtentImpl()), new AuditoriumCommandParser(new AuditoriumExtentImpl())));
+  }
+  
+  public ScriptInterpreter(List<Parser> parsers) {
+    myParsers = parsers;
+  }
+  
   /**
    * Receive command and process it
    * 

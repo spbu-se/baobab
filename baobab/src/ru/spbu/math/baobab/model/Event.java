@@ -1,5 +1,6 @@
 package ru.spbu.math.baobab.model;
 
+import java.util.Collection;
 import java.util.Date;
 
 /**
@@ -41,4 +42,20 @@ public interface Event {
    * @return topic associated with this event
    */
   Topic getTopic();
+  
+  /**
+   * Adds an attendee to this particular event.
+   * @param att new attendee
+   */
+  void addAttendee(Attendee att);
+  
+  /**
+   * @return all attendees of this event
+   */
+  Collection<Attendee> getAttendees();
+  
+  /**
+   * @return event id
+   */
+  int getID();
 }
