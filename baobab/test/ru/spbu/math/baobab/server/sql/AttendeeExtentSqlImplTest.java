@@ -59,7 +59,7 @@ public class AttendeeExtentSqlImplTest extends SqlTestCase {
     assertNull(attendeeExtent.find("blablabla"));
     // test find method when attendee with the given id exists
     expectSql("SELECT id name type group_id FROM Attendee WHERE uid").withParameters(1, "teacher").withResult(
-        row("id", 2, "name", "Test2", "type", Type.TEACHER.ordinal(), "group_id", null));
-    assertTrue(attendeeExtent.find("teacher").equals(teacher));
+        row("id", 2, "uid", "teacher", "name", "Test2", "type", Type.TEACHER.ordinal(), "group_id", null)); 
+    assertEquals(attendeeExtent.find("teacher"), teacher);
   }
 }
