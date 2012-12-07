@@ -84,8 +84,11 @@ public class AttendeeExtentSqlImpl implements AttendeeExtent {
       String name = rs.getString("name");
       int group_id = rs.getInt("group_id");
       int type = rs.getInt("type");
-      Attendee attendee = new AttendeeSqlImpl(id, uid, name, Attendee.Type.values()[type], group_id, this);
-      attendees.add(attendee);
+      if (rs.wasNull()) {        
+        attendees.add(new AttendeeSqlImpl(id, uid, name, Attendee.Type.values()[type], null, this));
+      } else {
+        attendees.add(new AttendeeSqlImpl(id, uid, name, Attendee.Type.values()[type], group_id, this));
+      }    
     }
     return attendees;
   }
