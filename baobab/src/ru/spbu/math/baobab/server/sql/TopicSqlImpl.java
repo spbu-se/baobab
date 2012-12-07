@@ -71,8 +71,24 @@ public class TopicSqlImpl implements Topic {
       stmt.setString(3, this.getID());
       stmt.setString(4, auditorium.getID());
       stmt.execute();
+      
+      stmt = sqlApi.prepareScript("SELECT id FROM Event WHERE date=?, time_slot_id=?, topic_id=?").get(0);
+      stmt.setDate(1, sqlDate);
+      stmt.setInt(2, timeSlot.getID());
+      stmt.setString(3, this.getID());
 
-      Event event = new EventImpl(date, timeSlot, auditorium, this);
+      ResultSet rs = stmt.executeQuery();
+      if (!rs.next()) {
+        throw new IllegalStateException("Event identified by this date: " + date.toString() +
+        		", timeslot: " + timeSlot.getName() + ",  topic: " + this.getName() + " does not exist");
+      } 
+      int id = rs.getInt("id");
+      if (rs.next()) {
+        throw new IllegalStateException("There are too many events identified by this date: " + sqlDate.toString() +
+                ", timeslot: " + timeSlot.getName() + ",  topic: " + this.getName());
+      } 
+     
+      Event event = new EventSqlImpl(id, date, timeSlot, auditorium, this);
       return event;
     } catch (SQLException e) {
     } finally {
@@ -135,18 +151,8 @@ public class TopicSqlImpl implements Topic {
           "SELECT * FROM Attendee a JOIN " + tableName + " ta ON ta.attendee_id = a.id " + "WHERE ta.topic_id=?;").get(0);
       stmt.setString(1, this.getID());
       ResultSet rs = stmt.executeQuery();
-
-      for (boolean hasRow = rs.next(); hasRow; hasRow = rs.next()) {
-        int id = rs.getInt("id");
-        String uid = rs.getString("uid");
-        String name = rs.getString("name");
-        int group_id = rs.getInt("group_id");
-        int type = rs.getInt("type");
-
-        Attendee attendee = new AttendeeSqlImpl(id, uid, name, Attendee.Type.values()[type], group_id, new AttendeeExtentSqlImpl());
-        attendees.add(attendee);
-      }
-      return attendees;
+      
+      return new AttendeeExtentSqlImpl().fetchAttendees(rs);
     } catch (SQLException e) {
       e.printStackTrace();
     } finally {
@@ -199,10 +205,11 @@ public class TopicSqlImpl implements Topic {
     SqlApi sqlApi = SqlApi.create();
     try {
       for (boolean hasRow = rs.next(); hasRow; hasRow = rs.next()) {
+        int id = rs.getInt("id");
         Date date = new Date(rs.getDate("date").getTime());
         TimeSlot ts = myTimeSlotExtent.findById(rs.getInt("timeslot_id"));
         Auditorium auditorium = myAuditoriumExtent.find(rs.getString("auditorium_num"));
-        Event event = new EventImpl(date, ts, auditorium, this);
+        Event event = new EventSqlImpl(id, date, ts, auditorium, this);
         events.add(event);
       }
     } catch (SQLException e) {
