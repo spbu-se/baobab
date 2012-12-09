@@ -1,3 +1,6 @@
+DROP TABLE IF EXISTS CalendarTopic;
+DROP TABLE IF EXISTS Calendar;
+DROP TABLE IF EXISTS EventAttendee;
 DROP TABLE IF EXISTS TopicAttendee;
 DROP TABLE IF EXISTS TopicOwner;
 DROP TABLE IF EXISTS Event;
@@ -50,8 +53,7 @@ CREATE TABLE Auditorium(
 );
 
 CREATE TABLE Topic(
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  uid VARCHAR(32) NOT NULL UNIQUE,
+  uid VARCHAR(32) NOT NULL PRIMARY KEY,
   name VARCHAR(256),
   type INT NOT NULL CHECK(type >= 0 AND type <= 5)
 );
@@ -60,23 +62,48 @@ CREATE TABLE Event(
   id INT PRIMARY KEY AUTO_INCREMENT,
   `date` DATE NOT NULL,
   time_slot_id INT NOT NULL,
-  topic_id INT NOT NULL,
+  topic_id VARCHAR(32) NOT NULL,
   auditorium_num VARCHAR(10),
+  UNIQUE(`date`, time_slot_id, topic_id),
   FOREIGN KEY (time_slot_id) REFERENCES TimeSlot(id),
   FOREIGN KEY (auditorium_num) REFERENCES Auditorium(num),
-  FOREIGN KEY (topic_id) REFERENCES Topic(id)
+  FOREIGN KEY (topic_id) REFERENCES Topic(uid)
 );
 
 CREATE TABLE TopicOwner(
-  topic_id INT,
+  topic_id VARCHAR(32),
   attendee_id INT,
-  FOREIGN KEY (topic_id) REFERENCES Topic(id),
+  FOREIGN KEY (topic_id) REFERENCES Topic(uid),
   FOREIGN KEY (attendee_id) REFERENCES Attendee(id)
 );
 
 CREATE TABLE TopicAttendee(
-  topic_id INT,
+  topic_id VARCHAR(32),
   attendee_id INT,
-  FOREIGN KEY (topic_id) REFERENCES Topic(id),
+  FOREIGN KEY (topic_id) REFERENCES Topic(uid),
   FOREIGN KEY (attendee_id) REFERENCES Attendee(id)  
+);
+
+-- This table keeps relationships between attendees and event instances.
+-- Attendees may opt to attend just a single event or to miss a single event.
+CREATE TABLE EventAttendee(
+  event_id INT NOT NULL,
+  attendee_uid VARCHAR(64) NOT NULL,
+  is_attending BOOLEAN NOT NULL DEFAULT TRUE,
+  UNIQUE(event_id, attendee_uid),
+  FOREIGN KEY (event_id) REFERENCES Event(id),
+  FOREIGN KEY(attendee_uid) REFERENCES Attendee(uid)
+);
+
+-- This table is just an enumeration of the available calendars
+CREATE TABLE Calendar(
+  uid VARCHAR(16) PRIMARY KEY
+);
+
+-- This table implements M:N relationship between calendars and topics
+CREATE TABLE CalendarTopic(
+  calendar_uid VARCHAR(16),
+  topic_uid VARCHAR(32),
+  FOREIGN KEY (calendar_uid) REFERENCES Calendar(uid),
+  FOREIGN KEY (topic_uid) REFERENCES Topic(uid)
 );

@@ -3,7 +3,10 @@ package ru.spbu.math.baobab.server.sql;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.List;
+
+import com.google.common.collect.Lists;
 
 import ru.spbu.math.baobab.model.Attendee;
 import ru.spbu.math.baobab.model.AttendeeExtent;
@@ -64,16 +67,9 @@ public class AttendeeExtentSqlImpl implements AttendeeExtent {
       PreparedStatement stmt = con.prepareScript("SELECT id, name, type, group_id FROM Attendee WHERE uid=?").get(0);
       stmt.setString(1, id);
       ResultSet resultFind = stmt.executeQuery();
-      if (resultFind.next()) {
-        int intID = resultFind.getInt("id");
-        String name = resultFind.getString("name");
-        Type type = Type.values()[resultFind.getInt("type")];
-        int group_id = resultFind.getInt("group_id");
-        if (resultFind.wasNull()) {
-          return new AttendeeSqlImpl(intID, id, name, type, null, this);
-        } else {
-          return new AttendeeSqlImpl(intID, id, name, type, group_id, this);
-        }
+      List<Attendee> findedAttendees = (List<Attendee>) fetchAttendees(resultFind);
+      if (findedAttendees.size() == 1) {
+        return findedAttendees.get(0);
       }
     } catch (SQLException e) {
       e.printStackTrace();
@@ -81,5 +77,22 @@ public class AttendeeExtentSqlImpl implements AttendeeExtent {
       con.dispose();
     }
     return null;
+  }
+  
+  public Collection<Attendee> fetchAttendees(ResultSet rs) throws SQLException {
+    List<Attendee> attendees = Lists.newArrayList();
+    for (boolean hasRow = rs.next(); hasRow; hasRow = rs.next()) {
+      int id = rs.getInt("id");
+      String uid = rs.getString("uid");
+      String name = rs.getString("name");
+      int group_id = rs.getInt("group_id");
+      int type = rs.getInt("type");
+      if (rs.wasNull()) {        
+        attendees.add(new AttendeeSqlImpl(id, uid, name, Attendee.Type.values()[type], null, this));
+      } else {
+        attendees.add(new AttendeeSqlImpl(id, uid, name, Attendee.Type.values()[type], group_id, this));
+      }    
+    }
+    return attendees;
   }
 }

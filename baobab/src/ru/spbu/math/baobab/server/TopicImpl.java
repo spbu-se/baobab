@@ -5,6 +5,7 @@ import java.util.Date;
 
 import javax.annotation.Nullable;
 
+import com.google.common.collect.Sets;
 import com.google.common.collect.Lists;
 
 import ru.spbu.math.baobab.model.Attendee;
@@ -24,6 +25,8 @@ public class TopicImpl implements Topic {
   private final Type myType;
   private final String myId;
   private final Collection<Event> myEvents = Lists.newArrayList();
+  private final Collection<Attendee> myAttendees = Sets.newLinkedHashSet();
+  private final Collection<Attendee> myOwners = Sets.newLinkedHashSet();
 
   public TopicImpl(String id, Type type, String name) {
     myId = id;
@@ -48,7 +51,7 @@ public class TopicImpl implements Topic {
 
   @Override
   public Event addEvent(Date date, TimeSlot timeSlot, @Nullable Auditorium auditorium) {
-    Event event = new EventImpl(date, timeSlot, auditorium, this);
+    Event event = new EventImpl(myEvents.size() + 1, date, timeSlot, auditorium, this);
     myEvents.add(event);
     return event;
   }
@@ -72,23 +75,21 @@ public class TopicImpl implements Topic {
 
   @Override
   public void addAttendee(Attendee att) {
-    // TODO Auto-generated method stub
+      myAttendees.add(att);
   }
 
   @Override
   public Collection<Attendee> getAttendees() {
-    // TODO Auto-generated method stub
-    return null;
+    return myAttendees;
   }
 
   @Override
   public void addOwner(Attendee owner) {
-    // TODO Auto-generated method stub
+      myOwners.add(owner);
   }
 
   @Override
   public Collection<Attendee> getOwners() {
-    // TODO Auto-generated method stub
-    return null;
+    return myOwners;
   }
 }
