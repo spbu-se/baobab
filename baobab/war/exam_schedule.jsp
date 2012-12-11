@@ -20,9 +20,6 @@
       .sidebar-nav a {
         margin-right: 4px;
       }
-      .sidebar-nav span.active{
-        margin: 0 2px 0 -2px;
-      }
       .datetime {
         width: 60px;
       }
@@ -53,10 +50,10 @@
               <li class="nav-header">1 курс</li>
               <li class="nav-header">2 курс</li>
               <p>
-                <a href="#">241</a>
-                <a href="#">242</a>
-                <span class="label label-info active">243</span>
-                <a href="#">244</a>
+                <a data-toggle="tab" href="#g241">241</a>
+                <a data-toggle="tab" href="#g242">242</a>
+                <a data-toggle="tab" href="#g243">243</a>
+                <a data-toggle="tab" href="#g244">244</a>
               </p>
               <li class="nav-header">3 курс</li>              
               <li class="nav-header">4 курс</li>
@@ -65,28 +62,96 @@
         </div><!--/span-->
         <div class="span9">
           <div class="row-fluid">
-            <div class="span9">
-              <h2>243 группа</h2>
+            <div class="span9 tab-content">
 
-              <div class="row-fluid">
-                <div class="span2" class="datetime">
-                  <h4>11 янв</h4>
-                  <h5 class="time">10:00</h5>
+              <div class="tab-pane active" id="g241">
+	              <h2>241 группа</h2>
+	              <div class="row-fluid">
+	                <div class="span2" class="datetime">
+	                  <h4>11 янв</h4>
+	                  <h5 class="time">10:00</h5>
+	                </div>
+	                <div class="span7">
+	                  <h4>Математический анализ</h4>
+	                  <p>Макаров, ауд. 05</p>
+	                </div>
+	              </div>
+	              <div class="row-fluid">
+	                <div class="span6">
+	                  <hr>
+	                  <p>
+	                    <a class="btn btn-small" a href="#"><i class="icon-download"></i> PDF</a>
+	                  </p>
+	                </div>
+	              </div>
+	            </div>
+
+	            <div class="tab-pane" id="g242">
+                <h2>242 группа</h2>
+                <div class="row-fluid">
+                  <div class="span2" class="datetime">
+                    <h4>11 янв</h4>
+                    <h5 class="time">10:00</h5>
+                  </div>
+                  <div class="span7">
+                    <h4>Математический анализ</h4>
+                    <p>Макаров, ауд. 05</p>
+                  </div>
                 </div>
-                <div class="span7">
-                  <h4>Математический анализ</h4>
-                  <p>Макаров, ауд. 05</p>
+                <div class="row-fluid">
+                  <div class="span6">
+                    <hr>
+                    <p>
+                      <a class="btn btn-small" a href="#"><i class="icon-download"></i> PDF</a>
+                    </p>
+                  </div>
                 </div>
               </div>
 
-              <div class="row-fluid">
-                <div class="span6">
-                  <hr>
-                  <p>
-                    <a class="btn btn-small" a href="#"><i class="icon-download"></i> PDF</a>
-                  </p>
+              <div class="tab-pane" id="g243">
+                <h2>243 группа</h2>
+                <div class="row-fluid">
+                  <div class="span2" class="datetime">
+                    <h4>11 янв</h4>
+                    <h5 class="time">10:00</h5>
+                  </div>
+                  <div class="span7">
+                    <h4>Математический анализ</h4>
+                    <p>Макаров, ауд. 05</p>
+                  </div>
+                </div>
+                <div class="row-fluid">
+                  <div class="span6">
+                    <hr>
+                    <p>
+                      <a class="btn btn-small" a href="#"><i class="icon-download"></i> PDF</a>
+                    </p>
+                  </div>
                 </div>
               </div>
+
+              <div class="tab-pane" id="g244">
+                <h2>244 группа</h2>
+                <div class="row-fluid">
+                  <div class="span2" class="datetime">
+                    <h4>11 янв</h4>
+                    <h5 class="time">10:00</h5>
+                  </div>
+                  <div class="span7">
+                    <h4>Математический анализ</h4>
+                    <p>Макаров, ауд. 05</p>
+                  </div>
+                </div>
+                <div class="row-fluid">
+                  <div class="span6">
+                    <hr>
+                    <p>
+                      <a class="btn btn-small" a href="#"><i class="icon-download"></i> PDF</a>
+                    </p>
+                  </div>
+                </div>
+              </div>
+
             </div><!--/span-->
           </div><!--/row-->
         </div><!--/span-->
@@ -96,5 +161,23 @@
 
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="bootstrap/js/jquery.min.js"></script>
+    <script src="bootstrap/js/bootstrap-tab.js"></script>
+    <script type="text/javascript">
+      var activeTab = {};
+
+      $(function() { 
+        activeTab = $(('.nav-list a[href=' + location.hash + ']').replace("#", "#g"));
+        activeTab && activeTab.tab('show');
+        activeTab.addClass('label label-info active');
+      });
+
+      $('.nav-list a').on('shown', function (e) {
+        activeTab.removeClass('label label-info active');
+        $(this).addClass('label label-info active');
+        activeTab = $(this);
+
+        document.location.hash = e.target.hash.replace("#g", "#");
+      });
+    </script>
   </body>
 </html>
