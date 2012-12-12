@@ -88,24 +88,6 @@
     <url-pattern>/_ah/test_pdf_schedule</url-pattern>
   </servlet-mapping>
   
-  <servlet>
-    <servlet-name>script_form</servlet-name>
-    <servlet-class>ru.spbu.math.baobab.server.ScriptFormServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>script_form</servlet-name>
-    <url-pattern>/data/edit</url-pattern>
-  </servlet-mapping>
-  
-  <servlet>
-    <servlet-name>test_calendar_of_attendee</servlet-name>
-    <servlet-class>ru.spbu.math.baobab.server.CalendarOfAttendeeDemoServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>test_calendar_of_attendee</servlet-name>
-    <url-pattern>/_ah/test_calendar_of_attendee</url-pattern>
-  </servlet-mapping>
-
   <!-- GWT -->
   <servlet>
     <servlet-name>greetServlet</servlet-name>
