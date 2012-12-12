@@ -9,7 +9,7 @@ import ru.spbu.math.baobab.server.TimeSlotExtentImpl;
 import junit.framework.TestCase;
 
 /**
- * Tests for script interpreter
+ * Tests for TimeSlotCommandParser
  * 
  * @author vloginova
  */
@@ -19,21 +19,21 @@ public class TimeSlotCommandParserTest extends TestCase {
     TimeSlotCommandParser parser = new TimeSlotCommandParser(timeSlotExtent);
     assertTrue(parser.parse("define timeslot 1st_try 12:12 to 12:40 on even Monday"));
     List<TimeSlot> timeSlots = timeSlotExtent.findByWeekDay(1);
-    assertTrue(timeSlots.size() == 1);
-    assertTrue(timeSlots.get(0).getName().equals("1st_try"));
-    assertTrue(timeSlots.get(0).getDayOfWeek() == 1);
-    assertTrue(timeSlots.get(0).getEvenOddWeek() == EvenOddWeek.EVEN);
-    assertTrue(timeSlots.get(0).getStart().getHour() == 12);
-    assertTrue(timeSlots.get(0).getStart().getMinute() == 12);
-    assertTrue(timeSlots.get(0).getFinish().getHour() == 12);
-    assertTrue(timeSlots.get(0).getFinish().getMinute() == 40);
+    assertEquals(timeSlots.size(), 1);
+    assertEquals(timeSlots.get(0).getName(), "1st_try");
+    assertEquals(timeSlots.get(0).getDayOfWeek(), 1);
+    assertEquals(timeSlots.get(0).getEvenOddWeek(), EvenOddWeek.EVEN);
+    assertEquals(timeSlots.get(0).getStart().getHour(), 12);
+    assertEquals(timeSlots.get(0).getStart().getMinute(), 12);
+    assertEquals(timeSlots.get(0).getFinish().getHour(), 12);
+    assertEquals(timeSlots.get(0).getFinish().getMinute(), 40);
   }
 
   public void testCommandCorrectnessRus() {
     TimeSlotExtent timeSlotExtent = new TimeSlotExtentImpl();
     TimeSlotCommandParser parser = new TimeSlotCommandParser(timeSlotExtent);
-    assertTrue(parser.parse("определить интервал ПерваяПара от 1:00 до 3:00 в нечетный вт"));
-    assertTrue(timeSlotExtent.findByWeekDay(2).size() == 1);
+    assertTrue(parser.parse("определить интервал 1st_try от 1:00 до 3:00 в нечетный вт"));
+    assertEquals(timeSlotExtent.findByWeekDay(2).size(), 1);
   }
 
   public void testIncorrectCommand() {
@@ -47,7 +47,7 @@ public class TimeSlotCommandParserTest extends TestCase {
     TimeSlotCommandParser parser = new TimeSlotCommandParser(timeSlotExtent);
     assertTrue(parser.parse("define timeslot 1st_try 11:15 to 12:50 on Wednesday"));
     List<TimeSlot> timeSlots = timeSlotExtent.findByWeekDay(3);
-    assertTrue(timeSlots.size() == 1);
-    assertTrue(timeSlots.get(0).getEvenOddWeek() == EvenOddWeek.ALL);
+    assertEquals(timeSlots.size(), 1);
+    assertEquals(timeSlots.get(0).getEvenOddWeek(), EvenOddWeek.ALL);
   }
 }
