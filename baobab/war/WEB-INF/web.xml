@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.5" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee                http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+
+  <!--  Auth -->
+  <servlet>
+    <servlet-name>auth_servlet</servlet-name>
+    <servlet-class>ru.spbu.math.baobab.server.auth.BaobabAuthServlet</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>auth_servlet</servlet-name>
+    <url-pattern>/auth/dev</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>auth_servlet</servlet-name>
+    <url-pattern>/auth/twitter</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>auth_servlet</servlet-name>
+    <url-pattern>/auth/vkontakte</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>auth_servlet</servlet-name>
+    <url-pattern>/auth/logout</url-pattern>
+  </servlet-mapping>
+  
+  <!-- Landing -->
+  <servlet>
+    <servlet-name>team_servlet</servlet-name>
+    <servlet-class>ru.spbu.math.baobab.server.TeamServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>team_servlet</servlet-name>
+    <url-pattern>/team</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>landing_servlet</servlet-name>
+    <jsp-file>/exam_schedule.jsp</jsp-file>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>landing_servlet</servlet-name>
+    <url-pattern>/</url-pattern>
+  </servlet-mapping>
+ 
+  
+  <!--  Devtools and testing -->
+  <servlet>
+    <servlet-name>code_review_servlet</servlet-name>
+    <servlet-class>ru.spbu.math.baobab.devtools.server.CodeReviewServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>code_review_servlet</servlet-name>
+    <url-pattern>/_ah/code_review</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>test_sql_servlet</servlet-name>
+    <servlet-class>ru.spbu.math.baobab.server.sql.TestSqlServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>test_sql_servlet</servlet-name>
+    <url-pattern>/_ah/test_sql</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+      <servlet-name>test_pdf_servlet</servlet-name>
+      <servlet-class>ru.spbu.math.baobab.server.TestPdfServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+      <servlet-name>test_pdf_servlet</servlet-name>
+      <url-pattern>/_ah/test_pdf</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>test_schedule</servlet-name>
+    <servlet-class>ru.spbu.math.baobab.server.SimpleScheduleDemoServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>test_schedule</servlet-name>
+    <url-pattern>/_ah/test_schedule</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>test_pdf_schedule</servlet-name>
+    <servlet-class>ru.spbu.math.baobab.server.SimpleSchedulePdfDemoServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>test_pdf_schedule</servlet-name>
+    <url-pattern>/_ah/test_pdf_schedule</url-pattern>
+  </servlet-mapping>
+  
+  <!-- GWT -->
+  <servlet>
+    <servlet-name>greetServlet</servlet-name>
+    <servlet-class>ru.spbu.math.baobab.server.GreetingServiceImpl</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>greetServlet</servlet-name>
+    <url-pattern>/baobab/greet</url-pattern>
+  </servlet-mapping>
+  
+  <!-- 
+  <welcome-file-list>
+    <welcome-file>Baobab.html</welcome-file>
+  </welcome-file-list>
+-->
+  <servlet>
+    <servlet-name>SystemServiceServlet</servlet-name>
+    <servlet-class>com.google.api.server.spi.SystemServiceServlet</servlet-class>
+    <init-param>
+      <param-name>services</param-name>
+      <param-value/>
+    </init-param>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>SystemServiceServlet</servlet-name>
+    <url-pattern>/_ah/spi/*</url-pattern>
+  </servlet-mapping>
+
+</web-app>
