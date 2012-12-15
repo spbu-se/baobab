@@ -36,3 +36,4 @@ public class ScriptInterpreter {
     throw new IllegalArgumentException("Incorrect command");
   }
 }
+
