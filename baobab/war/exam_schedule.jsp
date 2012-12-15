@@ -1,64 +1,36 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!doctype html>
 <html lang="ru">
-  <head>
-    <meta charset="utf-8">
-    <title>Расписание зимней сессии</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
-
-    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <style type="text/css">
-      body {
-        padding-top: 10px;
-        padding-bottom: 40px;
-      }
-      .sidebar-nav {
-        padding: 9px 0;
-      }
-      .sidebar-nav a {
-        margin-right: 4px;
-      }
-      .datetime {
-        width: 60px;
-      }
-      .time {
-        color: #999;
-      }
-    </style>
-    <link href="bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
-
-    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
-    <!--[if lt IE 9]>
-      <script src="bootstrap/js/html5.js"></script>
-    <![endif]-->
-  </head>
-
+  <jsp:include page="include_header.jsp"></jsp:include>
   <body>
     <div class="container-fluid">
-      <div class="row-fluid">
-        <div class="page-header">
-          <h1>Расписание зимней сессии</h1>
-        </div>
+      <div class="row-fluid page-header">
+        <div class="span10">
+          <h2>Расписание зимней сессии</h2>
+        </div>        
       </div>
 
       <div class="row-fluid">
         <div class="span3">
-          <div class="well sidebar-nav">
-            <ul class="nav nav-list">
-              <li class="nav-header">1 курс</li>
-              <li class="nav-header">2 курс</li>
-              <p>
-                <a data-toggle="tab" href="#g241">241</a>
-                <a data-toggle="tab" href="#g242">242</a>
-                <a data-toggle="tab" href="#g243">243</a>
-                <a data-toggle="tab" href="#g244">244</a>
-              </p>
-              <li class="nav-header">3 курс</li>              
-              <li class="nav-header">4 курс</li>
-            </ul><!--/.nav-->
-          </div><!--/.well-->
+          <div class="row-fluid">
+	          <div class="well sidebar-nav">
+	            <ul class="nav nav-list">
+	              <li class="nav-header">1 курс</li>
+	              <li class="nav-header">2 курс</li>
+	              <p>
+                    <a data-toggle="tab" href="#g241">241</a>
+                    <a data-toggle="tab" href="#g242">242</a>
+                    <a data-toggle="tab" href="#g243">243</a>
+                    <a data-toggle="tab" href="#g244">244</a>
+	              </p>
+	              <li class="nav-header">3 курс</li>              
+	              <li class="nav-header">4 курс</li>
+	            </ul><!--/.nav-->
+	          </div><!--/.well-->
+          </div>
+          <div class="row-fluid">
+            <div class="span4"><a href="/data/edit" class="link">Редактировать</a></div>
+          </div>
         </div><!--/span-->
         <div class="span9">
           <div class="row-fluid">
