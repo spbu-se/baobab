@@ -1,5 +1,7 @@
 package ru.spbu.math.baobab.model;
 
+import java.util.Collection;
+
 /**
  * Attendee extent is a set of all available attendees.
  * 
@@ -22,4 +24,9 @@ public interface AttendeeExtent {
    * @return found attendee or {@code null} if no attendee with such ID exists
    */
   Attendee find(String id);
+  
+  /**
+   * @return collection of all available attendees
+   */
+  Collection<Attendee> getAll();
 }
