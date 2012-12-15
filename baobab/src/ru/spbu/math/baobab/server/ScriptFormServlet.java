@@ -91,7 +91,7 @@ public class ScriptFormServlet extends HttpServlet {
     List<String> names = Lists.transform(timeSlots, new Function<TimeSlot, String>() {
       @Override
       public String apply(TimeSlot ts) {
-        return String.format("%s (%s %d:%d - %d:%d)", ts.getName(), Parser.DAYS_LONG_RU[ts.getDayOfWeek() - 1], 
+        return String.format("%s (%s %02d:%02d - %02d:%02d)", ts.getName(), Parser.DAYS_LONG_RU[ts.getDayOfWeek() - 1], 
             ts.getStart().getHour(), ts.getStart().getMinute(), ts.getFinish().getHour(), ts.getFinish().getMinute());
       }
     });
