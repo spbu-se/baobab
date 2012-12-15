@@ -85,7 +85,7 @@ public abstract class SqlApi {
   private static Connection createConnection(String database, String username) {
     Connection c = null;
     try {
-      c = DriverManager.getConnection(CONNECTION_SPEC + database, username, null);
+      c = DriverManager.getConnection(CONNECTION_SPEC + database + "&useUnicode=yes&characterEncoding=UTF-8", username, null);
     } catch (SQLException e) {
       LOGGER.log(Level.SEVERE, "Failed to create connection", e);
     }
