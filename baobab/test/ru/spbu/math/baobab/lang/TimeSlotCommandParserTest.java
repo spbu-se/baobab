@@ -36,6 +36,14 @@ public class TimeSlotCommandParserTest extends TestCase {
     assertEquals(timeSlotExtent.findByWeekDay(2).size(), 1);
   }
 
+  public void testQuotedName() {
+    TimeSlotExtent timeSlotExtent = new TimeSlotExtentImpl();
+    TimeSlotCommandParser parser = new TimeSlotCommandParser(timeSlotExtent);
+    assertTrue(parser.parse("определить интервал \"1 пара\" от 1:00 до 3:00 в нечетный вт"));
+    assertEquals(timeSlotExtent.findByWeekDay(2).size(), 1);
+    assertEquals("1 пара", timeSlotExtent.findByWeekDay(2).get(0).getName());
+  }
+  
   public void testIncorrectCommand() {
     TimeSlotExtent timeSlotExtent = new TimeSlotExtentImpl();
     TimeSlotCommandParser parser = new TimeSlotCommandParser(timeSlotExtent);

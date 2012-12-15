@@ -42,7 +42,7 @@ public class AuditoriumCommandParser extends Parser {
    * @param match matcher with matched command string
    */
   private void execute(Matcher match) {
-    String auditorium_num = match.group(1);
+    String auditorium_num = unquote(match.group(1));
     myAuditoriumExtent.create(auditorium_num, 0);
   }
 }
