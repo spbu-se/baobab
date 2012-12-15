@@ -48,7 +48,7 @@ public class TimeSlotCommandParser extends Parser {
    * @param match matcher with matched command string
    */
   private void execute(Matcher match) {
-    String id = match.group(1);
+    String id = unquote(match.group(1));
     TimeInstant start = TimeInstantConverter.convertToTimeInstant(match.group(2));
     TimeInstant finish = TimeInstantConverter.convertToTimeInstant(match.group(3));
     EvenOddWeek flashing = OddEvenWeekConverter.convertToOddEvenWeek(match.group(5) == null ? "" : match.group(5));

@@ -47,7 +47,7 @@ public abstract class Parser {
   public static final List<String> FREE_FORM_GROUP = Arrays.asList("free form group", "коллектив");
 
   // group patterns
-  protected final static String ID_PATTERN = "[\\wа-яА-Я]+";
+  protected final static String ID_PATTERN = "(?:[\\wа-яА-Я]+|\"[\\wа-яА-Я\\s\\.-]+\")";
   protected final static String TIME_PATTERN = "\\d{1,2}:\\d{2}";
   protected final static String EVEN_ODD_PATTERN_ENG = String.format("%s|%s", ODD.get(0), EVEN.get(0));
   protected final static String EVEN_ODD_PATTERN_RUS = String.format("%s|%s", ODD.get(1), EVEN.get(1));
@@ -71,4 +71,14 @@ public abstract class Parser {
    * @return true in case of success parsing
    */
   public abstract boolean parse(String command);
+  
+  protected static String unquote(String maybeQuoted) {
+    if (maybeQuoted == null) {
+      return null;
+    }
+    if (maybeQuoted.startsWith("\"") && maybeQuoted.endsWith("\"")) {
+      return maybeQuoted.substring(1, maybeQuoted.length() - 1);
+    }
+    return maybeQuoted;
+  }
 }
