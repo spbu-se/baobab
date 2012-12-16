@@ -41,6 +41,10 @@ class TestData {
     
     Attendee group241 = myAttendeeExtent.create("241", "241", Attendee.Type.ACADEMIC_GROUP);
     Attendee group242 = myAttendeeExtent.create("242", "242", Attendee.Type.ACADEMIC_GROUP);
+    Attendee group243 = myAttendeeExtent.create("243", "243", Attendee.Type.ACADEMIC_GROUP);
+    Attendee group244 = myAttendeeExtent.create("244", "244", Attendee.Type.ACADEMIC_GROUP);
+    Attendee group245 = myAttendeeExtent.create("245", "245", Attendee.Type.ACADEMIC_GROUP);
+    
     Attendee bibikov = myAttendeeExtent.create("Бибиков Ю.Н.", "Бибиков Ю.Н.", Attendee.Type.TEACHER);
     Attendee makarov = myAttendeeExtent.create("Макаров Б.М.", "Макаров Б.М.", Attendee.Type.TEACHER);
     Attendee aliev = myAttendeeExtent.create("Алиев А.А.", "Алиев А.А.", Attendee.Type.TEACHER);
@@ -48,29 +52,65 @@ class TestData {
     
     Topic examCalculus = myTopicExtent.createTopic("матан-03-exam", Topic.Type.EXAM, "Математический анализ");
     examCalculus.addOwner(makarov);
-    Event eventCalculus = examCalculus.addEvent(new Date(2013, Calendar.JANUARY, 11), timeSlots.get(4), aud2508);
-    eventCalculus.addAttendee(group241);
-    mySchedule.put(group241, eventCalculus);
     
     Topic examGeometry = myTopicExtent.createTopic("гит-03-exam", Topic.Type.EXAM, "Геометрия и топология");
     examGeometry.addOwner(bibikov);
-    Event eventGeometry = examGeometry.addEvent(new Date(2013, Calendar.JANUARY, 15), timeSlots.get(1), aud04);
-    eventGeometry.addAttendee(group241);
-    eventGeometry.addAttendee(group242);
     examGeometry.setUrl("http://cs6270.userapi.com/u19639064/docs/235e0eb1ddd4/Voprosy_Geometria_3_Semestr.pdf");
-    mySchedule.put(group241, eventGeometry);
-    
+ 
     Topic examInformatics = myTopicExtent.createTopic("инф-03-exam", Topic.Type.EXAM, "Информатика");
     examInformatics.addOwner(aliev);
-    Event eventInformatics = examInformatics.addEvent(new Date(2013, Calendar.JANUARY, 19), timeSlots.get(5), aud01);
-    eventInformatics.addAttendee(group241);
-    mySchedule.put(group241, eventInformatics);
-    
+
     Topic examAlgebra = myTopicExtent.createTopic("атч-03-exam", Topic.Type.EXAM, "Алгебра и теория чисел");
     examAlgebra.addOwner(zhukov);
-    Event eventAlgebra = examAlgebra.addEvent(new Date(2013, Calendar.JANUARY, 24), timeSlots.get(3), aud2508);
-    eventAlgebra.addAttendee(group241);
-    mySchedule.put(group241, eventAlgebra);
+
+    {
+      Event eventCalculus = examCalculus.addEvent(new Date(2013, Calendar.JANUARY, 11), timeSlots.get(4), aud2508);
+      eventCalculus.addAttendee(group241);
+      mySchedule.put(group241, eventCalculus);
+      mySchedule.put(group243, eventCalculus);
+      mySchedule.put(group245, eventCalculus);
+      
+      Event eventGeometry = examGeometry.addEvent(new Date(2013, Calendar.JANUARY, 15), timeSlots.get(1), aud04);
+      eventGeometry.addAttendee(group241);
+      mySchedule.put(group241, eventGeometry);
+      mySchedule.put(group243, eventGeometry);
+      mySchedule.put(group245, eventGeometry);
+
+      Event eventInformatics = examInformatics.addEvent(new Date(2013, Calendar.JANUARY, 19), timeSlots.get(5), aud01);
+      eventInformatics.addAttendee(group241);
+      mySchedule.put(group241, eventInformatics);
+      mySchedule.put(group243, eventInformatics);
+      mySchedule.put(group245, eventInformatics);
+
+      Event eventAlgebra = examAlgebra.addEvent(new Date(2013, Calendar.JANUARY, 24), timeSlots.get(3), aud2508);
+      eventAlgebra.addAttendee(group241);
+      mySchedule.put(group241, eventAlgebra);
+      mySchedule.put(group243, eventAlgebra);
+      mySchedule.put(group245, eventAlgebra);
+    }    
+
+    {
+      Event eventCalculus = examCalculus.addEvent(new Date(2013, Calendar.JANUARY, 10), timeSlots.get(3), aud2508);
+      eventCalculus.addAttendee(group242);
+      mySchedule.put(group242, eventCalculus);
+      mySchedule.put(group244, eventCalculus);
+      
+      Event eventGeometry = examGeometry.addEvent(new Date(2013, Calendar.JANUARY, 14), timeSlots.get(0), aud04);
+      eventGeometry.addAttendee(group242);
+      mySchedule.put(group242, eventGeometry);
+      mySchedule.put(group244, eventGeometry);
+      
+      Event eventInformatics = examInformatics.addEvent(new Date(2013, Calendar.JANUARY, 18), timeSlots.get(4), aud01);
+      eventInformatics.addAttendee(group242);
+      mySchedule.put(group242, eventInformatics);
+      mySchedule.put(group244, eventInformatics);
+
+      Event eventAlgebra = examAlgebra.addEvent(new Date(2013, Calendar.JANUARY, 23), timeSlots.get(2), aud2508);
+      eventAlgebra.addAttendee(group242);
+      mySchedule.put(group242, eventAlgebra);
+      mySchedule.put(group244, eventAlgebra);
+    }    
+
   }
   
   Multimap<Attendee, Event> getExamSchedule() {
