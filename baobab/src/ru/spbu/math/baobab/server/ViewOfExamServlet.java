@@ -17,9 +17,9 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 
 /**
- * Simple script form handler Get script source from the web interface and try to execute it
+ * Home page of topic
  * 
- * @author agudulin
+ * @author dageev
  */
 public class ViewOfExamServlet extends HttpServlet {
 
