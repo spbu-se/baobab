@@ -1,4 +1,9 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="java.util.*"%>
+<%@ page import="com.google.common.collect.*"%>
+
+<% LinkedListMultimap<String, String> groupsList = (LinkedListMultimap<String, String>) request.getAttribute("group_list"); %>
+
 <!doctype html>
 <html lang="ru">
   <jsp:include page="include_header.jsp"></jsp:include>
@@ -7,6 +12,11 @@
       <div class="row-fluid page-header">
         <div class="span10">
           <h2>Расписание зимней сессии</h2>
+          <%
+          if (groupsList != null) {
+            out.print("Groups List isn't null");
+          }
+          %>
         </div>        
       </div>
 
@@ -15,17 +25,8 @@
           <div class="row-fluid">
 	          <div class="well sidebar-nav">
 	            <ul class="nav nav-list">
-	              <li class="nav-header">1 курс</li>
-	              <li class="nav-header">2 курс</li>
-	              <p>
-                    <a data-toggle="tab" href="#g241">241</a>
-                    <a data-toggle="tab" href="#g242">242</a>
-                    <a data-toggle="tab" href="#g243">243</a>
-                    <a data-toggle="tab" href="#g244">244</a>
-	              </p>
-	              <li class="nav-header">3 курс</li>              
-	              <li class="nav-header">4 курс</li>
-	            </ul><!--/.nav-->
+	               
+              </ul><!--/.nav-->
 	          </div><!--/.well-->
           </div>
           <div class="row-fluid">
