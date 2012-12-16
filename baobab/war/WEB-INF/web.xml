@@ -43,7 +43,7 @@
   </servlet-mapping>
   <servlet>
     <servlet-name>landing_servlet</servlet-name>
-    <jsp-file>/exam_schedule.jsp</jsp-file>
+    <servlet-class>ru.spbu.math.baobab.server.ExamScheduleServlet</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>landing_servlet</servlet-name>
