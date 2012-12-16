@@ -70,7 +70,7 @@ public class TimeSlotExtentImpl implements TimeSlotExtent {
   @Override
   public TimeSlot create(String name, TimeInstant start, TimeInstant finish, int day, EvenOddWeek flashing) {
     for (TimeSlot ts : myTimeSlots) {
-      if (ts.getName().equals(name)) {
+      if (ts.getName().equals(name) && ts.getDayOfWeek() == day && ts.getEvenOddWeek() == flashing) {
         throw new IllegalStateException("The TimeSlot with this name is already exist");
       }
     }
