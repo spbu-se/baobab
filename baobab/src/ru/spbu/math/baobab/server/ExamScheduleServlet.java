@@ -2,7 +2,6 @@ package ru.spbu.math.baobab.server;
 
 import java.io.IOException;
 import java.util.Set;
-import java.util.logging.Logger;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -29,8 +28,8 @@ public class ExamScheduleServlet extends HttpServlet {
     Multimap<String, Attendee> groups = getGroupList(schedule.keySet());
 
     request.setCharacterEncoding("UTF-8");
-    request.setAttribute("groups_list", groups);
-    request.setAttribute("schedule", schedule);
+    request.setAttribute("groupsList", groups.asMap());
+    request.setAttribute("schedule", schedule.asMap());
     RequestDispatcher view = request.getRequestDispatcher("/exam_schedule.jsp");
     view.forward(request, response);
   }
@@ -41,12 +40,8 @@ public class ExamScheduleServlet extends HttpServlet {
     }
 
     Multimap<String, Attendee> groups = LinkedListMultimap.<String, Attendee> create();
-    String prefix = attendeeList.iterator().next().getName().substring(0, 1);
     for (Attendee a : attendeeList) {
-      if (a.getName().startsWith(prefix)) {
-        groups.put(prefix, a);
-      }
-      prefix = a.getName().substring(0, 1);
+      groups.put(a.getName().substring(0, 1), a);
     }
 
     return groups;
