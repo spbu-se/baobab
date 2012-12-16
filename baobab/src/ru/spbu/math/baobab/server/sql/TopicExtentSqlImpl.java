@@ -94,4 +94,28 @@ public class TopicExtentSqlImpl implements TopicExtent {
 
     return null;
   }
+
+  @Override
+  public Topic find(String id) {
+    SqlApi sqlApi = SqlApi.create();
+
+    try {
+      List<PreparedStatement> stmts = sqlApi.prepareScript("SELECT * FROM Topic WHERE uid=?;");
+      stmts.get(0).setString(1, id);
+
+      ResultSet rs = stmts.get(0).executeQuery();
+      for (boolean hasRow = rs.next(); hasRow; hasRow = rs.next()) {
+        Type type = Type.values()[rs.getInt("type")];
+        String name = rs.getString("name");
+        return(new TopicSqlImpl(id, type, name, myTimeSlotExtent, myAuditoriumExtent));
+      }
+      
+    } catch (SQLException e) {
+      e.printStackTrace();
+    } finally {
+      sqlApi.dispose();
+    }
+    
+    return null;
+  }
 }
