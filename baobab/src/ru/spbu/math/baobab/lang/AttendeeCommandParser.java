@@ -44,7 +44,7 @@ public class AttendeeCommandParser extends Parser {
    * @param match matcher with matched command string
    */
   private void execute(Matcher match) {
-    String id = match.group(1);
+    String id = unquote(match.group(1));
     Attendee.Type type = AttendeeTypeConverter.convertToAttendeeType(match.group(2));
     myAttendeeExtent.create(id, id, type);
   }

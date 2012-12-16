@@ -84,7 +84,7 @@ public class AttendeeExtentSqlImpl implements AttendeeExtent {
   public Collection<Attendee> getAll() {
     SqlApi con = SqlApi.create();
     try {
-      PreparedStatement stmt = con.prepareScript("SELECT id, name, type, group_id FROM Attendee").get(0);
+      PreparedStatement stmt = con.prepareScript("SELECT id, uid, name, type, group_id FROM Attendee").get(0);
       ResultSet resultFind = stmt.executeQuery();
       return fetchAttendees(resultFind);
     } catch (SQLException e) {
