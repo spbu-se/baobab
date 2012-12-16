@@ -18,7 +18,7 @@ public class DateConverter {
     Matcher commandMatch = DATE_PATTERN.matcher(value);
     if (commandMatch.matches()) {
       GregorianCalendar calendar = new GregorianCalendar(Integer.parseInt(commandMatch.group(1)),
-          Integer.parseInt(commandMatch.group(2)), Integer.parseInt(commandMatch.group(3)));
+          Integer.parseInt(commandMatch.group(2)) - 1, Integer.parseInt(commandMatch.group(3)));
       return calendar.getTime();
     }
     throw new IllegalArgumentException("convertToTimeInstant: Incorrect value");

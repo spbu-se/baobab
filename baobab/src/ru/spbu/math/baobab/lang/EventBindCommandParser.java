@@ -25,24 +25,25 @@ import ru.spbu.math.baobab.model.impl.TimeSlotConverter;
  */
 public class EventBindCommandParser extends Parser {
   private static final Pattern PATTERN_ENG = Pattern.compile(String.format(
-      "^\\s*event\\s+(%s)\\s+holds on\\s+(%s)from\\s+(%s)till\\s+(%s)at\\s+(%s)(\\s+for\\s+(%s))?\\s*$", ID_PATTERN, TIMESLOT_KEY_ENG_PATTERN,
-      DATE_PATTERN, DATE_PATTERN, ID_PATTERN, OWNERS_PATTERN));
+      "^\\s*event\\s+(%s)\\s+holds on\\s+(%s)\\s+from\\s+(%s)\\s+till\\s+(%s)\\s+at\\s+(%s)(\\s+for\\s+(%s))?\\s*$",
+      ID_PATTERN, TIMESLOT_KEY_ENG_PATTERN, DATE_PATTERN, DATE_PATTERN, ID_PATTERN, OWNERS_PATTERN));
   private static final Pattern PATTERN_RUS = Pattern.compile(String.format(
-      "^\\s*событие\\s+(%s)\\s+состоится на\\s+(%s)с\\s+(%s)по\\s+(%s)в\\s+(%s)(\\s+for\\s+(%s))?\\s*$", ID_PATTERN, TIMESLOT_KEY_RUS_PATTERN,
-      DATE_PATTERN, DATE_PATTERN, ID_PATTERN, OWNERS_PATTERN));
-  private static final Pattern PATTERN_ENG_REPEATED = Pattern.compile(String.format(
-      "^\\s*event\\s+(%s)\\s+holds on\\s+(%s)\\s+(%s)at\\s+(%s)(\\s+for\\s+(%s))?\\s*$", ID_PATTERN, ID_PATTERN,
+      "^\\s*событие\\s+(%s)\\s+состоится на\\s+(%s)\\s+с\\s+(%s)\\s+по\\s+(%s)\\s+в\\s+(%s)(\\s+для\\s+(%s))?\\s*$",
+      ID_PATTERN, TIMESLOT_KEY_RUS_PATTERN, DATE_PATTERN, DATE_PATTERN, ID_PATTERN, OWNERS_PATTERN));
+  private static final Pattern PATTERN_ENG_WITHOUT_REPEATING = Pattern.compile(String.format(
+      "^\\s*event\\s+(%s)\\s+holds on\\s+(%s)\\s+(%s)\\s+at\\s+(%s)(\\s+for\\s+(%s))?\\s*$", ID_PATTERN, ID_PATTERN,
       DATE_PATTERN, ID_PATTERN, OWNERS_PATTERN));
-  private static final Pattern PATTERN_RUS_REPEATED = Pattern.compile(String.format(
-      "^\\s*событие\\s+(%s)\\s+состоится на\\s+(%s)\\s+(%s)в\\s+(%s)(\\s+for\\s+(%s))?\\s*$", ID_PATTERN, ID_PATTERN,
-      DATE_PATTERN, ID_PATTERN, OWNERS_PATTERN));
+  private static final Pattern PATTERN_RUS_WITHOUT_REPEATING = Pattern.compile(String.format(
+      "^\\s*событие\\s+(%s)\\s+состоится на\\s+(%s)\\s+(%s)\\s+в\\s+(%s)(\\s+для\\s+(%s))?\\s*$", ID_PATTERN,
+      ID_PATTERN, DATE_PATTERN, ID_PATTERN, OWNERS_PATTERN));
 
   private final TopicExtent myTopicExtent;
   private final AttendeeExtent myAttendeeExtent;
   private final AuditoriumExtent myAuditoriumExtent;
   private final TimeSlotExtent myTimeSlotExtent;
 
-  public EventBindCommandParser(TopicExtent topicExtent, AttendeeExtent attendeeExtent,  AuditoriumExtent auditoriumExtent, TimeSlotExtent timeSlotExtent) {
+  public EventBindCommandParser(TopicExtent topicExtent, AttendeeExtent attendeeExtent,
+      AuditoriumExtent auditoriumExtent, TimeSlotExtent timeSlotExtent) {
     myTopicExtent = topicExtent;
     myAttendeeExtent = attendeeExtent;
     myAuditoriumExtent = auditoriumExtent;
@@ -51,8 +52,9 @@ public class EventBindCommandParser extends Parser {
 
   @Override
   public boolean parse(String command) {
-    return tryParse(PATTERN_RUS, command) || tryParse(PATTERN_ENG, command) ||
-        tryParseNotRepeated(PATTERN_ENG_REPEATED, command) || tryParseNotRepeated(PATTERN_RUS_REPEATED, command);
+    return tryParse(PATTERN_RUS, command) || tryParse(PATTERN_ENG, command)
+        || tryParseNotRepeated(PATTERN_ENG_WITHOUT_REPEATING, command)
+        || tryParseNotRepeated(PATTERN_RUS_WITHOUT_REPEATING, command);
   }
 
   private boolean tryParse(Pattern pattern, String command) {
@@ -63,11 +65,11 @@ public class EventBindCommandParser extends Parser {
     }
     return false;
   }
-  
+
   private boolean tryParseNotRepeated(Pattern pattern, String command) {
     Matcher commandMatch = pattern.matcher(command);
     if (commandMatch.matches()) {
-      executeNotRepeated(commandMatch);
+      executeWithoutRepeating(commandMatch);
       return true;
     }
     return false;
@@ -81,18 +83,18 @@ public class EventBindCommandParser extends Parser {
   private void execute(Matcher match) {
     String id = match.group(1);
     TimeSlot timeSlot = TimeSlotConverter.convertToTimeSlot(match.group(2), myTimeSlotExtent);
-    Date from = DateConverter.convertToDate(match.group(3));
-    Date to = DateConverter.convertToDate(match.group(3));
-    Auditorium auditorium = myAuditoriumExtent.find(match.group(2));
-    List<Attendee> participants = AttendeeListConverter.convertToList(match.group(6), myAttendeeExtent);
+    Date from = DateConverter.convertToDate(match.group(5));
+    Date to = DateConverter.convertToDate(match.group(6));
+    Auditorium auditorium = myAuditoriumExtent.find(match.group(7));
+    List<Attendee> participants = AttendeeListConverter.convertToList(match.group(9), myAttendeeExtent);
     Topic topic = findById(id, myTopicExtent.getAll());
     for (Attendee att : participants) {
       topic.addAttendee(att);
     }
     topic.addAllEvents(from, to, timeSlot, auditorium);
   }
-  
-  private void executeNotRepeated(Matcher match) {
+
+  private void executeWithoutRepeating(Matcher match) {
     String id = match.group(1);
     Date date = DateConverter.convertToDate(match.group(3));
     TimeSlot timeSlot = TimeSlotConverter.convertToTimeSlot(match.group(2), date, myTimeSlotExtent);

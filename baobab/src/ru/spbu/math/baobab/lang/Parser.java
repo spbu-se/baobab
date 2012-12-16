@@ -42,7 +42,7 @@ public abstract class Parser {
   public final static String ID_PATTERN = "[\\wа-яА-Я]+";
   protected final static String TIME_PATTERN = "\\d{1,2}:\\d{2}";
   protected final static String DATE_PATTERN = "\\d{4}-\\d{2}-\\d{2}";
-  protected final static String OWNERS_PATTERN = "[[\\wа-яА-Я]+,]+[\\wа-яА-Я]+";
+  protected final static String OWNERS_PATTERN = "([\\wа-яА-Я]+,)*[\\wа-яА-Я]+";
   public final static String EVEN_ODD_PATTERN_ENG = String.format("%s|%s", ODD.get(0), EVEN.get(0));
   public final static String EVEN_ODD_PATTERN_RUS = String.format("%s|%s", ODD.get(1), EVEN.get(1));
   public final static String WEEKDAY_PATTERN_ENG = String.format("%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s",
@@ -61,9 +61,9 @@ public abstract class Parser {
       LABS_COURSE.get(0), EXAM.get(0), INVITED_LECTURE.get(0), TEAM_MEETING.get(0), THESIS_DEFENSE.get(0));
   protected final static String TOPIC_TYPE_PATTERN_RUS = String.format("%s|%s|%s|%s|%s|%s", LECTURE_COURSE.get(1),
       LABS_COURSE.get(1), EXAM.get(1), INVITED_LECTURE.get(1), TEAM_MEETING.get(1), THESIS_DEFENSE.get(1));
-  protected final static String TIMESLOT_KEY_ENG_PATTERN = String.format("%s\\s+(%s)?\\s+%s", ID_PATTERN,
+  protected final static String TIMESLOT_KEY_ENG_PATTERN = String.format("%s(\\s+%s)?\\s+(%s)", ID_PATTERN,
       EVEN_ODD_PATTERN_ENG, Parser.WEEKDAY_PATTERN_ENG);
-  protected final static String TIMESLOT_KEY_RUS_PATTERN = String.format("%s\\s+(%s)?\\s+%s", ID_PATTERN,
+  protected final static String TIMESLOT_KEY_RUS_PATTERN = String.format("%s(\\s+%s)?\\s+(%s)", ID_PATTERN,
       EVEN_ODD_PATTERN_RUS, WEEKDAY_PATTERN_RUS);
 
   /**
