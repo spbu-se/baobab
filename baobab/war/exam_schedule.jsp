@@ -1,8 +1,27 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.*"%>
+<%@ page import="ru.spbu.math.baobab.model.*"%>
+<%@ page import="ru.spbu.math.baobab.server.*"%>
 <%@ page import="com.google.common.collect.*"%>
+<%@ page import="com.google.common.base.*"%>
+<%@ page import="java.text.*"%>
 
-<% LinkedListMultimap<String, String> groupsList = (LinkedListMultimap<String, String>) request.getAttribute("group_list"); %>
+<%
+Multimap<String, Attendee> groupsList = (Multimap<String, Attendee>) request.getAttribute("groups_list");
+Multimap<Attendee, Event> schedule = (Multimap<Attendee, Event>) request.getAttribute("schedule");
+DateFormat dfDate = new SimpleDateFormat("dd MMM", new Locale("ru"));
+DateFormat dfTime = new SimpleDateFormat("HH:mm", new Locale("ru"));
+%>
+<%!
+public String getOwnersNamesList(Collection<Attendee> owners) {
+  List<String> names = Lists.newArrayList();
+  for (Attendee owner : owners) {
+    names.add(owner.getName());
+  }
+  Collections.sort(names);
+  return Joiner.on(", ").join(names);
+}
+%>
 
 <!doctype html>
 <html lang="ru">
@@ -12,22 +31,26 @@
       <div class="row-fluid page-header">
         <div class="span10">
           <h2>Расписание зимней сессии</h2>
-          <%
-          if (groupsList != null) {
-            out.print("Groups List isn't null");
-          }
-          %>
         </div>        
       </div>
 
       <div class="row-fluid">
         <div class="span3">
           <div class="row-fluid">
-	          <div class="well sidebar-nav">
-	            <ul class="nav nav-list">
-	               
+            <div class="well sidebar-nav">
+              <ul class="nav nav-list">
+              <% if (groupsList != null) { %>
+                 <% for (String course : groupsList.keySet()) { %>
+                   <li class="nav-header"><%= course %> курс</li>
+                   <p>
+                   <% for (Attendee group : groupsList.get(course)) { %>
+                     <a data-toggle="tab" href="#g<%= group.getName() %>"><%= group.getName() %></a>
+                   <% } %>
+                   </p>
+                 <% } %>
+              <% } %>
               </ul><!--/.nav-->
-	          </div><!--/.well-->
+            </div><!--/.well-->
           </div>
           <div class="row-fluid">
             <div class="span4"><a href="/data/edit" class="link">Редактировать</a></div>
@@ -36,94 +59,33 @@
         <div class="span9">
           <div class="row-fluid">
             <div class="span9 tab-content">
-
-              <div class="tab-pane active" id="g241">
-	              <h2>241 группа</h2>
-	              <div class="row-fluid">
-	                <div class="span2" class="datetime">
-	                  <h4>11 янв</h4>
-	                  <h5 class="time">10:00</h5>
-	                </div>
-	                <div class="span7">
-	                  <h4>Математический анализ</h4>
-	                  <p>Макаров, ауд. 05</p>
-	                </div>
-	              </div>
-	              <div class="row-fluid">
-	                <div class="span6">
-	                  <hr>
-	                  <p>
-	                    <a class="btn btn-small" a href="#"><i class="icon-download"></i> PDF</a>
-	                  </p>
-	                </div>
-	              </div>
-	            </div>
-
-	            <div class="tab-pane" id="g242">
-                <h2>242 группа</h2>
-                <div class="row-fluid">
-                  <div class="span2" class="datetime">
-                    <h4>11 янв</h4>
-                    <h5 class="time">10:00</h5>
+              <% if (groupsList != null) { %>
+                <% for (Attendee group : groupsList.values() ) { %>
+                <div class="tab-pane active" id="g<%= group.getName() %>">
+                  <h2><%= group.getName() %> группа</h2>
+                  <% for (Event event : schedule.get(group)) { %>
+                  <div class="row-fluid">
+                    <div class="span2" class="datetime">
+                      <h4><%= dfDate.format(event.getStartDate()) %></h4>
+                      <h5 class="time"><%= dfTime.format(event.getStartDate()) %></h5>
+                    </div>
+                    <div class="span7">
+                      <h4><%= event.getTopic().getName() %></h4>
+                      <p><%= getOwnersNamesList(event.getTopic().getOwners()) %>, ауд. <%= event.getAuditorium().getID() %></p>
+                    </div>
                   </div>
-                  <div class="span7">
-                    <h4>Математический анализ</h4>
-                    <p>Макаров, ауд. 05</p>
+                  <% } %>
+                  <div class="row-fluid">
+                    <div class="span6">
+                      <hr>
+                      <p>
+                        <a class="btn btn-small" a href="#"><i class="icon-download"></i> PDF</a>
+                      </p>
+                    </div>
                   </div>
                 </div>
-                <div class="row-fluid">
-                  <div class="span6">
-                    <hr>
-                    <p>
-                      <a class="btn btn-small" a href="#"><i class="icon-download"></i> PDF</a>
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div class="tab-pane" id="g243">
-                <h2>243 группа</h2>
-                <div class="row-fluid">
-                  <div class="span2" class="datetime">
-                    <h4>11 янв</h4>
-                    <h5 class="time">10:00</h5>
-                  </div>
-                  <div class="span7">
-                    <h4>Математический анализ</h4>
-                    <p>Макаров, ауд. 05</p>
-                  </div>
-                </div>
-                <div class="row-fluid">
-                  <div class="span6">
-                    <hr>
-                    <p>
-                      <a class="btn btn-small" a href="#"><i class="icon-download"></i> PDF</a>
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div class="tab-pane" id="g244">
-                <h2>244 группа</h2>
-                <div class="row-fluid">
-                  <div class="span2" class="datetime">
-                    <h4>11 янв</h4>
-                    <h5 class="time">10:00</h5>
-                  </div>
-                  <div class="span7">
-                    <h4>Математический анализ</h4>
-                    <p>Макаров, ауд. 05</p>
-                  </div>
-                </div>
-                <div class="row-fluid">
-                  <div class="span6">
-                    <hr>
-                    <p>
-                      <a class="btn btn-small" a href="#"><i class="icon-download"></i> PDF</a>
-                    </p>
-                  </div>
-                </div>
-              </div>
+                <% } %>
+              <% } %>
 
             </div><!--/span-->
           </div><!--/row-->
