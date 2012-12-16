@@ -30,4 +30,14 @@ public class TopicExtentImpl implements TopicExtent {
   public Collection<Topic> getAll() {
     return myTopics;
   }
+
+  @Override
+  public Topic find(String id) {
+    for (Topic topic : myTopics) {
+      if (topic.getID() == id) {
+        return topic;
+      }
+    }
+    return null;
+  }
 }
