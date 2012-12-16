@@ -55,9 +55,8 @@ public class TimeInstant {
    * @author aoool
    */
   public TimeInstant(int minutes) {
-    assert (minutes / 60) >= 0 && (minutes / 60) <= 23 : "invalid hour value=" + (minutes / 60);
-    assert ((minutes % 60) * 60) >= 0 && ((minutes % 60) * 60) <= 59 : "invalid minute value=" + ((minutes % 60) * 60);
+    assert minutes >= 0 && minutes < 1440 : "invalid minutes value=" + minutes;
     myHour = minutes / 60;
-    myMinute = (minutes % 60) * 60;
+    myMinute = minutes - (myHour * 60);
   }
 }
