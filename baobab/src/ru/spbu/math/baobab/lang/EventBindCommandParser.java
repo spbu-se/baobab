@@ -1,6 +1,5 @@
 package ru.spbu.math.baobab.lang;
 
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -19,23 +18,23 @@ import ru.spbu.math.baobab.model.impl.DateConverter;
 import ru.spbu.math.baobab.model.impl.TimeSlotConverter;
 
 /**
- * Parser for define course command
+ * Parser for binding events to topic command
  * 
  * @author vloginova
  */
 public class EventBindCommandParser extends Parser {
   private static final Pattern PATTERN_ENG = Pattern.compile(String.format(
       "^\\s*event\\s+(%s)\\s+holds on\\s+(%s)\\s+from\\s+(%s)\\s+till\\s+(%s)\\s+at\\s+(%s)(\\s+for\\s+(%s))?\\s*$",
-      ID_PATTERN, TIMESLOT_KEY_ENG_PATTERN, DATE_PATTERN, DATE_PATTERN, ID_PATTERN, OWNERS_PATTERN));
+      ID_PATTERN, TIMESLOT_KEY_ENG_PATTERN, DATE_PATTERN, DATE_PATTERN, ID_PATTERN, ATTENDEES_PATTERN));
   private static final Pattern PATTERN_RUS = Pattern.compile(String.format(
       "^\\s*событие\\s+(%s)\\s+состоится на\\s+(%s)\\s+с\\s+(%s)\\s+по\\s+(%s)\\s+в\\s+(%s)(\\s+для\\s+(%s))?\\s*$",
-      ID_PATTERN, TIMESLOT_KEY_RUS_PATTERN, DATE_PATTERN, DATE_PATTERN, ID_PATTERN, OWNERS_PATTERN));
+      ID_PATTERN, TIMESLOT_KEY_RUS_PATTERN, DATE_PATTERN, DATE_PATTERN, ID_PATTERN, ATTENDEES_PATTERN));
   private static final Pattern PATTERN_ENG_WITHOUT_REPEATING = Pattern.compile(String.format(
       "^\\s*event\\s+(%s)\\s+holds on\\s+(%s)\\s+(%s)\\s+at\\s+(%s)(\\s+for\\s+(%s))?\\s*$", ID_PATTERN, ID_PATTERN,
-      DATE_PATTERN, ID_PATTERN, OWNERS_PATTERN));
+      DATE_PATTERN, ID_PATTERN, ATTENDEES_PATTERN));
   private static final Pattern PATTERN_RUS_WITHOUT_REPEATING = Pattern.compile(String.format(
       "^\\s*событие\\s+(%s)\\s+состоится на\\s+(%s)\\s+(%s)\\s+в\\s+(%s)(\\s+для\\s+(%s))?\\s*$", ID_PATTERN,
-      ID_PATTERN, DATE_PATTERN, ID_PATTERN, OWNERS_PATTERN));
+      ID_PATTERN, DATE_PATTERN, ID_PATTERN, ATTENDEES_PATTERN));
 
   private final TopicExtent myTopicExtent;
   private final AttendeeExtent myAttendeeExtent;
@@ -76,7 +75,7 @@ public class EventBindCommandParser extends Parser {
   }
 
   /**
-   * defines time slot using AttendeeExtent
+   * binds events to topics using Extents for repeating events
    * 
    * @param match matcher with matched command string
    */
@@ -87,28 +86,55 @@ public class EventBindCommandParser extends Parser {
     Date to = DateConverter.convertToDate(match.group(6));
     Auditorium auditorium = myAuditoriumExtent.find(match.group(7));
     List<Attendee> participants = AttendeeListConverter.convertToList(match.group(9), myAttendeeExtent);
-    Topic topic = findById(id, myTopicExtent.getAll());
+    Topic topic = findTopicById(id, myTopicExtent);
     for (Attendee att : participants) {
       topic.addAttendee(att);
     }
     topic.addAllEvents(from, to, timeSlot, auditorium);
   }
 
+  /**
+   * binds events to topics using Extents for events without repeating
+   * 
+   * @param match matcher with matched command string
+   */
   private void executeWithoutRepeating(Matcher match) {
     String id = match.group(1);
     Date date = DateConverter.convertToDate(match.group(3));
     TimeSlot timeSlot = TimeSlotConverter.convertToTimeSlot(match.group(2), date, myTimeSlotExtent);
-    Auditorium auditorium = myAuditoriumExtent.find(match.group(4));
+    Auditorium auditorium = findAuditoriumById(match.group(4), myAuditoriumExtent);
     List<Attendee> participants = AttendeeListConverter.convertToList(match.group(6), myAttendeeExtent);
-    Topic topic = findById(id, myTopicExtent.getAll());
+    Topic topic = findTopicById(id, myTopicExtent);
     for (Attendee att : participants) {
       topic.addAttendee(att);
     }
     topic.addEvent(date, timeSlot, auditorium);
   }
 
-  private Topic findById(String id, Collection<Topic> topics) {
-    for (Topic topic : topics) {
+  /**
+   * finds auditorium by Id using AuditoriumExtent. Throws RuntimeException in case of absence of it
+   * 
+   * @param id auditorium id
+   * @param auditoriumExtent extent for searching
+   * @return found auditorium
+   */
+  private Auditorium findAuditoriumById(String id, AuditoriumExtent auditoriumExtent) {
+    Auditorium auditorium = myAuditoriumExtent.find(id);
+    if (auditorium == null) {
+      throw new RuntimeException("The  Auditorium with this ID doesn't exist");
+    }
+    return auditorium;
+  }
+
+  /**
+   * finds topic by Id using TopicExtent. Throws RuntimeException in case of absence of it
+   * 
+   * @param id topic id
+   * @param topicExtent extent for searching
+   * @return found topic
+   */
+  private Topic findTopicById(String id, TopicExtent topicExtent) {
+    for (Topic topic : topicExtent.getAll()) {
       if (topic.getID().equals(id)) {
         return topic;
       }
