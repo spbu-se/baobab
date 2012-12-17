@@ -218,4 +218,39 @@ public class TopicSqlImpl implements Topic {
       sqlApi.dispose();
     }
   }
+  
+  public void setUrl(String url) {
+    SqlApi sqlApi = SqlApi.create();
+    try {
+      PreparedStatement stmt = sqlApi.prepareScript(
+          "UPDATE Topic SET url=? WHERE uid=?;").get(0);
+      stmt.setString(1, this.getID());
+      stmt.setString(2, url);
+      stmt.execute();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    } finally {
+      sqlApi.dispose();
+    }
+  }
+  
+  public String getUrl() {
+    SqlApi sqlApi = SqlApi.create();
+    try {
+      PreparedStatement stmt = sqlApi.prepareScript(
+          "SELECT url FROM Topic WHERE uid=?;").get(0);
+      stmt.setString(1, this.getID());
+      ResultSet rs = stmt.executeQuery();
+      if (!rs.next()) {
+        throw new IllegalStateException("This Topic: " + this.getName() + " does not containt a list of questions");
+      } 
+      String url = rs.getString("url");
+      return url;
+    } catch (SQLException e) {
+      e.printStackTrace();
+    } finally {
+      sqlApi.dispose();
+    }
+    return null;
+  }
 }

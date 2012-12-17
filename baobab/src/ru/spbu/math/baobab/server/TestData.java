@@ -11,6 +11,7 @@ import ru.spbu.math.baobab.model.Event;
 import ru.spbu.math.baobab.model.TimeInstant;
 import ru.spbu.math.baobab.model.TimeSlot;
 import ru.spbu.math.baobab.model.Topic;
+import ru.spbu.math.baobab.model.TopicExtent;
 
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Lists;
@@ -54,6 +55,7 @@ class TestData {
     
     Topic examGeometry = myTopicExtent.createTopic("гит-03-exam", Topic.Type.EXAM, "Геометрия и топология");
     examGeometry.addOwner(bibikov);
+    examGeometry.setUrl("http://cs6270.userapi.com/u19639064/docs/235e0eb1ddd4/Voprosy_Geometria_3_Semestr.pdf");
  
     Topic examInformatics = myTopicExtent.createTopic("инф-03-exam", Topic.Type.EXAM, "Информатика");
     examInformatics.addOwner(aliev);
@@ -113,5 +115,9 @@ class TestData {
   
   Multimap<Attendee, Event> getExamSchedule() {
     return mySchedule;
+  }
+  
+  TopicExtent getTopicExtent() {
+    return myTopicExtent;
   }
 }
