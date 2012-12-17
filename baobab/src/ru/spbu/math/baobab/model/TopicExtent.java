@@ -22,4 +22,12 @@ public interface TopicExtent {
    * @return all topics
    */
   Collection<Topic> getAll();
+  
+  /**
+   * Finds topic by its ID
+   * 
+   * @param id id
+   * @return found topic or {@code null} if no topic with such ID exists
+   */
+  Topic find(String id);
 }

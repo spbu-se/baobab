@@ -61,7 +61,7 @@
                           </div>
                           <div class="span7">
                             <h4>
-                              <c:out value="${event.topic.name}" />
+                              <a href="/exam?id=${event.topic.ID}"> <c:out value="${event.topic.name}" /></a>
                             </h4>
                             <p>
                               <c:forEach items="${event.topic.owners}" var="owner">${owner.name}, </c:forEach>

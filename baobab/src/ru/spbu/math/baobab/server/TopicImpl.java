@@ -27,6 +27,7 @@ public class TopicImpl implements Topic {
   private final Collection<Event> myEvents = Lists.newArrayList();
   private final Collection<Attendee> myAttendees = Sets.newLinkedHashSet();
   private final Collection<Attendee> myOwners = Sets.newLinkedHashSet();
+  private String myUrl;
 
   public TopicImpl(String id, Type type, String name) {
     myId = id;
@@ -91,5 +92,15 @@ public class TopicImpl implements Topic {
   @Override
   public Collection<Attendee> getOwners() {
     return myOwners;
+  }
+
+  @Override
+  public void setUrl(String url) {
+    myUrl = url;
+  }
+
+  @Override
+  public String getUrl() {
+    return myUrl;
   }
 }

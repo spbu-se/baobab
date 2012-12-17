@@ -106,6 +106,15 @@
     <url-pattern>/_ah/test_pdf_schedule</url-pattern>
   </servlet-mapping>
   
+  <servlet>
+    <servlet-name>exam_servlet</servlet-name>
+    <servlet-class>ru.spbu.math.baobab.server.ViewOfExamServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>exam_servlet</servlet-name>
+    <url-pattern>/exam</url-pattern>
+  </servlet-mapping>
+  
   <!-- GWT -->
   <servlet>
     <servlet-name>greetServlet</servlet-name>
