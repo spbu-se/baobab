@@ -34,7 +34,7 @@ public class TopicExtentImpl implements TopicExtent {
   @Override
   public Topic find(String id) {
     for (Topic topic : myTopics) {
-      if (topic.getID() == id) {
+      if (topic.getID().equals(id)) {
         return topic;
       }
     }
