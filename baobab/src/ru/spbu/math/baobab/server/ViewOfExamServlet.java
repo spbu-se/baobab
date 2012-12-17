@@ -1,8 +1,11 @@
 package ru.spbu.math.baobab.server;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
+
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -22,31 +25,26 @@ import com.google.common.collect.Lists;
  * @author dageev
  */
 public class ViewOfExamServlet extends HttpServlet {
+  private final TestData myTestData = new TestData();
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    process(request, response, "");
-  }
-
-  private void process(HttpServletRequest request, HttpServletResponse response, String result)
-      throws ServletException, IOException {
     request.setCharacterEncoding("UTF-8");
-    TestData testd = new TestData();
     String id = request.getParameter("id");
-    // Topic topic = getTopic(id) do not work
-    Topic topic = getTopic("гит-03-exam");
-    request.setAttribute("exam_name", topic.getName());
-    request.setAttribute("owners", getOwnerList(topic));
-    request.setAttribute("events", getAttendees(topic));
-    request.setAttribute("url", topic.getUrl());
-
+    Topic topic = getTopic(id);
+    if (!(topic == null)) {    
+      request.setAttribute("exam_name", topic.getName());
+      request.setAttribute("owners", getOwnerList(topic));
+      request.setAttribute("attendees", getAttendees(topic));
+      request.setAttribute("url", topic.getUrl());
+    }
+    request.setAttribute("exams", getExams());
     RequestDispatcher scriptForm = request.getRequestDispatcher("/view_of_exam.jsp");
     scriptForm.forward(request, response);
   }
 
   private Topic getTopic(String id) {
-    TestData testData = new TestData();
-    TopicExtent topicExtent = testData.getTopicExtent();
+    TopicExtent topicExtent = myTestData.getTopicExtent();
     return topicExtent.find(id);
   }
 
@@ -59,16 +57,25 @@ public class ViewOfExamServlet extends HttpServlet {
   }
 
   private List<String> getAttendees(Topic topic) {
-    final List<String> months = Arrays.asList("янв", "ферв", "марта", "апр", "мая", "июня", "июля", "авг", "сент",
-        "окт", "ноябр", "дек");
+    SimpleDateFormat dateformat = new SimpleDateFormat("dd MMM", new Locale("ru", "RU"));
     List<Event> events = (List<Event>) topic.getEvents();
     List<String> names = Lists.newArrayList();
     for (Event ev : events) {
       for (Attendee att : ev.getAttendees()) {
-        names.add(String.format("%s %s группа %s, ауд. %s", ev.getStartDate().getDate(),
-            months.get(ev.getStartDate().getMonth()), att.getName(), ev.getAuditorium().getID()));
+        names.add(String.format("%s группа %s, ауд. %s", dateformat.format(ev.getStartDate()), 
+            att.getName(), ev.getAuditorium().getID()));
       }
     }
     return names;
+  }
+  
+  private List<Topic> getExams() {
+    List<Topic> exams = Lists.newArrayList();
+    for (Topic topic : myTestData.getTopicExtent().getAll() ) {
+      if (topic.getType() == Topic.Type.EXAM) {
+        exams.add(topic);
+      }
+    }
+    return exams;
   }
 }
