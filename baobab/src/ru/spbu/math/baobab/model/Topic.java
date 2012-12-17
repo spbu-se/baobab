@@ -89,4 +89,15 @@ public interface Topic {
    * @return a list of all owners
    */
   Collection<Attendee> getOwners();
+  
+  /**
+   * Set url of set of questions for topic
+   * @param url url
+   */
+  void setUrl(String url);
+  
+  /**
+   * @return topic url
+   */
+  String getUrl();
 }
