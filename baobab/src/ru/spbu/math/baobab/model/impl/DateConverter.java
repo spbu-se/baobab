@@ -2,9 +2,6 @@ package ru.spbu.math.baobab.model.impl;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Converts "yyyy-MM-dd" to date
@@ -22,11 +19,10 @@ public class DateConverter {
    */
   public static Date convertToDate(String value) {
     SimpleDateFormat format = new SimpleDateFormat(DATE_PATTERN);
-    try{
+    try {
       return format.parse(value);
-    }
-    catch(Exception e){
-    throw new IllegalArgumentException("convertToDate: Incorrect value"); 
+    } catch (Exception e) {
+      throw new IllegalArgumentException("convertToDate: Incorrect value");
     }
   }
 }
