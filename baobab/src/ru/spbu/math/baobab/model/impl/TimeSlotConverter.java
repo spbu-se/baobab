@@ -69,7 +69,7 @@ public class TimeSlotConverter {
   private static TimeSlot getTimeSlot(Pattern pattern, String timeSlotKey, TimeSlotExtent extent) {
     Matcher matcher = pattern.matcher(timeSlotKey);
     if (matcher.matches()) {
-      String name = matcher.group(1);
+      String name = Parser.unquote(matcher.group(1));
       EvenOddWeek flashing = OddEvenWeekConverter
           .convertToOddEvenWeek(matcher.group(3) == null ? "" : matcher.group(3));
       int weekDay = WeekDayConverter.convertToInt(matcher.group(4));

@@ -54,8 +54,8 @@ public class EventDeclareCommandParser extends Parser {
    */
   private void execute(Matcher match) {
     Type type = TopicTypeConverter.convertToTopicType(match.group(1));
-    String id = match.group(2);
-    String name = match.group(4);
+    String id = unquote(match.group(2));
+    String name = unquote(match.group(4));
     List<Attendee> participants = AttendeeListConverter.convertToList(match.group(6), myAttendeeExtent);
     List<Attendee> owners = AttendeeListConverter.convertToList(match.group(8), myAttendeeExtent);
     Topic topic = myTopicExtent.createTopic(id, type, name == null ? id : name);

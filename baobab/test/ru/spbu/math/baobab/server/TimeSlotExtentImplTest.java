@@ -44,7 +44,14 @@ public class TimeSlotExtentImplTest extends TestCase {
     TimeInstant start1 = new TimeInstant(13, 40);
     TimeInstant finish1 = new TimeInstant(15, 15);
     try {
-      timeSlotExtent.create("first double class", start1, finish1, 5, EvenOddWeek.ODD);
+      // the same name, but other day => OK
+      timeSlotExtent.create("first double class", start, finish, 3, EvenOddWeek.ALL);
+      
+      // the same name and day but other flashing => OK
+      timeSlotExtent.create("first double class", start, finish, 2, EvenOddWeek.ODD);
+
+      // the same name and the same day + flashing => should fail despite that interval is different
+      timeSlotExtent.create("first double class", start1, finish1, 2, EvenOddWeek.ALL);
       fail("Expected IllegalArgumentException");
     } catch (IllegalStateException e) {
       // can't create with existing name

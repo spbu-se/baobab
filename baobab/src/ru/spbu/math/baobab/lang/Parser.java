@@ -3,20 +3,41 @@ package ru.spbu.math.baobab.lang;
 import java.util.Arrays;
 import java.util.List;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
+
 /**
  * Abstract class for all command parsers
  * 
  * @author vloginova
  */
 public abstract class Parser {
+  public static final String[] DAYS_LONG_EN = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday",
+      "Sunday" };
+  public static final String[] DAYS_SHORT_EN = { "Mo", "Tu", "We", "Th", "Fr", "Sa", "Su" };
+  public static final String[] DAYS_LONG_RU = { "понедельник", "вторник", "среда", "четверг", "пятница", "субоота",
+      "воскресенье" };
+  public static final String[] DAYS_SHORT_RU = { "пн", "вт", "ср", "чт", "пт", "сб", "вс" };
+  private static final List<String[]> DAY_NAME_MATRIX = Lists.newArrayList(DAYS_LONG_EN, DAYS_SHORT_EN, DAYS_LONG_RU,
+      DAYS_SHORT_RU);
+
+  private static final List<String> getDayMatrixColumn(final int column) {
+    return Lists.transform(DAY_NAME_MATRIX, new Function<String[], String>() {
+      @Override
+      public String apply(String[] row) {
+        return row[column];
+      }
+    });
+  }
+
   // baobab language literals: days of week
-  public static final List<String> MONDAY = Arrays.asList("Monday", "Mo", "понедельник", "пн");
-  public static final List<String> TUESDAY = Arrays.asList("Tuesday", "Tu", "вторник", "вт");
-  public static final List<String> WEDNESDAY = Arrays.asList("Wednesday", "We", "среда", "ср");
-  public static final List<String> THURSDAY = Arrays.asList("Thursday", "Th", "четверг", "чт");
-  public static final List<String> FRIDAY = Arrays.asList("Friday", "Fr", "пятница", "пт");
-  public static final List<String> SATURDAY = Arrays.asList("Saturday", "Sa", "суббота", "сб");
-  public static final List<String> SUNDAY = Arrays.asList("Sunday", "Su", "воскресенье", "вс");
+  public static final List<String> MONDAY = getDayMatrixColumn(0);
+  public static final List<String> TUESDAY = getDayMatrixColumn(1);
+  public static final List<String> WEDNESDAY = getDayMatrixColumn(2);
+  public static final List<String> THURSDAY = getDayMatrixColumn(3);
+  public static final List<String> FRIDAY = getDayMatrixColumn(4);
+  public static final List<String> SATURDAY = getDayMatrixColumn(5);
+  public static final List<String> SUNDAY = getDayMatrixColumn(6);
 
   // baobab language literals: flashing
   public static final List<String> ODD = Arrays.asList("odd", "нечетный");
@@ -38,7 +59,7 @@ public abstract class Parser {
   public static final List<String> THESIS_DEFENSE = Arrays.asList("defense", "защита");
 
   // group patterns
-  public final static String ID_PATTERN = "[\\wа-яА-Я]+";
+  public final static String ID_PATTERN = "(?:[\\wа-яА-Я]+|\"[\\wа-яА-Я\\s\\.-]+\")";
   protected final static String TIME_PATTERN = "\\d{1,2}:\\d{2}";
   protected final static String DATE_PATTERN = "\\d{4}-\\d{2}-\\d{2}";
   protected final static String ATTENDEES_PATTERN = String.format("(%s,)*%s", ID_PATTERN, ID_PATTERN);
@@ -72,4 +93,14 @@ public abstract class Parser {
    * @return true in case of success parsing
    */
   public abstract boolean parse(String command);
+
+  public static String unquote(String maybeQuoted) {
+    if (maybeQuoted == null) {
+      return null;
+    }
+    if (maybeQuoted.startsWith("\"") && maybeQuoted.endsWith("\"")) {
+      return maybeQuoted.substring(1, maybeQuoted.length() - 1);
+    }
+    return maybeQuoted;
+  }
 }

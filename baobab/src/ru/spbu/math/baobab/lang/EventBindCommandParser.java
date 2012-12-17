@@ -80,11 +80,11 @@ public class EventBindCommandParser extends Parser {
    * @param match matcher with matched command string
    */
   private void execute(Matcher match) {
-    String id = match.group(1);
+    String id = unquote(match.group(1));
     TimeSlot timeSlot = TimeSlotConverter.convertToTimeSlot(match.group(2), myTimeSlotExtent);
     Date from = DateConverter.convertToDate(match.group(5));
     Date to = DateConverter.convertToDate(match.group(6));
-    Auditorium auditorium = myAuditoriumExtent.find(match.group(7));
+    Auditorium auditorium = myAuditoriumExtent.find(unquote(match.group(7)));
     List<Attendee> participants = AttendeeListConverter.convertToList(match.group(9), myAttendeeExtent);
     Topic topic = findTopicById(id, myTopicExtent);
     for (Attendee att : participants) {
@@ -99,10 +99,10 @@ public class EventBindCommandParser extends Parser {
    * @param match matcher with matched command string
    */
   private void executeWithoutRepeating(Matcher match) {
-    String id = match.group(1);
+    String id = unquote(match.group(1));
     Date date = DateConverter.convertToDate(match.group(3));
-    TimeSlot timeSlot = TimeSlotConverter.convertToTimeSlot(match.group(2), date, myTimeSlotExtent);
-    Auditorium auditorium = findAuditoriumById(match.group(4), myAuditoriumExtent);
+    TimeSlot timeSlot = TimeSlotConverter.convertToTimeSlot(unquote(match.group(2)), date, myTimeSlotExtent);
+    Auditorium auditorium = findAuditoriumById(unquote(match.group(4)), myAuditoriumExtent);
     List<Attendee> participants = AttendeeListConverter.convertToList(match.group(6), myAttendeeExtent);
     Topic topic = findTopicById(id, myTopicExtent);
     for (Attendee att : participants) {
@@ -121,7 +121,7 @@ public class EventBindCommandParser extends Parser {
   private Auditorium findAuditoriumById(String id, AuditoriumExtent auditoriumExtent) {
     Auditorium auditorium = myAuditoriumExtent.find(id);
     if (auditorium == null) {
-      throw new RuntimeException("The  Auditorium with this ID doesn't exist");
+      throw new RuntimeException("The Auditorium with this ID doesn't exist");
     }
     return auditorium;
   }
