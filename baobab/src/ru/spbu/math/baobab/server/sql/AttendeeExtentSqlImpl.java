@@ -79,6 +79,22 @@ public class AttendeeExtentSqlImpl implements AttendeeExtent {
     return null;
   }
   
+  
+  @Override
+  public Collection<Attendee> getAll() {
+    SqlApi con = SqlApi.create();
+    try {
+      PreparedStatement stmt = con.prepareScript("SELECT id, uid, name, type, group_id FROM Attendee").get(0);
+      ResultSet resultFind = stmt.executeQuery();
+      return fetchAttendees(resultFind);
+    } catch (SQLException e) {
+      e.printStackTrace();
+    } finally {
+      con.dispose();
+    }
+    return null;
+  }
+
   public Collection<Attendee> fetchAttendees(ResultSet rs) throws SQLException {
     List<Attendee> attendees = Lists.newArrayList();
     for (boolean hasRow = rs.next(); hasRow; hasRow = rs.next()) {

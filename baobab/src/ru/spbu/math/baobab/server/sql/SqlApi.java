@@ -9,6 +9,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
+import ru.spbu.math.baobab.server.DevMode;
+
 import com.google.appengine.api.rdbms.AppEngineDriver;
 import com.google.common.collect.Lists;
 
@@ -85,7 +87,7 @@ public abstract class SqlApi {
   private static Connection createConnection(String database, String username) {
     Connection c = null;
     try {
-      c = DriverManager.getConnection(CONNECTION_SPEC + database, username, null);
+      c = DriverManager.getConnection(CONNECTION_SPEC + database + (DevMode.IS_ENABLED ? "&useUnicode=yes&characterEncoding=UTF-8" : ""), username, null);
     } catch (SQLException e) {
       LOGGER.log(Level.SEVERE, "Failed to create connection", e);
     }

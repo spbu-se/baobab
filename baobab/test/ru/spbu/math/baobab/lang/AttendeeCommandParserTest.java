@@ -27,9 +27,19 @@ public class AttendeeCommandParserTest extends TestCase {
     assertEquals(attendee.getType(), Attendee.Type.STUDENT);
   }
 
+  public void testQuotedIdentifier() {
+    AttendeeExtent attendeeExtent = new AttendeeExtentImpl();
+    AttendeeCommandParser parser = new AttendeeCommandParser(attendeeExtent);
+    assertTrue(parser.parse("определить участника \"Барашев Д.В.\" как преподавателя"));
+    Attendee attendee = attendeeExtent.find("Барашев Д.В.");
+    assertNotNull(attendee);
+    assertEquals(Attendee.Type.TEACHER, attendee.getType());
+  }
+
   public void testIncorrectCommand() {
     AttendeeExtent attendeeExtent = new AttendeeExtentImpl();
     AttendeeCommandParser parser = new AttendeeCommandParser(attendeeExtent);
     assertFalse(parser.parse("define attendee beeng free form group"));
   }
+  
 }

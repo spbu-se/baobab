@@ -1,4 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?><web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.5" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee                http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+  <servlet>
+    <servlet-name>data_edit_servlet</servlet-name>
+    <servlet-class>ru.spbu.math.baobab.server.ScriptFormServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>data_edit_servlet</servlet-name>
+    <url-pattern>/data/edit</url-pattern>
+  </servlet-mapping>
+  
 
   <!--  Auth -->
   <servlet>
@@ -34,13 +43,22 @@
   </servlet-mapping>
   <servlet>
     <servlet-name>landing_servlet</servlet-name>
-    <jsp-file>/exam_schedule.jsp</jsp-file>
+    <servlet-class>ru.spbu.math.baobab.server.ExamScheduleServlet</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>landing_servlet</servlet-name>
     <url-pattern>/</url-pattern>
   </servlet-mapping>
- 
+
+  <!--  Exports --> 
+  <servlet>
+    <servlet-name>exam_all_pdf_servlet</servlet-name>
+    <servlet-class>ru.spbu.math.baobab.server.ExamsPdfServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>exam_all_pdf_servlet</servlet-name>
+    <url-pattern>/exam/all/pdf</url-pattern>
+  </servlet-mapping>
   
   <!--  Devtools and testing -->
   <servlet>

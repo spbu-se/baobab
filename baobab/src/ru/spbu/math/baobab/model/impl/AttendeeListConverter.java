@@ -18,7 +18,7 @@ public class AttendeeListConverter {
     value += ",";
     Matcher commandMatch = TIME_PATTERN.matcher(value);
     while (commandMatch.find()) {
-      String attendeeId = commandMatch.group(1);
+      String attendeeId = Parser.unquote(commandMatch.group(1));
       attendees.add(extent.find(attendeeId));
     }
     return attendees;

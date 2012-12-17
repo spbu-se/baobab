@@ -1,5 +1,6 @@
 package ru.spbu.math.baobab.server;
 
+import java.util.Collection;
 import java.util.HashMap;
 import static com.google.common.collect.Maps.newHashMap;
 
@@ -27,5 +28,10 @@ public class AttendeeExtentImpl implements AttendeeExtent {
   @Override
   public Attendee find(String id) {
     return myAttendees.get(id);
+  }
+
+  @Override
+  public Collection<Attendee> getAll() {
+    return myAttendees.values();
   }
 }
