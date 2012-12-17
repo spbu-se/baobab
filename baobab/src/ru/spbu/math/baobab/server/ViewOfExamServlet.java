@@ -20,7 +20,7 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 
 /**
- * Home page of topic
+ * Home page of exam
  * 
  * @author dageev
  */
@@ -32,13 +32,12 @@ public class ViewOfExamServlet extends HttpServlet {
     request.setCharacterEncoding("UTF-8");
     String id = request.getParameter("id");
     Topic topic = getTopic(id);
-    if (!(topic == null)) {    
+    if (topic != null) {    
       request.setAttribute("exam_name", topic.getName());
       request.setAttribute("owners", getOwnerList(topic));
       request.setAttribute("attendees", getAttendees(topic));
       request.setAttribute("url", topic.getUrl());
     }
-    request.setAttribute("exams", getExams());
     RequestDispatcher scriptForm = request.getRequestDispatcher("/view_of_exam.jsp");
     scriptForm.forward(request, response);
   }
@@ -67,15 +66,5 @@ public class ViewOfExamServlet extends HttpServlet {
       }
     }
     return names;
-  }
-  
-  private List<Topic> getExams() {
-    List<Topic> exams = Lists.newArrayList();
-    for (Topic topic : myTestData.getTopicExtent().getAll() ) {
-      if (topic.getType() == Topic.Type.EXAM) {
-        exams.add(topic);
-      }
-    }
-    return exams;
   }
 }
