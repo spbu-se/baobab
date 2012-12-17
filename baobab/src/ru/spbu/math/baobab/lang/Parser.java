@@ -2,7 +2,6 @@ package ru.spbu.math.baobab.lang;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.regex.Pattern;
 
 /**
  * Abstract class for all command parsers
@@ -42,7 +41,7 @@ public abstract class Parser {
   public final static String ID_PATTERN = "[\\wа-яА-Я]+";
   protected final static String TIME_PATTERN = "\\d{1,2}:\\d{2}";
   protected final static String DATE_PATTERN = "\\d{4}-\\d{2}-\\d{2}";
-  protected final static String OWNERS_PATTERN = "([\\wа-яА-Я]+,)*[\\wа-яА-Я]+";
+  protected final static String ATTENDEES_PATTERN = String.format("(%s,)*%s", ID_PATTERN, ID_PATTERN);
   public final static String EVEN_ODD_PATTERN_ENG = String.format("%s|%s", ODD.get(0), EVEN.get(0));
   public final static String EVEN_ODD_PATTERN_RUS = String.format("%s|%s", ODD.get(1), EVEN.get(1));
   public final static String WEEKDAY_PATTERN_ENG = String.format("%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s",

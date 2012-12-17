@@ -10,6 +10,11 @@ import ru.spbu.math.baobab.model.EvenOddWeek;
 import ru.spbu.math.baobab.model.TimeSlot;
 import ru.spbu.math.baobab.model.TimeSlotExtent;
 
+/**
+ * Converts time slot lexeme (name or time slot key) on Baobab language to convenient type
+ * 
+ * @author vloginova
+ */
 public class TimeSlotConverter {
 
   private final static Pattern TIMESLOT_KEY_ENG_PATTERN = Pattern.compile(String.format("(%s)(\\s+(%s))?\\s+(%s)",
@@ -17,20 +22,40 @@ public class TimeSlotConverter {
   private final static Pattern TIMESLOT_KEY_RUS_PATTERN = Pattern.compile(String.format("(%s)(\\s+(%s))?\\s+(%s)",
       Parser.ID_PATTERN, Parser.EVEN_ODD_PATTERN_RUS, Parser.WEEKDAY_PATTERN_RUS));
 
+  /**
+   * Converts time slot key string to time slot. Throws IllegalArgumentException in case of absence time slot in
+   * TimeSlotExtent collection
+   * 
+   * @param timeSlotKey this string contains time slot key
+   * @param extent TimeSlotExtent for searching time slot
+   * @return found time slot
+   */
   public static TimeSlot convertToTimeSlot(String timeSlotKey, TimeSlotExtent extent) {
     TimeSlot timeSlot = getTimeSlot(TIMESLOT_KEY_RUS_PATTERN, timeSlotKey, extent);
     if (timeSlot == null) {
       timeSlot = getTimeSlot(TIMESLOT_KEY_ENG_PATTERN, timeSlotKey, extent);
     }
+    if (timeSlot == null) {
+      throw new IllegalArgumentException("convertToTimeSlot: there is no such time slot");
+    }
     return timeSlot;
   }
 
+  /**
+   * Converts time slot name string to time slot using Date. Throws IllegalArgumentException in case of absence time slot in
+   * TimeSlotExtent collection
+   * 
+   * @param name time slot name
+   * @param date date for week day determination
+   * @param extent TimeSlotExtent for searching time slot
+   * @return found time slot
+   */
   public static TimeSlot convertToTimeSlot(String name, Date date, TimeSlotExtent extent) {
     for (TimeSlot slot : extent.getAll()) {
-      Calendar calendar = Calendar.getInstance();
+      Calendar calendar = (Calendar) Calendar.getInstance().clone();
       calendar.setTime(date);
       int weekDay = calendar.get(Calendar.DAY_OF_WEEK) - 1;
-      if (weekDay == 0){
+      if (weekDay == 0) {
         weekDay = 7;
       }
       if (slot.getName().equals(name) && slot.getDayOfWeek() == weekDay
@@ -38,7 +63,7 @@ public class TimeSlotConverter {
         return slot;
       }
     }
-    throw new IllegalArgumentException("convertToTimeSlot: therre is no such time slot");
+    throw new IllegalArgumentException("convertToTimeSlot: there is no such time slot");
   }
 
   private static TimeSlot getTimeSlot(Pattern pattern, String timeSlotKey, TimeSlotExtent extent) {

@@ -10,10 +10,10 @@ import ru.spbu.math.baobab.model.Topic.Type;
  */
 public class TopicTypeConverter {
   /**
-   * converts string to EvenOddWeek
+   * converts string to Topic.Type
    * 
    * @param value string to convert
-   * @return converted EvenOddWeek
+   * @return converted Topic.Type
    */
   public static Type convertToTopicType(String value) {
     if (Parser.LABS_COURSE.contains(value)) {

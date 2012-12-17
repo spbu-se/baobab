@@ -13,17 +13,17 @@ import ru.spbu.math.baobab.model.impl.AttendeeListConverter;
 import ru.spbu.math.baobab.model.impl.TopicTypeConverter;
 
 /**
- * Parser for define action command
+ * Parser for define topic command
  * 
  * @author vloginova
  */
 public class EventDeclareCommandParser extends Parser {
   private static final Pattern PATTERN_ENG = Pattern.compile(String.format(
       "^\\s*define\\s+(%s)\\s+(%s)(\\s+(%s))?(\\s+for\\s+(%s))?(\\s+owned by\\s+(%s))?\\s*$", TOPIC_TYPE_PATTERN_ENG,
-      ID_PATTERN, ID_PATTERN, OWNERS_PATTERN, OWNERS_PATTERN));
+      ID_PATTERN, ID_PATTERN, ATTENDEES_PATTERN, ATTENDEES_PATTERN));
   private static final Pattern PATTERN_RUS = Pattern.compile(String.format(
-      "^\\s*определить\\s+(%s)\\s+(%s)(\\s+(%s))?(\\s+для\\s+(%s))?(\\s+владельцы\\s+(%s))?\\s*$", TOPIC_TYPE_PATTERN_RUS,
-      ID_PATTERN, ID_PATTERN, OWNERS_PATTERN, OWNERS_PATTERN));
+      "^\\s*определить\\s+(%s)\\s+(%s)(\\s+(%s))?(\\s+для\\s+(%s))?(\\s+владельцы\\s+(%s))?\\s*$",
+      TOPIC_TYPE_PATTERN_RUS, ID_PATTERN, ID_PATTERN, ATTENDEES_PATTERN, ATTENDEES_PATTERN));
 
   private final TopicExtent myTopicExtent;
   private final AttendeeExtent myAttendeeExtent;
@@ -48,7 +48,7 @@ public class EventDeclareCommandParser extends Parser {
   }
 
   /**
-   * defines action using TopicExtent
+   * defines topic using Extents
    * 
    * @param match matcher with matched command string
    */

@@ -21,14 +21,22 @@ public class ScriptInterpreter {
   private final List<Parser> myParsers;
 
   public ScriptInterpreter() {
-    this(Arrays.asList(new TimeSlotCommandParser(new TimeSlotExtentImpl()), new AuditoriumCommandParser(
-        new AuditoriumExtentImpl()), new EventDeclareCommandParser(new TopicExtentImpl(), new AttendeeExtentImpl()),
-        new EventBindCommandParser(new TopicExtentImpl(), new AttendeeExtentImpl(), new AuditoriumExtentImpl(),
-            new TimeSlotExtentImpl())));
+    this(getNewParserList());
   }
 
   public ScriptInterpreter(List<Parser> parsers) {
     myParsers = parsers;
+  }
+
+  private static List<Parser> getNewParserList() {
+    TopicExtent topicExtent = new TopicExtentImpl();
+    AttendeeExtent attendeeExtent = new AttendeeExtentImpl();
+    AuditoriumExtent auditoriumExtent = new AuditoriumExtentImpl();
+    TimeSlotExtent timeSlotExtent = new TimeSlotExtentImpl();
+
+    return Arrays.asList(new TimeSlotCommandParser(timeSlotExtent), new AuditoriumCommandParser(auditoriumExtent),
+        new EventDeclareCommandParser(topicExtent, attendeeExtent), new EventBindCommandParser(topicExtent,
+            attendeeExtent, auditoriumExtent, timeSlotExtent));
   }
 
   /**
