@@ -54,15 +54,12 @@
       'teacher': 'определить участника "<впишите здесь имя>" как преподавателя',
       'group': 'событие "<короткий идентификатор>" состоится на "<идентификатор слота>" ГГГГ-ММ-ДД в <номер аудитории> для группа1, группа2'
     };
+    var textarea = $('#script');
 
-    $(document).ready(function(){
-      var textarea = $('#script');
-
-      // Add command template with placeholders to the text area
-      $('#controlPanel button').click(function(){
-        var buttonID = $(this).attr('id');
-        textarea.val(textarea.val() + placeholder[buttonID] + '\n');
-      });
+    // Add command template with placeholders to the text area
+    $('#controlPanel button').click(function(){
+      var buttonID = $(this).attr('id');
+      textarea.val(textarea.val() + placeholder[buttonID] + '\n');
     });
   </script>
 </body>
