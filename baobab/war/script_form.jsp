@@ -30,7 +30,7 @@
           <div class="btn-group">
             <button class="btn btn-small" id="exam">экзамен</button>
             <button class="btn btn-small" id="teacher">преподавателя</button>
-            <button class="btn btn-small" id="group">группу</button>
+            <button class="btn btn-small" id="event">событие</button>
           </div>
         </div>
         <form action="/data/edit" method="post">
