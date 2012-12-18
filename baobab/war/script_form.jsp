@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!doctype html>
 <%@ include file="../include_header.jsp" %>
 <html>
@@ -47,19 +48,18 @@
     </div>
   </div>
 
-  <script src="/bootstrap/js/jquery.min.js"></script>
   <script type="text/javascript">
-    var placeholder = {
-      'exam': 'определить экзамен "<короткий идентификатор>" "<название предмета>"',
-      'teacher': 'определить участника "<впишите здесь имя>" как преподавателя',
-      'group': 'событие "<короткий идентификатор>" состоится на "<идентификатор слота>" ГГГГ-ММ-ДД в <номер аудитории> для группа1, группа2'
-    };
+    var placeholders = {};
+    <c:forEach items="${placeholders}" var="item">
+      placeholders['${item.key}'] = '${item.value}';
+    </c:forEach>
+
     var textarea = $('#script');
 
     // Add command template with placeholders to the text area
     $('#controlPanel button').click(function(){
       var buttonID = $(this).attr('id');
-      textarea.val(textarea.val() + placeholder[buttonID] + '\n');
+      textarea.val(textarea.val() + placeholders[buttonID] + '\n');
     });
   </script>
 </body>

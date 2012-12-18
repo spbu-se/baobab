@@ -1,7 +1,9 @@
 package ru.spbu.math.baobab.lang;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
@@ -102,5 +104,13 @@ public abstract class Parser {
       return maybeQuoted.substring(1, maybeQuoted.length() - 1);
     }
     return maybeQuoted;
+  }
+
+  public final static Map<String, String> placeholders() {
+    Map<String, String> placeholders = new HashMap<String, String>();
+    placeholders.put("exam", "определить экзамен \"<короткий идентификатор>\" \"<название предмета>\"");
+    placeholders.put("teacher", "определить участника \"<впишите здесь имя>\" как преподавателя");
+    placeholders.put("group", "событие \"<короткий идентификатор>\" состоится на \"<идентификатор слота>\" ГГГГ-ММ-ДД в <номер аудитории> для группа1, группа2");
+    return placeholders;
   }
 }
