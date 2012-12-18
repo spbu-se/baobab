@@ -57,6 +57,7 @@ public class ScriptFormServlet extends HttpServlet {
     request.setAttribute("teacher_list", getTeacherList());
     request.setAttribute("auditorium_list", getAuditoriumList());
     request.setAttribute("time_slot_list", getTimeSlotList());
+    request.setAttribute("placeholders", Parser.placeholders());
     RequestDispatcher scriptForm = request.getRequestDispatcher("/script_form.jsp");
     scriptForm.forward(request, response);
   }
