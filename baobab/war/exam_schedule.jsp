@@ -90,9 +90,7 @@
       </div><!--/row-->
   
     </div><!--/.fluid-container-->
-  
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="bootstrap/js/jquery.min.js"></script>
+
     <script src="bootstrap/js/bootstrap-tab.js"></script>
     <script type="text/javascript">
       var activeTab = {};
