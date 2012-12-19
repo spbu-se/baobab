@@ -30,6 +30,8 @@
       }
     </style>
     <link href="/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
+    <script src="http://userapi.com/js/api/openapi.js" type="text/javascript" charset="windows-1251"></script>
+    <script type="text/javascript">VK.init({apiId: 3148505, onlyWidgets: true});</script>
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
