@@ -14,7 +14,7 @@ import com.google.common.collect.Lists;
 public abstract class Parser {
   public static final String[] DAYS_LONG_EN = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
   public static final String[] DAYS_SHORT_EN = {"Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"};
-  public static final String[] DAYS_LONG_RU = {"понедельник", "вторник", "среда", "четверг", "пятница", "субоота", "воскресенье"};
+  public static final String[] DAYS_LONG_RU = {"понедельник", "вторник", "среда", "четверг", "пятница", "суббота", "воскресенье"};
   public static final String[] DAYS_SHORT_RU = {"пн", "вт", "ср", "чт", "пт", "сб", "вс"};
   private static final List<String[]> DAY_NAME_MATRIX = Lists.newArrayList(DAYS_LONG_EN, DAYS_SHORT_EN, DAYS_LONG_RU, DAYS_SHORT_RU);
   
