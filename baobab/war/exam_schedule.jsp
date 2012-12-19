@@ -35,6 +35,9 @@
             <div class="span4">
               <a href="/data/edit" class="link">Редактировать</a>
             </div>
+            <div class="span4">
+              <a href="/exam/all/pdf" class="link">Скачать PDF</a>
+            </div>
           </div>
         </div><!--/span-->
         <div class="span9">
