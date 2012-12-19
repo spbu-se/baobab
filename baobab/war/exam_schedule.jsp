@@ -32,11 +32,8 @@
             </div><!--/.well-->
           </div>
           <div class="row-fluid">
-            <div class="span4">
-              <a href="/data/edit" class="link">Редактировать</a>
-            </div>
-            <div class="span4">
-              <a href="/exam/all/pdf" class="link">Скачать PDF</a>
+            <div class="span12">
+              <a href="/data/edit" class="link">Редактировать</a>&nbsp;|&nbsp;<a href="/exam/all/pdf" class="link">Скачать PDF</a>
             </div>
           </div>
         </div><!--/span-->
