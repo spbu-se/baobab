@@ -53,6 +53,10 @@ public class ExamsPdfServlet extends HttpServlet {
 
   private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd MMM", new Locale("ru", "RU"));
   
+  private static final String EXAM_START_MESSAGE = "Экзамены начинаются в %02d:%02d, если явно не указано иное";
+
+  private static final String AUDITORIUM_NUM_MESSAGE = "ауд. %s";
+  
   @Override
   public void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     resp.setContentType("application/pdf");
@@ -72,7 +76,7 @@ public class ExamsPdfServlet extends HttpServlet {
           Rectangle pageSize = writer.getPageSize();
           ColumnText.showTextAligned(writer.getDirectContent(),
               Element.ALIGN_CENTER, new Phrase(String.format(
-                  "Экзамены начинаются в %02d:%02d, если явно не указано иное", typicalTimeSlot.getStart().getHour(), typicalTimeSlot.getStart().getMinute()), 
+                  EXAM_START_MESSAGE, typicalTimeSlot.getStart().getHour(), typicalTimeSlot.getStart().getMinute()), 
                   PdfFonts.SMALL_FONT),
               (pageSize.getLeft() + pageSize.getRight()) / 2,  10, 0);
           LineSeparator line = new LineSeparator();
@@ -179,7 +183,8 @@ public class ExamsPdfServlet extends HttpServlet {
       
       PdfPTable footerTable = new PdfPTable(new float[] {1f, 4f});
       footerTable.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
-      PdfPCell audCell = new PdfPCell(new Phrase(String.format("ауд. %s", e.getAuditorium().getID()), PdfFonts.SMALL_FONT));
+      PdfPCell audCell = new PdfPCell(new Phrase(String.format(
+          AUDITORIUM_NUM_MESSAGE, e.getAuditorium().getID()), PdfFonts.SMALL_FONT));
       audCell.setHorizontalAlignment(PdfPCell.ALIGN_LEFT);
       audCell.setBorder(PdfPCell.NO_BORDER);
       footerTable.addCell(audCell);
