@@ -1,9 +1,13 @@
 package ru.spbu.math.baobab.server;
 
+import static com.google.common.collect.Maps.newHashMap;
+
 import java.util.Collection;
+import java.util.HashMap;
 
 import com.google.common.collect.Lists;
 
+import ru.spbu.math.baobab.model.Auditorium;
 import ru.spbu.math.baobab.model.Calendar;
 import ru.spbu.math.baobab.model.CalendarExtent;
 
@@ -13,25 +17,20 @@ import ru.spbu.math.baobab.model.CalendarExtent;
  * @author vloginova
  */
 public class CalendarExtentImpl implements CalendarExtent {
-  private Collection<Calendar> myCalendars = Lists.newArrayList();
+  private final HashMap<String, Calendar> myCalendars = newHashMap();
 
   @Override
   public Calendar create(String uid) {
-    Calendar calendar = new CalendarImpl(uid);
-    if (myCalendars.contains(calendar)) {
+    if (myCalendars.get(uid) != null) {
       throw new RuntimeException("Calendar with the given UID already exists.");
     }
-    myCalendars.add(calendar);
+    Calendar calendar = new CalendarImpl(uid);
+    myCalendars.put(uid, calendar);
     return calendar;
   }
 
   @Override
   public Calendar find(String uid) {
-    for (Calendar topic : myCalendars) {
-      if (topic.getID().equals(uid)) {
-        return topic;
-      }
-    }
-    return null;
+    return myCalendars.get(uid);
   }
 }
