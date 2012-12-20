@@ -61,7 +61,7 @@
                           </div>
                           <div class="span7">
                             <h4>
-                              <c:out value="${event.topic.name}" />
+                              <a href="/exam?id=${event.topic.ID}"> <c:out value="${event.topic.name}" /></a>
                             </h4>
                             <p>
                               <c:forEach items="${event.topic.owners}" var="owner">${owner.name}, </c:forEach>
@@ -90,9 +90,7 @@
       </div><!--/row-->
   
     </div><!--/.fluid-container-->
-  
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="bootstrap/js/jquery.min.js"></script>
+
     <script src="bootstrap/js/bootstrap-tab.js"></script>
     <script type="text/javascript">
       var activeTab = {};
