@@ -28,7 +28,9 @@ public class CalendarImpl implements Calendar {
 
   @Override
   public void addTopic(Topic topic) {
-    myTopics.add(topic);
+    if (!myTopics.contains(topic)) {
+      myTopics.add(topic);
+    }
   }
 
   @Override
@@ -38,7 +40,7 @@ public class CalendarImpl implements Calendar {
 
   @Override
   public int hashCode() {
-    return Objects.hashCode(myID);
+    return myID.hashCode();
   }
 
   @Override
@@ -46,7 +48,7 @@ public class CalendarImpl implements Calendar {
     if (this == obj) {
       return true;
     }
-    if (obj instanceof Calendar == false) {
+    if (!(obj instanceof Calendar)) {
       return false;
     }
     Calendar calendar = (Calendar) obj;

@@ -88,7 +88,7 @@ public class CalendarSqlImpl implements Calendar {
 
   @Override
   public int hashCode() {
-    return Objects.hashCode(myID);
+    return myID.hashCode();
   }
 
   @Override
@@ -96,7 +96,7 @@ public class CalendarSqlImpl implements Calendar {
     if (this == obj) {
       return true;
     }
-    if (obj instanceof Calendar == false) {
+    if (!(obj instanceof Calendar)) {
       return false;
     }
     Calendar calendar = (Calendar) obj;
