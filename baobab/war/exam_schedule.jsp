@@ -32,8 +32,8 @@
             </div><!--/.well-->
           </div>
           <div class="row-fluid">
-            <div class="span4">
-              <a href="/data/edit" class="link">Редактировать</a>
+            <div class="span12">
+              <a href="/data/edit" class="link">Редактировать</a>&nbsp;|&nbsp;<a href="/exam/all/pdf" class="link">Скачать PDF</a>
             </div>
           </div>
         </div><!--/span-->
@@ -90,9 +90,7 @@
       </div><!--/row-->
   
     </div><!--/.fluid-container-->
-  
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="bootstrap/js/jquery.min.js"></script>
+
     <script src="bootstrap/js/bootstrap-tab.js"></script>
     <script type="text/javascript">
       var activeTab = {};
