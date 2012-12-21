@@ -1,7 +1,9 @@
 package ru.spbu.math.baobab.lang;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
@@ -15,7 +17,7 @@ public abstract class Parser {
   public static final String[] DAYS_LONG_EN = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday",
       "Sunday" };
   public static final String[] DAYS_SHORT_EN = { "Mo", "Tu", "We", "Th", "Fr", "Sa", "Su" };
-  public static final String[] DAYS_LONG_RU = { "понедельник", "вторник", "среда", "четверг", "пятница", "субоота",
+  public static final String[] DAYS_LONG_RU = { "понедельник", "вторник", "среда", "четверг", "пятница", "суббота",
       "воскресенье" };
   public static final String[] DAYS_SHORT_RU = { "пн", "вт", "ср", "чт", "пт", "сб", "вс" };
   private static final List<String[]> DAY_NAME_MATRIX = Lists.newArrayList(DAYS_LONG_EN, DAYS_SHORT_EN, DAYS_LONG_RU,
@@ -102,5 +104,13 @@ public abstract class Parser {
       return maybeQuoted.substring(1, maybeQuoted.length() - 1);
     }
     return maybeQuoted;
+  }
+
+  public final static Map<String, String> placeholders() {
+    Map<String, String> placeholders = new HashMap<String, String>();
+    placeholders.put("exam", "определить экзамен \"<короткий идентификатор>\" \"<название предмета>\"");
+    placeholders.put("teacher", "определить участника \"<впишите здесь имя>\" как преподавателя");
+    placeholders.put("event", "событие \"<короткий идентификатор>\" состоится на \"<идентификатор слота>\" ГГГГ-ММ-ДД в <номер аудитории> для группа1, группа2");
+    return placeholders;
   }
 }

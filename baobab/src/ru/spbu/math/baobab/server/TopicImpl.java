@@ -103,4 +103,18 @@ public class TopicImpl implements Topic {
   public String getUrl() {
     return myUrl;
   }
+  
+  @Override
+  public int hashCode() {
+    return myId.hashCode();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof TopicImpl == false) {
+      return false;
+    }
+    TopicImpl that = (TopicImpl) obj;
+    return myId.equals(that.myId);
+  }
 }
