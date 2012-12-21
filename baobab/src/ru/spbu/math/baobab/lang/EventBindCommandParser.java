@@ -25,16 +25,16 @@ import ru.spbu.math.baobab.model.impl.TimeSlotConverter;
 public class EventBindCommandParser extends Parser {
   private static final Pattern PATTERN_ENG = Pattern.compile(String.format(
       "^\\s*event\\s+(%s)\\s+holds on\\s+(%s)\\s+from\\s+(%s)\\s+till\\s+(%s)\\s+at\\s+(%s)(\\s+for\\s+(%s))?\\s*$",
-      ID_PATTERN, TIMESLOT_KEY_ENG_PATTERN, DATE_PATTERN, DATE_PATTERN, ID_PATTERN, ATTENDEES_PATTERN));
+      ID_PATTERN, TIMESLOT_KEY_ENG_PATTERN, DATE_PATTERN, DATE_PATTERN, ID_PATTERN, ID_LIST_PATTERN));
   private static final Pattern PATTERN_RUS = Pattern.compile(String.format(
       "^\\s*событие\\s+(%s)\\s+состоится на\\s+(%s)\\s+с\\s+(%s)\\s+по\\s+(%s)\\s+в\\s+(%s)(\\s+для\\s+(%s))?\\s*$",
-      ID_PATTERN, TIMESLOT_KEY_RUS_PATTERN, DATE_PATTERN, DATE_PATTERN, ID_PATTERN, ATTENDEES_PATTERN));
+      ID_PATTERN, TIMESLOT_KEY_RUS_PATTERN, DATE_PATTERN, DATE_PATTERN, ID_PATTERN, ID_LIST_PATTERN));
   private static final Pattern PATTERN_ENG_WITHOUT_REPEATING = Pattern.compile(String.format(
       "^\\s*event\\s+(%s)\\s+holds on\\s+(%s)\\s+(%s)\\s+at\\s+(%s)(\\s+for\\s+(%s))?\\s*$", ID_PATTERN, ID_PATTERN,
-      DATE_PATTERN, ID_PATTERN, ATTENDEES_PATTERN));
+      DATE_PATTERN, ID_PATTERN, ID_LIST_PATTERN));
   private static final Pattern PATTERN_RUS_WITHOUT_REPEATING = Pattern.compile(String.format(
       "^\\s*событие\\s+(%s)\\s+состоится на\\s+(%s)\\s+(%s)\\s+в\\s+(%s)(\\s+для\\s+(%s))?\\s*$", ID_PATTERN,
-      ID_PATTERN, DATE_PATTERN, ID_PATTERN, ATTENDEES_PATTERN));
+      ID_PATTERN, DATE_PATTERN, ID_PATTERN, ID_LIST_PATTERN));
 
   private final TopicExtent myTopicExtent;
   private final AttendeeExtent myAttendeeExtent;

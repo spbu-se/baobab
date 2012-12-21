@@ -62,9 +62,9 @@ public abstract class Parser {
 
   // group patterns
   public final static String ID_PATTERN = "(?:[\\wа-яА-Я]+|\"[\\wа-яА-Я\\s\\.-]+\")";
+  protected final static String ID_LIST_PATTERN = String.format("(%s,\\s*)*%s", ID_PATTERN, ID_PATTERN);
   protected final static String TIME_PATTERN = "\\d{1,2}:\\d{2}";
   protected final static String DATE_PATTERN = "\\d{4}-\\d{2}-\\d{2}";
-  protected final static String ATTENDEES_PATTERN = String.format("(%s,)*%s", ID_PATTERN, ID_PATTERN);
   public final static String EVEN_ODD_PATTERN_ENG = String.format("%s|%s", ODD.get(0), EVEN.get(0));
   public final static String EVEN_ODD_PATTERN_RUS = String.format("%s|%s", ODD.get(1), EVEN.get(1));
   public final static String WEEKDAY_PATTERN_ENG = String.format("%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s",
@@ -106,6 +106,10 @@ public abstract class Parser {
     return maybeQuoted;
   }
 
+  protected static String group(String pattern) {
+    return "(" + pattern + ")";
+  }
+  
   public final static Map<String, String> placeholders() {
     Map<String, String> placeholders = new HashMap<String, String>();
     placeholders.put("exam", "определить экзамен \"<короткий идентификатор>\" \"<название предмета>\"");

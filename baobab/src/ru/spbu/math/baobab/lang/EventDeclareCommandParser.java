@@ -20,10 +20,10 @@ import ru.spbu.math.baobab.model.impl.TopicTypeConverter;
 public class EventDeclareCommandParser extends Parser {
   private static final Pattern PATTERN_ENG = Pattern.compile(String.format(
       "^\\s*define\\s+(%s)\\s+(%s)(\\s+(%s))?(\\s+for\\s+(%s))?(\\s+owned by\\s+(%s))?\\s*$", TOPIC_TYPE_PATTERN_ENG,
-      ID_PATTERN, ID_PATTERN, ATTENDEES_PATTERN, ATTENDEES_PATTERN));
+      ID_PATTERN, ID_PATTERN, ID_LIST_PATTERN, ID_LIST_PATTERN));
   private static final Pattern PATTERN_RUS = Pattern.compile(String.format(
       "^\\s*определить\\s+(%s)\\s+(%s)(\\s+(%s))?(\\s+для\\s+(%s))?(\\s+владельцы\\s+(%s))?\\s*$",
-      TOPIC_TYPE_PATTERN_RUS, ID_PATTERN, ID_PATTERN, ATTENDEES_PATTERN, ATTENDEES_PATTERN));
+      TOPIC_TYPE_PATTERN_RUS, ID_PATTERN, ID_PATTERN, ID_LIST_PATTERN, ID_LIST_PATTERN));
 
   private final TopicExtent myTopicExtent;
   private final AttendeeExtent myAttendeeExtent;
