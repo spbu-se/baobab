@@ -26,43 +26,46 @@ public class CalendarCommandParserTest extends TestCase {
     }
   };
   
+  private TopicExtentImpl myTopicExtent;
+  private CalendarExtentImpl myCalendarExtent;
+  
+  @Override
+  protected void setUp() throws Exception {
+    myTopicExtent = new TopicExtentImpl();
+    myCalendarExtent = new CalendarExtentImpl();
+  }
+
   private static void assertTopicIdSet(Set<String> expected, Collection<Topic> actual) {
     assertEquals(expected, Sets.newHashSet(Collections2.transform(actual, getTopicID)));
   }
   
   public void testAddExistingTopicToExistingCalendar() {
-    TopicExtentImpl topicExtent = new TopicExtentImpl();
-    CalendarExtentImpl calendarExtent = new CalendarExtentImpl();
-    topicExtent.createTopic("exam01", Topic.Type.EXAM, "Calculus");
-    topicExtent.createTopic("exam02", Topic.Type.EXAM, "Algebra");
-    Calendar calendar = calendarExtent.create("расписание экзаменов зима 2012 2013");
+    myTopicExtent.createTopic("exam01", Topic.Type.EXAM, "Calculus");
+    myTopicExtent.createTopic("exam02", Topic.Type.EXAM, "Algebra");
+    Calendar calendar = myCalendarExtent.create("расписание экзаменов зима 2012 2013");
     
-    CalendarCommandParser parser = new CalendarCommandParser(calendarExtent, topicExtent);
+    CalendarCommandParser parser = new CalendarCommandParser(myCalendarExtent, myTopicExtent);
     assertTrue(parser.parse("  добавить в календарь  \"расписание экзаменов зима 2012 2013\"  события  exam01, \"exam02\"  "));
     assertTopicIdSet(Sets.newHashSet("exam02", "exam01"), calendar.getAllTopics());
   }
   
   public void testAddExistingTopicToNotExistingCalendar() {
-    TopicExtentImpl topicExtent = new TopicExtentImpl();
-    CalendarExtentImpl calendarExtent = new CalendarExtentImpl();
-    topicExtent.createTopic("exam01", Topic.Type.EXAM, "Calculus");
-    topicExtent.createTopic("exam02", Topic.Type.EXAM, "Algebra");
+    myTopicExtent.createTopic("exam01", Topic.Type.EXAM, "Calculus");
+    myTopicExtent.createTopic("exam02", Topic.Type.EXAM, "Algebra");
     
-    CalendarCommandParser parser = new CalendarCommandParser(calendarExtent, topicExtent);
+    CalendarCommandParser parser = new CalendarCommandParser(myCalendarExtent, myTopicExtent);
     assertTrue(parser.parse("  добавить в календарь  \"расписание экзаменов зима 2012 2013\"  события  exam01, \"exam02\"  "));
     
-    Calendar calendar = calendarExtent.find("расписание экзаменов зима 2012 2013");
+    Calendar calendar = myCalendarExtent.find("расписание экзаменов зима 2012 2013");
     assertNotNull(calendar);
     assertTopicIdSet(Sets.newHashSet("exam02", "exam01"), calendar.getAllTopics());    
   }
   
   public void testAddNotExistingTopic() {
-    TopicExtentImpl topicExtent = new TopicExtentImpl();
-    CalendarExtentImpl calendarExtent = new CalendarExtentImpl();
-    topicExtent.createTopic("exam01", Topic.Type.EXAM, "Calculus");
-    calendarExtent.create("расписание экзаменов зима 2012 2013");
+    myTopicExtent.createTopic("exam01", Topic.Type.EXAM, "Calculus");
+    myCalendarExtent.create("расписание экзаменов зима 2012 2013");
     
-    CalendarCommandParser parser = new CalendarCommandParser(calendarExtent, topicExtent);
+    CalendarCommandParser parser = new CalendarCommandParser(myCalendarExtent, myTopicExtent);
     try {
       parser.parse("добавить в календарь  \"расписание экзаменов зима 2012 2013\"  события  exam01, \"exam02\"  ");
       fail("Expected that exception is thrown because exam02 is undefined");
@@ -72,13 +75,11 @@ public class CalendarCommandParserTest extends TestCase {
   }
   
   public void testSyntaxErrorNoTopicList() {
-    TopicExtentImpl topicExtent = new TopicExtentImpl();
-    CalendarExtentImpl calendarExtent = new CalendarExtentImpl();
-    topicExtent.createTopic("exam01", Topic.Type.EXAM, "Calculus");
-    topicExtent.createTopic("exam02", Topic.Type.EXAM, "Algebra");
-    calendarExtent.create("расписание экзаменов зима 2012 2013");
+    myTopicExtent.createTopic("exam01", Topic.Type.EXAM, "Calculus");
+    myTopicExtent.createTopic("exam02", Topic.Type.EXAM, "Algebra");
+    myCalendarExtent.create("расписание экзаменов зима 2012 2013");
     
-    CalendarCommandParser parser = new CalendarCommandParser(calendarExtent, topicExtent);
+    CalendarCommandParser parser = new CalendarCommandParser(myCalendarExtent, myTopicExtent);
     assertFalse(parser.parse("добавить в календарь  \"расписание экзаменов зима 2012 2013\" "));
   }
 }
