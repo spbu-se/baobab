@@ -42,8 +42,8 @@ public class AttendeeEventMap {
       + "ts.id AS ts_id, ts.name AS ts_name, ts.start_min AS ts_start_min, "
       + "ts.finish_min AS ts_finish_min, ts.day AS ts_day, ts.is_odd AS ts_is_odd, "
       + "au.num AS au_num, au.capacity AS au_capacity, "
-      + "top.uid AS top_uid, top.type AS top_type, top.name AS top_name, "
-      + "att2.uid AS att2_uid, att2.name AS att2_name, att2.type AS att2_type, "
+      + "top.uid AS topic_uid, top.type AS topic_type, top.name AS topic_name, "
+      + "att2.uid AS owner_uid, att2.name AS owner_name, att2.type AS owner_type, "
       + "ev.date AS ev_date "
       + "FROM CalendarTopic ct "
       + "JOIN Topic top ON (top.uid = ct.topic_uid) "
@@ -95,15 +95,15 @@ public class AttendeeEventMap {
         if (auditorium == null) {
           auditorium = auditoriumExtent.create(result.getString("au_num"), result.getInt("au_capacity"));
         }
-        Topic topic = topicExtent.find(result.getString("top_uid"));
+        Topic topic = topicExtent.find(result.getString("topic_uid"));
         if (topic == null) {
-          topic = topicExtent.createTopic(result.getString("top_uid"), Topic.Type.values()[result.getInt("top_type")],
-              result.getString("top_name"));
+          topic = topicExtent.createTopic(result.getString("topic_uid"), Topic.Type.values()[result.getInt("topic_type")],
+              result.getString("topic_name"));
         }
-        Attendee owner = ownerExtent.find(result.getString("att2_uid"));
+        Attendee owner = ownerExtent.find(result.getString("owner_uid"));
         if (owner == null) {
-          owner = ownerExtent.create(result.getString("att2_uid"), result.getString("att2_name"),
-              Attendee.Type.values()[result.getInt("att2_type")]);
+          owner = ownerExtent.create(result.getString("owner_uid"), result.getString("owner_name"),
+              Attendee.Type.values()[result.getInt("owner_type")]);
         }
         topic.addOwner(owner); // adding topic owner
         topic.addEvent(result.getDate("ev_date"), timeSlot, auditorium);
