@@ -128,7 +128,7 @@ public class ScriptFormServlet extends HttpServlet {
   private boolean checkPassword(String password) {
     Properties properties = new Properties();
     loadProperties(properties, "/auth.secret.properties");
-    String[] passwords = properties.getProperty("script.passwords", "baobab").split(";");
+    String[] passwords = properties.getProperty("script.passwords", "").split(";");
     for (String p : passwords) {
       if (p.equals(password)) {
         return true;
