@@ -36,12 +36,17 @@
         <form action="/data/edit" method="post">
           <div class="row-fluid">
             <div class="span12">
-              <textarea class="span12" rows="10" name="script" id="script"></textarea>
+              <textarea class="span12" rows="10" name="script" id="script">${script_text}</textarea>
             </div>
           </div>
           <div class="row-fluid">
-              <span class="span10">${result}</span>
-              <span class="span2"><input type="submit" class="btn btn-primary" style="float: right" value="Поехали!"/></span>
+              <span class="span7">${result}</span>
+              <div class="span5 input-append">
+                <div class="right">
+                  <input type="password" placeholder="Введите пароль..." name="password" required>
+                  <input type="submit" class="btn btn-primary" value="Поехали!">
+                </div>
+              </div>
           </div>
         </form>
       </div>  
