@@ -28,6 +28,11 @@
       .time {
         color: #999;
       }
+      .right {
+        float: right;
+        margin-left: auto;
+        margin-right: auto;
+      }
     </style>
     <link href="/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">
     <script src="/bootstrap/js/jquery.min.js"></script>
@@ -39,4 +44,3 @@
       <script src="bootstrap/js/html5.js"></script>
     <![endif]-->
   </head>
-
