@@ -38,21 +38,22 @@ public class AttendeeEventMap {
   private final Calendar myCalendar;
   private Multimap<Attendee, Event> myAttendeeEvent = LinkedListMultimap.create();
   private final static String GET_TABLE_INFO_QUERY = 
-      "SELECT att.uid, att.name, att.type, "
-      + "ts.id, ts.name, ts.start_min, ts.finish_min, ts.day, ts.is_odd, "
-      + "au.num, au.capacity, " 
-      + "top.uid, top.type, top.name, "
-      + "att2.uid, att2.name, att2.type, " 
-      + "ev.id, ev.date " 
+      "SELECT att.uid AS att_uid, att.name AS att_name, att.type AS att_type, "
+      + "ts.id AS ts_id, ts.name AS ts_name, ts.start_min AS ts_start_min, "
+      + "ts.finish_min AS ts_finish_min, ts.day AS ts_day, ts.is_odd AS ts_is_odd, "
+      + "au.num AS au_num, au.capacity AS au_capacity, "
+      + "top.uid AS top_uid, top.type AS top_type, top.name AS top_name, "
+      + "att2.uid AS att2_uid, att2.name AS att2_name, att2.type AS att2_type, "
+      + "ev.date AS ev_date "
       + "FROM CalendarTopic ct "
-      + "JOIN Topic top ON (top.uid = ct.topic_uid) " 
+      + "JOIN Topic top ON (top.uid = ct.topic_uid) "
       + "JOIN Event ev ON (ev.topic_id = ct.topic_uid) "
       + "JOIN TopicOwner topow ON (ev.topic_id = topow.topic_id) "
-      + "JOIN Attendee att2 ON (topow.attendee_id = att2.id) " 
+      + "JOIN Attendee att2 ON (topow.attendee_id = att2.id) "
       + "JOIN EventAttendee ea ON (ea.event_id = ev.id) "
-      + "JOIN Attendee att ON (ea.attendee_uid = att.uid) " 
+      + "JOIN Attendee att ON (ea.attendee_uid = att.uid) "
       + "JOIN TimeSlot ts ON (ts.id = ev.time_slot_id) "
-      + "JOIN Auditorium au ON (au.num = ev.auditorium_num) " 
+      + "JOIN Auditorium au ON (au.num = ev.auditorium_num) "
       + "WHERE ct.calendar_uid = ? "
       + "ORDER BY att.id, ev.date, ts.start_min;";
 
@@ -71,75 +72,42 @@ public class AttendeeEventMap {
       PreparedStatement stmt = con.prepareScript(GET_TABLE_INFO_QUERY).get(0);
       stmt.setString(1, myCalendar.getID());
       ResultSet result = stmt.executeQuery();
-      //Extents initialization
+      // Extents initialization
       AttendeeExtent attendeeExtent = new AttendeeExtentImpl();
       AttendeeExtent ownerExtent = new AttendeeExtentImpl();
       TimeSlotExtent timeSlotExtent = new TimeSlotExtentImpl();
       AuditoriumExtent auditoriumExtent = new AuditoriumExtentImpl();
       TopicExtent topicExtent = new TopicExtentImpl();
-      //Instances of Attendee, TimeSlot, etc.
-      Attendee attendee = new AttendeeImpl(null, null, null, attendeeExtent);
-      TimeSlot timeSlot = new TimeSlotImpl(0, null, null, null, 0, null, timeSlotExtent);
-      Auditorium auditorium = new AuditoriumImpl(null, 0);
-      Topic topic = new TopicImpl(null, null, null);
-      Attendee owner = new AttendeeImpl(null, null, null, attendeeExtent);
-      Event event = new EventImpl(0, null, null, null, null);
-      //Map filling
-      while(result.next()) {
-        if(attendeeExtent.find(result.getString(1) /*attendee uid*/ ) == null){
-          attendee = attendeeExtent.create(
-              result.getString(1) /*attendee uid*/ , 
-              result.getString(2) /*attendee name*/ , 
-              Attendee.Type.values()[result.getInt(3)] /*attendee type*/
-                  );
-        } else {
-          attendee = attendeeExtent.find(result.getString(1));
+      // Map filling
+      while (result.next()) {
+        Attendee attendee = attendeeExtent.find(result.getString("att_uid"));
+        if (attendee == null) {
+          attendee = attendeeExtent.create(result.getString("att_uid"), result.getString("att_name"),
+              Attendee.Type.values()[result.getInt("att_type")]);
         }
-        if((timeSlotExtent.findById(result.getInt(4)) == null) &&
-            (timeSlotExtent.findByWeekDay(result.getInt(8)) == null)){
-          timeSlot = timeSlotExtent.create(
-              result.getString(5) /*timeslot name*/ , 
-              new TimeInstant(result.getInt(6)) /*timeslot start*/ , 
-              new TimeInstant(result.getInt(7)) /*timeslot finish*/ , 
-              result.getInt(8) /*timeslot day*/ , 
-              EvenOddWeek.values()[result.getInt(9)] /*timeslot EvenOddWeek*/
-                  );
-        } else {
-          timeSlot = timeSlotExtent.findById(result.getInt(4) /*timeslot id*/);
+        TimeSlot timeSlot = timeSlotExtent.findById(result.getInt("ts_id"));
+        if (timeSlot == null) {
+          timeSlot = timeSlotExtent.create(result.getString("ts_name"), new TimeInstant(result.getInt("ts_start_min")),
+              new TimeInstant(result.getInt("ts_finish_min")), result.getInt("ts_day"),
+              EvenOddWeek.values()[result.getInt("ts_is_odd")]);
         }
-        if(auditoriumExtent.find(result.getString(10)) == null) {
-          auditorium = auditoriumExtent.create(
-              result.getString(10) /*auditorium num*/ , 
-              result.getInt(11) /*auditorium capacity*/
-                  );
-        } else {
-          auditorium = auditoriumExtent.find(result.getString(10));
+        Auditorium auditorium = auditoriumExtent.find(result.getString("au_num"));
+        if (auditorium == null) {
+          auditorium = auditoriumExtent.create(result.getString("au_num"), result.getInt("au_capacity"));
         }
-        if(!topicExtent.getAll().contains(topic)){
-          topic = topicExtent.createTopic(
-              result.getString(12) /*topic uid*/ , 
-              Topic.Type.values()[result.getInt(13)] /*topic type*/ ,
-              result.getString(14) /*topic name*/
-                  );
+        Topic topic = topicExtent.find(result.getString("top_uid"));
+        if (topic == null) {
+          topic = topicExtent.createTopic(result.getString("top_uid"), Topic.Type.values()[result.getInt("top_type")],
+              result.getString("top_name"));
         }
-        if(ownerExtent.find(result.getString(15) /*owner uid*/ ) == null) {
-          owner = ownerExtent.create(
-              result.getString(15) /*owner uid*/ , 
-              result.getString(16) /*owner name*/ ,
-              Attendee.Type.values()[result.getInt(17)] /*owner type*/ 
-                  );
-        } else {
-          owner = ownerExtent.find(result.getString(15) /*owner uid*/ );
+        Attendee owner = ownerExtent.find(result.getString("att2_uid"));
+        if (owner == null) {
+          owner = ownerExtent.create(result.getString("att2_uid"), result.getString("att2_name"),
+              Attendee.Type.values()[result.getInt("att2_type")]);
         }
-        topic.addOwner(owner); //adding topic owner (there will be a problem when more then one person owns topic)
-        event = new EventImpl(
-            result.getInt(18) /*event id*/ ,
-            result.getDate(19) /*event date*/ ,
-            timeSlot /*event timeslot*/ ,
-            auditorium /*event auditorium*/ ,
-            topic /*event topic*/
-                );
-        myAttendeeEvent.put(attendee, event);
+        topic.addOwner(owner); // adding topic owner
+        topic.addEvent(result.getDate("ev_date"), timeSlot, auditorium);
+        myAttendeeEvent.put(attendee, topic.addEvent(result.getDate("ev_date"), timeSlot, auditorium));
       }
     } catch (SQLException e) {
       e.printStackTrace();
