@@ -34,18 +34,17 @@
           <!--/.well-->
         </div>
       </div>
-      <!--/span-->
-      <div class="span9">
-        <div class="row-fluid">
-          <div class="tab-pane active">
-            <div class="row-fluid">
-              <c:if test="${url != null}">
-                <iframe src="http://docs.google.com/viewer?url=${url}&embedded=true" width="670" height="780" style="border: none;"></iframe>
-              </c:if>
-            </div>
-          </div>
-        </div>
-      </div>
+      <c:if test="${url != null}">
+	      <div class="span6 well">
+	          <iframe src="http://docs.google.com/viewer?url=${url}&embedded=true" width="100%" height="780" style="border: none;"></iframe>
+	      </div>
+      </c:if>
+      <div class="span3">
+        <div id="vk_comments"></div>
+        <script type="text/javascript">
+          VK.Widgets.Comments('vk_comments', {limit: 10, width: "100%", attach: "*", autoPublish: "0"});
+        </script>
+      </div>      
     </div>
   </div>
 </body>
