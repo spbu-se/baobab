@@ -1,8 +1,10 @@
 package ru.spbu.math.baobab.server;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.Collections;
 import java.util.List;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -107,26 +109,57 @@ public class ScriptFormServlet extends HttpServlet {
       }
     }));
     Collections.sort(names);
-    return Joiner.on(", ").join(names);        
+    return Joiner.on(", ").join(names);
+  }
+  private static void loadProperties(Properties result, String resource) {
+    URL url = ScriptFormServlet.class.getResource(resource);
+    if (url == null) {
+      return;
+    }
+    try {
+      result.load(url.openStream());
+    } catch (IOException e) {
+      LOGGER.log(Level.SEVERE, "Failed to load properties", e);
+    }
+  }
+  private boolean checkPassword(String password) {
+    Properties properties = new Properties();
+    loadProperties(properties, "/auth.secret.properties");
+    String[] passwords = properties.getProperty("script.passwords").split(";");
+    for (String p : passwords) {
+      if (p.equals(password)) {
+        return true;
+      }
+    }
+    return false;
   }
   protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    String password = request.getParameter("password");
     String scriptText = request.getParameter("script");
+    String result = "";
 
-    AttendeeExtent attendeeExtent = new AttendeeExtentSqlImpl();
-    TimeSlotExtent timeSlotExtent = new TimeSlotExtentSqlImpl();
-    AuditoriumExtent auditoriumExtent = new AuditoriumExtentSqlImpl();
-    
-    ScriptInterpreter interpreter = new ScriptInterpreter(Lists.<Parser>newArrayList(
-        new TimeSlotCommandParser(timeSlotExtent), new AttendeeCommandParser(attendeeExtent), new AuditoriumCommandParser(auditoriumExtent)));
-    
-    String result = "Все завершилось прекрасно";
-    for (String command : Splitter.on('\n').omitEmptyStrings().split(scriptText)) {
-      try {
-        interpreter.process(command);
-      } catch (Throwable e) {
-        LOGGER.log(Level.SEVERE, "Failed to execute script", e);
-        result = String.format("Ошибка при выполнении команды %s", command);
-        break;
+    if (!checkPassword(password)) {
+      request.setAttribute("script_text", scriptText);
+      result = "Неправильный пароль";
+    }
+    else {
+      AttendeeExtent attendeeExtent = new AttendeeExtentSqlImpl();
+      TimeSlotExtent timeSlotExtent = new TimeSlotExtentSqlImpl();
+      AuditoriumExtent auditoriumExtent = new AuditoriumExtentSqlImpl();
+      
+      ScriptInterpreter interpreter = new ScriptInterpreter(Lists.<Parser>newArrayList(
+          new TimeSlotCommandParser(timeSlotExtent), new AttendeeCommandParser(attendeeExtent), new AuditoriumCommandParser(auditoriumExtent)));
+
+      result = "Все завершилось прекрасно";
+      for (String command : Splitter.on('\n').omitEmptyStrings().split(scriptText)) {
+        try {
+          interpreter.process(command);
+        } catch (Throwable e) {
+          LOGGER.log(Level.SEVERE, "Failed to execute script", e);
+          request.setAttribute("script_text", scriptText);
+          result = String.format("Ошибка при выполнении команды %s", command);
+          break;
+        }
       }
     }
     process(request, response, result);
