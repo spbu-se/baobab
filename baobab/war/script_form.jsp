@@ -46,7 +46,12 @@
             </div>
           </div>
           <div class="row-fluid">
-              <span class="span7">${result}</span>
+              <span class="span7">
+                <div class="${alert}">
+                  <button type="button" class="close" data-dismiss="alert">&times;</button>
+                  ${result}
+                </div>          
+              </span>
               <div class="span5 input-append">
                 <div class="right">
                   <input type="password" placeholder="Введите пароль..." name="password" required>
