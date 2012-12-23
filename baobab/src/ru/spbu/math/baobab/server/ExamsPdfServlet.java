@@ -17,14 +17,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import ru.spbu.math.baobab.model.Attendee;
+import ru.spbu.math.baobab.model.Calendar;
+import ru.spbu.math.baobab.model.CalendarExtent;
 import ru.spbu.math.baobab.model.Event;
 import ru.spbu.math.baobab.model.TimeSlot;
+import ru.spbu.math.baobab.server.sql.AttendeeEventMap;
+import ru.spbu.math.baobab.server.sql.CalendarExtentSqlImpl;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.HashMultiset;
+import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multiset;
@@ -57,16 +62,20 @@ public class ExamsPdfServlet extends HttpServlet {
 
   private static final String AUDITORIUM_NUM_MESSAGE = "ауд. %s";
   
+  private static final TestData myTestData = new TestData();
+
+  private final CalendarExtent myCalendarExtent = new CalendarExtentSqlImpl();
+  
   @Override
   public void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     resp.setContentType("application/pdf");
     Document document = new Document(PageSize.A4, 30f, 30f, 30f, 30f);
 
     try {
-      TestData testData = new TestData();
+      Multimap<Attendee, Event> schedule = getSchedule();
       Multimap<Collection<Event>, Attendee> invertedMap = HashMultimap.create();
-      for (Attendee a : testData.getExamSchedule().keySet()) {
-        invertedMap.put(testData.getExamSchedule().get(a), a);
+      for (Attendee a : schedule.keySet()) {
+        invertedMap.put(schedule.get(a), a);
       }
       final TimeSlot typicalTimeSlot = getTypicalTimeSlot(invertedMap.keySet());
       PdfWriter writer = PdfWriter.getInstance(document, resp.getOutputStream());
@@ -93,7 +102,7 @@ public class ExamsPdfServlet extends HttpServlet {
       table.getDefaultCell().setPaddingBottom(12.0f);
       
       int row = 0;
-      for (Collection<Event> events : testData.getExamSchedule().asMap().values()) {
+      for (Collection<Event> events : schedule.asMap().values()) {
         Collection<Attendee> attendees = invertedMap.removeAll(events);
         if (attendees.isEmpty()) {
           // we have already processed this group
@@ -126,6 +135,18 @@ public class ExamsPdfServlet extends HttpServlet {
     }
   }
   
+  private Multimap<Attendee, Event> getSchedule() {
+    Multimap<Attendee, Event> schedule;
+    Calendar calendar = myCalendarExtent.find("exams-winter-2013");
+    if (calendar != null) {
+      AttendeeEventMap data = new AttendeeEventMap(calendar);
+      schedule = data.getAttendeeEventMap();      
+    } else {
+      schedule = DevMode.USE_TEST_DATA ? myTestData.getExamSchedule() : LinkedListMultimap.<Attendee, Event>create();
+    }
+    return schedule;
+  }
+
   private TimeSlot getTypicalTimeSlot(Collection<Collection<Event>> allEvents) {
     Multiset<TimeSlot> timeSlots = HashMultiset.create();
     TimeSlot typicalTimeSlot = null;

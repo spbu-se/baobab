@@ -13,9 +13,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import ru.spbu.math.baobab.model.Attendee;
+import ru.spbu.math.baobab.model.AuditoriumExtent;
 import ru.spbu.math.baobab.model.Event;
+import ru.spbu.math.baobab.model.TimeSlotExtent;
 import ru.spbu.math.baobab.model.Topic;
 import ru.spbu.math.baobab.model.TopicExtent;
+import ru.spbu.math.baobab.server.sql.AuditoriumExtentSqlImpl;
+import ru.spbu.math.baobab.server.sql.TimeSlotExtentSqlImpl;
+import ru.spbu.math.baobab.server.sql.TopicExtentSqlImpl;
+
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 
@@ -26,7 +32,10 @@ import com.google.common.collect.Lists;
  */
 public class ViewOfExamServlet extends HttpServlet {
   private final TestData myTestData = new TestData();
-
+  private final AuditoriumExtent myAuditoriumExtent = DevMode.USE_TEST_DATA ? myTestData.getAuditoriumExtent() : new AuditoriumExtentSqlImpl();
+  private final TimeSlotExtent myTimeSlotExtent = DevMode.USE_TEST_DATA ? myTestData.getTimeSlotExtent() : new TimeSlotExtentSqlImpl();
+  private final TopicExtent myTopicExtent = DevMode.USE_TEST_DATA ? myTestData.getTopicExtent() : new TopicExtentSqlImpl(myTimeSlotExtent, myAuditoriumExtent);
+  
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     request.setCharacterEncoding("UTF-8");
@@ -43,8 +52,7 @@ public class ViewOfExamServlet extends HttpServlet {
   }
 
   private Topic getTopic(String id) {
-    TopicExtent topicExtent = myTestData.getTopicExtent();
-    return topicExtent.find(id);
+    return myTopicExtent.find(id);
   }
 
   private String getOwnerList(Topic topic) {

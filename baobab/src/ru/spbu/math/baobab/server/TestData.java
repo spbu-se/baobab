@@ -6,10 +6,12 @@ import java.util.List;
 
 import ru.spbu.math.baobab.model.Attendee;
 import ru.spbu.math.baobab.model.Auditorium;
+import ru.spbu.math.baobab.model.AuditoriumExtent;
 import ru.spbu.math.baobab.model.EvenOddWeek;
 import ru.spbu.math.baobab.model.Event;
 import ru.spbu.math.baobab.model.TimeInstant;
 import ru.spbu.math.baobab.model.TimeSlot;
+import ru.spbu.math.baobab.model.TimeSlotExtent;
 import ru.spbu.math.baobab.model.Topic;
 import ru.spbu.math.baobab.model.TopicExtent;
 
@@ -119,5 +121,13 @@ class TestData {
   
   TopicExtent getTopicExtent() {
     return myTopicExtent;
+  }
+  
+  AuditoriumExtent getAuditoriumExtent() {
+    return myAuditoriumExtent;
+  }
+  
+  TimeSlotExtent getTimeSlotExtent() {
+    return myTimeSlotExtent;
   }
 }
