@@ -97,7 +97,7 @@ public class TopicExtentSqlImpl implements TopicExtent {
       
       ResultSet rs = stmts.get(0).executeQuery();
       fetchTopic(rs, topics);
-      return topics.get(0);
+      return topics.isEmpty() ? null : topics.get(0);
       
     } catch (SQLException e) {
       e.printStackTrace();
