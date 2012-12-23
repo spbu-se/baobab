@@ -29,14 +29,17 @@ public class ExamScheduleServlet extends HttpServlet {
   
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    //TestData data = new TestData();
     Multimap<Attendee, Event> schedule;
-    Calendar calendar = myCalendarExtent.find("exams-winter-2013");
-    if (calendar != null) {
-      AttendeeEventMap data = new AttendeeEventMap(calendar);
-      schedule = data.getAttendeeEventMap();      
+    if (DevMode.USE_TEST_DATA) {
+      schedule = new TestData().getExamSchedule(); 
     } else {
-      schedule = LinkedListMultimap.create();
+      Calendar calendar = myCalendarExtent.find("exams-winter-2013");
+      if (calendar != null) {
+        AttendeeEventMap data = new AttendeeEventMap(calendar);
+        schedule = data.getAttendeeEventMap();      
+      } else {
+        schedule = LinkedListMultimap.create();
+      }
     }
     Multimap<String, Attendee> groups = getGroupList(schedule.keySet());
 
