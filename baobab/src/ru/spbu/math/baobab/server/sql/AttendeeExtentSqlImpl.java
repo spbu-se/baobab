@@ -64,7 +64,7 @@ public class AttendeeExtentSqlImpl implements AttendeeExtent {
   public Attendee find(String id) {
     SqlApi con = SqlApi.create();
     try {
-      PreparedStatement stmt = con.prepareScript("SELECT id, name, type, group_id FROM Attendee WHERE uid=?").get(0);
+      PreparedStatement stmt = con.prepareScript("SELECT id, uid, name, type, group_id FROM Attendee WHERE uid=?").get(0);
       stmt.setString(1, id);
       ResultSet resultFind = stmt.executeQuery();
       List<Attendee> findedAttendees = (List<Attendee>) fetchAttendees(resultFind);
