@@ -14,8 +14,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 
+import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+
+import ru.spbu.math.baobab.server.sql.MockSqlApi.Expectations;
 
 import junit.framework.Assert;
 
@@ -58,7 +61,8 @@ public class MockSqlApi extends SqlApi {
   public static class Expectations {
     final Pattern myStmtPattern;
     Map<Integer, Object> myParameters;
-    List<Map<String, Object>> myResultSet = Lists.newArrayList();
+    List<Map<String, Object>> myResultSet;
+    private PreparedStatement myMock;
 
     /**
      * Initializes expectations with command text pattern. Pattern is a sequence
@@ -73,11 +77,15 @@ public class MockSqlApi extends SqlApi {
      * @param pattern
      */
     Expectations(String pattern) {
-      myStmtPattern = Pattern.compile(Joiner.on(".*").join(
-          Collections2.transform(Arrays.asList(pattern.split("\\s+")), ESCAPE_REGEX))
-          + ".*");
+      this(pattern, true);
     }
 
+    Expectations(String pattern, boolean hasResultSet) {
+      myStmtPattern = Pattern.compile(Joiner.on(".*").join(
+          Collections2.transform(Arrays.asList(pattern.split("\\s+")), ESCAPE_REGEX))
+          + ".*");      
+      myResultSet = hasResultSet ? Lists.<Map<String, Object>>newArrayList() : null;
+    }
     /**
      * Adds parameter expectations. If SQL statement has placeholders, mock
      * SqlApi will check if actual parameter values match the expected ones.
@@ -107,13 +115,33 @@ public class MockSqlApi extends SqlApi {
       myResultSet = Arrays.asList(rows);
       return this;
     }
+    
+    boolean hasResultSet() {
+      return myResultSet != null;
+    }
+
+    void setMock(PreparedStatement mock) {
+      myMock = mock;
+    }
+    
+    void verify() {
+      if (myMock != null && !hasResultSet()) {
+        try {
+          Mockito.verify(myMock).execute();
+        } catch (SQLException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+      }
+    }
   }
 
   static {
     DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
   }
   private final Queue<Expectations> myExpectedData = Queues.newArrayDeque();
-
+  private final List<Expectations> myVerificationList = Lists.newArrayList();
+  
   public MockSqlApi() {
     SqlApi.setFactory(new SqlApi.Factory() {
       @Override
@@ -136,9 +164,18 @@ public class MockSqlApi extends SqlApi {
     return result;
   }
 
+  public Expectations addInsertExpectation(String pattern) {
+    Expectations result = new Expectations(pattern, false);
+    myExpectedData.add(result);
+    return result;
+  }
+
   @Override
   public void dispose() {
-  }
+    for (Expectations e : myVerificationList) {
+      e.verify();
+    }
+ }
 
   @Override
   protected PreparedStatement prepareCall(String stmt) throws SQLException {
@@ -159,9 +196,12 @@ public class MockSqlApi extends SqlApi {
       doAnswer(verifyParameter).when(mock).setString(anyInt(), anyString());
       doAnswer(verifyParameter).when(mock).setDate(anyInt(), any(Date.class));
     }
-    if (expectedData.myResultSet != null) {
+    if (expectedData.hasResultSet()) {
       ResultSet mockResultSet = mockResultSet(expectedData.myResultSet);
       when(mock.executeQuery()).thenReturn(mockResultSet);
+    } else {
+      expectedData.setMock(mock);
+      myVerificationList.add(expectedData);
     }
     return mock;
   }
@@ -212,4 +252,4 @@ public class MockSqlApi extends SqlApi {
     });
     return mock;
   }
-}
+}  
