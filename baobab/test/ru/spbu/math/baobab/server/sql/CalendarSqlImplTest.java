@@ -18,7 +18,7 @@ public class CalendarSqlImplTest extends SqlTestCase {
   public void testAddTopicAndGetAllTopics() throws SQLException {
     CalendarExtent calendarExtent = new CalendarExtentSqlImpl();
     expectSql("SELECT Calendar WHERE uid").withParameters(1, "1");
-    expectSql("INSERT Calendar uid").withParameters(1, "1");
+    expectInsert("INSERT Calendar uid").withParameters(1, "1");
     Calendar calendar = calendarExtent.create("1");
 
     List<Topic> topics = Lists.newArrayList();
@@ -28,7 +28,7 @@ public class CalendarSqlImplTest extends SqlTestCase {
     topics.add(topic2);
 
     expectSql("SELECT CalendarTopic WHERE calendar_uid topic_uid").withParameters(1, "1", 2, "_1");
-    expectSql("INSERT CalendarTopic calendar_uid topic_uid").withParameters(1, "1", 2, "_1");
+    expectInsert("INSERT CalendarTopic calendar_uid topic_uid").withParameters(1, "1", 2, "_1");
     expectSql("SELECT CalendarTopic WHERE calendar_uid topic_uid").withParameters(1, "1", 2, "_2").withResult(
         row("calendar_uid", "1", "topic_uid", "_2"));
 
