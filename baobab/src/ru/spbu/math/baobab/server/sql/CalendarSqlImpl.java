@@ -6,7 +6,6 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 
-import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 
 import ru.spbu.math.baobab.model.Calendar;
@@ -74,6 +73,7 @@ public class CalendarSqlImpl implements Calendar {
       stmt = sqlApi.prepareScript("INSERT INTO CalendarTopic SET calendar_uid=?, topic_uid=?;").get(0);
       stmt.setString(1, myID);
       stmt.setString(2, topic.getID());
+      stmt.execute();
     } catch (SQLException e) {
       e.printStackTrace();
     } finally {

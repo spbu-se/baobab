@@ -19,7 +19,11 @@ public class AttendeeListConverter {
     Matcher commandMatch = ATTENDEE_ID_PATTERN.matcher(value);
     while (commandMatch.find()) {
       String attendeeId = Parser.unquote(commandMatch.group(1));
-      attendees.add(extent.find(attendeeId));
+      Attendee attendee = extent.find(attendeeId);
+      if (attendee == null) {
+        throw new RuntimeException("Can't find attendee with ID=" + attendeeId);
+      }
+      attendees.add(attendee);
     }
     return attendees;
   }
