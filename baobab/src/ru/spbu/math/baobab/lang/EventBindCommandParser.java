@@ -1,14 +1,20 @@
 package ru.spbu.math.baobab.lang;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
+
 import ru.spbu.math.baobab.model.Attendee;
 import ru.spbu.math.baobab.model.AttendeeExtent;
 import ru.spbu.math.baobab.model.Auditorium;
 import ru.spbu.math.baobab.model.AuditoriumExtent;
+import ru.spbu.math.baobab.model.Event;
 import ru.spbu.math.baobab.model.TimeSlot;
 import ru.spbu.math.baobab.model.TimeSlotExtent;
 import ru.spbu.math.baobab.model.Topic;
@@ -85,12 +91,10 @@ public class EventBindCommandParser extends Parser {
     Date from = DateConverter.convertToDate(match.group(5));
     Date to = DateConverter.convertToDate(match.group(6));
     Auditorium auditorium = myAuditoriumExtent.find(unquote(match.group(7)));
-    List<Attendee> participants = AttendeeListConverter.convertToList(match.group(9), myAttendeeExtent);
+    List<Attendee> participants = Strings.isNullOrEmpty(match.group(9))
+        ? Collections.<Attendee>emptyList() : AttendeeListConverter.convertToList(match.group(9), myAttendeeExtent);
     Topic topic = findTopicById(id, myTopicExtent);
-    for (Attendee att : participants) {
-      topic.addAttendee(att);
-    }
-    topic.addAllEvents(from, to, timeSlot, auditorium);
+    addAttendees(topic.addAllEvents(from, to, timeSlot, auditorium), participants);
   }
 
   /**
@@ -103,14 +107,19 @@ public class EventBindCommandParser extends Parser {
     Date date = DateConverter.convertToDate(match.group(3));
     TimeSlot timeSlot = TimeSlotConverter.convertToTimeSlot(unquote(match.group(2)), date, myTimeSlotExtent);
     Auditorium auditorium = findAuditoriumById(unquote(match.group(4)), myAuditoriumExtent);
-    List<Attendee> participants = AttendeeListConverter.convertToList(match.group(6), myAttendeeExtent);
+    List<Attendee> participants = Strings.isNullOrEmpty(match.group(6))
+        ? Collections.<Attendee>emptyList() : AttendeeListConverter.convertToList(match.group(6), myAttendeeExtent);
     Topic topic = findTopicById(id, myTopicExtent);
-    for (Attendee att : participants) {
-      topic.addAttendee(att);
-    }
-    topic.addEvent(date, timeSlot, auditorium);
+    addAttendees(ImmutableList.of(topic.addEvent(date, timeSlot, auditorium)), participants);
   }
 
+  private void addAttendees(Collection<Event> events, List<Attendee> participants) {
+    for (Event e : events) {
+      for (Attendee att : participants) {
+        e.addAttendee(att);
+      }
+    }    
+  }
   /**
    * finds auditorium by Id using AuditoriumExtent. Throws RuntimeException in case of absence of it
    * 
