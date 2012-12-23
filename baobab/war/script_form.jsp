@@ -18,6 +18,12 @@
           <li><p>${group_list}</p></li>
           <li class="nav-header">Преподаватели</li>
           <li><p>${teacher_list}</p></li>
+          <li class="nav-header">События</li>
+          <li><p>
+            <c:forEach items="${topic_list}" var="topic">
+              ${topic}<br>
+            </c:forEach>
+          </p></li>
           <li class="nav-header">Аудитории</li>
           <li><p>${auditorium_list}</p></li>
           <li class="nav-header">Временные слоты</li>
@@ -36,14 +42,22 @@
         <form action="/data/edit" method="post">
           <div class="row-fluid">
             <div class="span12">
-              <textarea class="span12" rows="10" name="script" id="script"></textarea>
+              <textarea class="span12" rows="10" name="script" id="script">${script_text}</textarea>
             </div>
           </div>
           <div class="row-fluid">
-            <span class="span10">
-              <div class="${alert}">${result}</div>
-            </span>
-            <span class="span2"><input type="submit" class="btn btn-primary" style="float: right" value="Поехали!"/></span>
+              <span class="span7">
+                <div class="${alert}">
+                  <button type="button" class="close" data-dismiss="alert">&times;</button>
+                  ${result}
+                </div>          
+              </span>
+              <div class="span5 input-append">
+                <div class="right">
+                  <input type="password" placeholder="Введите пароль..." name="password" required>
+                  <input type="submit" class="btn btn-primary" value="Поехали!">
+                </div>
+              </div>
           </div>
         </form>
       </div>  

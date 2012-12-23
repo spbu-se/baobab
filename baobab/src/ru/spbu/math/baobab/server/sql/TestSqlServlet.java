@@ -13,6 +13,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.common.collect.Multimap;
+
+import ru.spbu.math.baobab.model.Attendee;
+import ru.spbu.math.baobab.model.CalendarExtent;
+import ru.spbu.math.baobab.model.Event;
+
 /**
  * This servlet does a smoke test of database connection. It runs a single select and
  * prints how many rows it returned
@@ -35,6 +41,10 @@ public class TestSqlServlet extends HttpServlet {
         rowCount++;
       }
       resp.getWriter().println("Success. " + rowCount + " rows fetched");
+      CalendarExtent extent =  new CalendarExtentSqlImpl();
+      AttendeeEventMap attev = new AttendeeEventMap(extent.find("TESTCALENDAR"));
+      Multimap<Attendee, Event> map = attev.getAttendeeEventMap();
+      resp.getWriter().println(map.size());
     } catch (SQLException e) {
       LOGGER.log(Level.SEVERE, "Failed to execute SQL", e);
       resp.getWriter().println("Failure. " + e.getMessage());
