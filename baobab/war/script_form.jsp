@@ -40,8 +40,10 @@
             </div>
           </div>
           <div class="row-fluid">
-              <span class="span10">${result}</span>
-              <span class="span2"><input type="submit" class="btn btn-primary" style="float: right" value="Поехали!"/></span>
+            <span class="span10">
+              <div class="${alert}">${result}</div>
+            </span>
+            <span class="span2"><input type="submit" class="btn btn-primary" style="float: right" value="Поехали!"/></span>
           </div>
         </form>
       </div>  

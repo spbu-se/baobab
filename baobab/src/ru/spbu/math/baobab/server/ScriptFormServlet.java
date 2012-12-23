@@ -40,6 +40,8 @@ import com.google.common.collect.Lists;
  */
 public class ScriptFormServlet extends HttpServlet {
   private static final Logger LOGGER = Logger.getLogger("ScriptFormService");
+  private static final String SUCCESSFUL_RESULT = "Все завершилось прекрасно";
+  private static final String WRONG_RESULT = "Ошибка при выполнении команды %s";
 
   private final AttendeeExtent myAttendeeExtent = new AttendeeExtentSqlImpl();
   private final AuditoriumExtent myAuditoriumExtent = new AuditoriumExtentSqlImpl();
@@ -58,8 +60,19 @@ public class ScriptFormServlet extends HttpServlet {
     request.setAttribute("auditorium_list", getAuditoriumList());
     request.setAttribute("time_slot_list", getTimeSlotList());
     request.setAttribute("placeholders", Parser.placeholders());
+    request.setAttribute("alert", getTypeOfAlert(result));
     RequestDispatcher scriptForm = request.getRequestDispatcher("/script_form.jsp");
     scriptForm.forward(request, response);
+  }
+  
+  private String getTypeOfAlert(String result) {
+    if (result.equals(SUCCESSFUL_RESULT)) {
+      return "alert alert-success";
+    }
+    if (result.indexOf("Ошибка при выполнении") != -1) {
+      return "alert alert-error";     
+    }
+    return null;
   }
 
   private String getGroupList() {
@@ -119,13 +132,13 @@ public class ScriptFormServlet extends HttpServlet {
     ScriptInterpreter interpreter = new ScriptInterpreter(Lists.<Parser>newArrayList(
         new TimeSlotCommandParser(timeSlotExtent), new AttendeeCommandParser(attendeeExtent), new AuditoriumCommandParser(auditoriumExtent)));
     
-    String result = "Все завершилось прекрасно";
+    String result = SUCCESSFUL_RESULT;
     for (String command : Splitter.on('\n').omitEmptyStrings().split(scriptText)) {
       try {
         interpreter.process(command);
       } catch (Throwable e) {
         LOGGER.log(Level.SEVERE, "Failed to execute script", e);
-        result = String.format("Ошибка при выполнении команды %s", command);
+        result = String.format(WRONG_RESULT, command);
         break;
       }
     }
