@@ -72,7 +72,7 @@ public class TopicSqlImpl implements Topic {
       stmt.setString(4, auditorium.getID());
       stmt.execute();
       
-      stmt = sqlApi.prepareScript("SELECT id FROM Event WHERE date=?, time_slot_id=?, topic_id=?").get(0);
+      stmt = sqlApi.prepareScript("SELECT id FROM Event WHERE date=? AND time_slot_id=? AND topic_id=?").get(0);
       stmt.setDate(1, sqlDate);
       stmt.setInt(2, timeSlot.getID());
       stmt.setString(3, this.getID());

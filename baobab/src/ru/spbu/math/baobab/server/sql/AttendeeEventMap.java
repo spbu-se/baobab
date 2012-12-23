@@ -3,6 +3,8 @@ package ru.spbu.math.baobab.server.sql;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import com.google.common.base.Preconditions;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
 
@@ -58,7 +60,7 @@ public class AttendeeEventMap {
       + "ORDER BY att.id, ev.date, ts.start_min;";
 
   public AttendeeEventMap(Calendar calendar) {
-    myCalendar = calendar;
+    myCalendar = Preconditions.checkNotNull(calendar);
     initializeMyAttendeeTables();
   }
 

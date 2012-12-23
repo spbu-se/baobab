@@ -25,8 +25,8 @@ public class SqlTestCase extends TestCase {
     return myMockSqlApi.addExpectation(pattern);
   }
   
-  protected void expectInsert(String pattern) {
-    myMockSqlApi.addExpectation(pattern);
+  protected MockSqlApi.Expectations expectInsert(String pattern) {
+    return myMockSqlApi.addInsertExpectation(pattern);
   }
 
   protected void expectQuery(String pattern, Map<String, Object>... expectedResultSet) {
