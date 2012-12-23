@@ -10,7 +10,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import ru.spbu.math.baobab.model.Attendee;
+import ru.spbu.math.baobab.model.Calendar;
+import ru.spbu.math.baobab.model.CalendarExtent;
 import ru.spbu.math.baobab.model.Event;
+import ru.spbu.math.baobab.server.sql.AttendeeEventMap;
+import ru.spbu.math.baobab.server.sql.CalendarExtentSqlImpl;
 
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
@@ -21,10 +25,19 @@ import com.google.common.collect.Multimap;
  * @author agudulin
  */
 public class ExamScheduleServlet extends HttpServlet {
+  private CalendarExtent myCalendarExtent = new CalendarExtentSqlImpl();
+  
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    TestData data = new TestData();
-    Multimap<Attendee, Event> schedule = data.getExamSchedule();
+    //TestData data = new TestData();
+    Multimap<Attendee, Event> schedule;
+    Calendar calendar = myCalendarExtent.find("exams-winter-2013");
+    if (calendar != null) {
+      AttendeeEventMap data = new AttendeeEventMap(calendar);
+      schedule = data.getAttendeeEventMap();      
+    } else {
+      schedule = LinkedListMultimap.create();
+    }
     Multimap<String, Attendee> groups = getGroupList(schedule.keySet());
 
     request.setCharacterEncoding("UTF-8");
@@ -36,7 +49,7 @@ public class ExamScheduleServlet extends HttpServlet {
 
   private Multimap<String, Attendee> getGroupList(Set<Attendee> attendeeList) {
     if (attendeeList.isEmpty()) {
-      return null;
+      return LinkedListMultimap.create();
     }
 
     Multimap<String, Attendee> groups = LinkedListMultimap.<String, Attendee> create();

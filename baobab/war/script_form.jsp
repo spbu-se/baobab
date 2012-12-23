@@ -18,6 +18,12 @@
           <li><p>${group_list}</p></li>
           <li class="nav-header">Преподаватели</li>
           <li><p>${teacher_list}</p></li>
+          <li class="nav-header">События</li>
+          <li><p>
+            <c:forEach items="${topic_list}" var="topic">
+              ${topic}<br>
+            </c:forEach>
+          </p></li>
           <li class="nav-header">Аудитории</li>
           <li><p>${auditorium_list}</p></li>
           <li class="nav-header">Временные слоты</li>
