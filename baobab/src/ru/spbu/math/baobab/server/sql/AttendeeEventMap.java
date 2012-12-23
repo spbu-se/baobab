@@ -4,10 +4,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.LinkedListMultimap;
-import com.google.common.collect.Multimap;
-
 import ru.spbu.math.baobab.model.Attendee;
 import ru.spbu.math.baobab.model.AttendeeExtent;
 import ru.spbu.math.baobab.model.Auditorium;
@@ -21,14 +17,14 @@ import ru.spbu.math.baobab.model.TimeSlotExtent;
 import ru.spbu.math.baobab.model.Topic;
 import ru.spbu.math.baobab.model.TopicExtent;
 import ru.spbu.math.baobab.server.AttendeeExtentImpl;
-import ru.spbu.math.baobab.server.AttendeeImpl;
 import ru.spbu.math.baobab.server.AuditoriumExtentImpl;
-import ru.spbu.math.baobab.server.AuditoriumImpl;
-import ru.spbu.math.baobab.server.EventImpl;
 import ru.spbu.math.baobab.server.TimeSlotExtentImpl;
-import ru.spbu.math.baobab.server.TimeSlotImpl;
 import ru.spbu.math.baobab.server.TopicExtentImpl;
-import ru.spbu.math.baobab.server.TopicImpl;
+
+import com.google.common.base.Objects;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.LinkedListMultimap;
+import com.google.common.collect.Multimap;
 
 /**
  * AttendeeEventMap represents map Attendee <-> Event
@@ -87,12 +83,9 @@ public class AttendeeEventMap {
           attendee = attendeeExtent.create(result.getString("att_uid"), result.getString("att_name"),
               Attendee.Type.values()[result.getInt("att_type")]);
         }
-        TimeSlot timeSlot = timeSlotExtent.findById(result.getInt("ts_id"));
-        if (timeSlot == null) {
-          timeSlot = timeSlotExtent.create(result.getString("ts_name"), new TimeInstant(result.getInt("ts_start_min")),
-              new TimeInstant(result.getInt("ts_finish_min")), result.getInt("ts_day"),
-              EvenOddWeek.values()[result.getInt("ts_is_odd")]);
-        }
+        TimeSlot timeSlot = getOrCreateTimeSlot(timeSlotExtent, result.getString("ts_name"), new TimeInstant(result.getInt("ts_start_min")),
+            new TimeInstant(result.getInt("ts_finish_min")), result.getInt("ts_day"),
+            EvenOddWeek.values()[result.getInt("ts_is_odd")]); 
         Auditorium auditorium = auditoriumExtent.find(result.getString("au_num"));
         if (auditorium == null) {
           auditorium = auditoriumExtent.create(result.getString("au_num"), result.getInt("au_capacity"));
@@ -116,5 +109,14 @@ public class AttendeeEventMap {
     } finally {
       con.dispose();
     }
+  }
+
+  private TimeSlot getOrCreateTimeSlot(TimeSlotExtent timeSlotExtent, String name, TimeInstant start, TimeInstant finish, int day, EvenOddWeek flashing) {
+    for (TimeSlot ts : timeSlotExtent.getAll()) {
+      if (Objects.equal(name, ts.getName()) && ts.getDayOfWeek() == day && ts.getEvenOddWeek() == flashing) {
+        return ts;
+      }
+    }
+    return timeSlotExtent.create(name, start, finish, day, flashing);
   }
 }
