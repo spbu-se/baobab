@@ -7,6 +7,7 @@ import java.util.List;
 import ru.spbu.math.baobab.model.Attendee;
 import ru.spbu.math.baobab.model.Auditorium;
 import ru.spbu.math.baobab.model.AuditoriumExtent;
+import ru.spbu.math.baobab.model.CalendarExtent;
 import ru.spbu.math.baobab.model.EvenOddWeek;
 import ru.spbu.math.baobab.model.Event;
 import ru.spbu.math.baobab.model.TimeInstant;
@@ -14,6 +15,7 @@ import ru.spbu.math.baobab.model.TimeSlot;
 import ru.spbu.math.baobab.model.TimeSlotExtent;
 import ru.spbu.math.baobab.model.Topic;
 import ru.spbu.math.baobab.model.TopicExtent;
+import ru.spbu.math.baobab.server.sql.CalendarExtentSqlImpl;
 
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Lists;
@@ -29,6 +31,7 @@ class TestData {
   private final AuditoriumExtentImpl myAuditoriumExtent = new AuditoriumExtentImpl();
   private final AttendeeExtentImpl myAttendeeExtent = new AttendeeExtentImpl();
   private final TopicExtentImpl myTopicExtent = new TopicExtentImpl();
+  private final CalendarExtentImpl myCalendarExtent = new CalendarExtentImpl();
   private final LinkedListMultimap<Attendee, Event> mySchedule = LinkedListMultimap.<Attendee, Event>create();
 
   TestData() {
@@ -129,5 +132,9 @@ class TestData {
   
   TimeSlotExtent getTimeSlotExtent() {
     return myTimeSlotExtent;
+  }
+
+  public CalendarExtent getCalendarExtent() {
+    return myCalendarExtent;
   }
 }

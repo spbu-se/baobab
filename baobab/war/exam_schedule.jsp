@@ -7,6 +7,13 @@
   <jsp:include page="include_header.jsp"></jsp:include>
   <body>
     <div class="container-fluid">
+      <div class="row-fluid">
+        <div class="span12">
+		      <c:forEach var="calendar" items="${calendarList}">
+		        <a href="/calendar/${calendar.ID}">${calendar.ID}</a>&nbsp;|&nbsp;
+		      </c:forEach>
+	      </div>
+	    </div>
       <div class="row-fluid page-header">
         <div class="span10">
           <h2>Расписание зимней сессии</h2>
@@ -33,7 +40,7 @@
           </div>
           <div class="row-fluid">
             <div class="span12">
-              <a href="/data/edit" class="link">Редактировать</a>&nbsp;|&nbsp;<a href="/exam/all/pdf" class="link">Скачать PDF</a>
+              <a href="/data/edit" class="link">Редактировать</a>&nbsp;|&nbsp;<a href="/export/${calendarID}" class="link">Скачать PDF</a>
             </div>
           </div>
         </div><!--/span-->
