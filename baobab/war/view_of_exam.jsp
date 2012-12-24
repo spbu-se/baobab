@@ -4,14 +4,22 @@
 <html lang="ru">
 <jsp:include page="include_header.jsp" />
 <body>
-  <div class="container-fluid">
-    <div class="row-fluid">
-      <div class="span12">
-        <c:forEach var="calendar" items="${calendarList}">
-          <a href="/calendar/${calendar.ID}">${calendar.ID}</a>&nbsp;|&nbsp;
-        </c:forEach>
+  <div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container">
+        <a class="brand" href="/">Baobab</a>
+        <div class="nav-collapse collapse navbar-responsive-collapse">
+          <ul class="nav">
+            <c:forEach var="calendar" items="${calendarList}">
+              <li><a href="/calendar/${calendar.ID}">${calendar.ID}</a></li>
+            </c:forEach>
+          </ul>
+        </div>
       </div>
     </div>
+  </div>
+
+  <div class="container-fluid">
     <div class="row-fluid page-header">
       <div class="span10">
         <h2>${exam_name}</h2>
@@ -42,9 +50,9 @@
         </div>
       </div>
       <c:if test="${url != null}">
-	      <div class="span6 well">
-	          <iframe src="http://docs.google.com/viewer?url=${url}&embedded=true" width="100%" height="780" style="border: none;"></iframe>
-	      </div>
+        <div class="span6 well">
+          <iframe src="http://docs.google.com/viewer?url=${url}&embedded=true" width="100%" height="780" style="border: none;"></iframe>
+        </div>
       </c:if>
       <div class="span3">
         <div id="vk_comments"></div>
