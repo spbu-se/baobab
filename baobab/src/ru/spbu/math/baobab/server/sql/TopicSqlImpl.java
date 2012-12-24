@@ -207,7 +207,7 @@ public class TopicSqlImpl implements Topic {
       for (boolean hasRow = rs.next(); hasRow; hasRow = rs.next()) {
         int id = rs.getInt("id");
         Date date = new Date(rs.getDate("date").getTime());
-        TimeSlot ts = myTimeSlotExtent.findById(rs.getInt("timeslot_id"));
+        TimeSlot ts = myTimeSlotExtent.findById(rs.getInt("time_slot_id"));
         Auditorium auditorium = myAuditoriumExtent.find(rs.getString("auditorium_num"));
         Event event = new EventSqlImpl(id, date, ts, auditorium, this);
         events.add(event);

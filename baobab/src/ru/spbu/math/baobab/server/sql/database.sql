@@ -55,7 +55,7 @@ CREATE TABLE Auditorium(
 CREATE TABLE Topic(
   uid VARCHAR(32) NOT NULL PRIMARY KEY,
   name VARCHAR(256),
-  type INT NOT NULL CHECK(type >= 0 AND type <= 5)
+  type INT NOT NULL CHECK(type >= 0 AND type <= 5),
   url VARCHAR(256)
 );
 

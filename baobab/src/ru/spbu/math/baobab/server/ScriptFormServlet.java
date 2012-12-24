@@ -181,7 +181,7 @@ public class ScriptFormServlet extends HttpServlet {
         } catch (Throwable e) {
           LOGGER.log(Level.SEVERE, "Failed to execute script", e);
           request.setAttribute("script_text", scriptText);
-          result = String.format("Ошибка при выполнении команды %s:\n", command, e.getMessage());
+          result = String.format("Ошибка при выполнении команды %s:%s\n", command, e.getMessage());
           break;
         }
       }
