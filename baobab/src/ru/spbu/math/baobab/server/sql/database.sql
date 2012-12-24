@@ -55,7 +55,7 @@ CREATE TABLE Auditorium(
 CREATE TABLE Topic(
   uid VARCHAR(32) NOT NULL PRIMARY KEY,
   name VARCHAR(256),
-  type INT NOT NULL CHECK(type >= 0 AND type <= 5)
+  type INT NOT NULL CHECK(type >= 0 AND type <= 5),
   url VARCHAR(256)
 );
 
@@ -98,12 +98,12 @@ CREATE TABLE EventAttendee(
 
 -- This table is just an enumeration of the available calendars
 CREATE TABLE Calendar(
-  uid VARCHAR(16) PRIMARY KEY
+  uid VARCHAR(32) PRIMARY KEY
 );
 
 -- This table implements M:N relationship between calendars and topics
 CREATE TABLE CalendarTopic(
-  calendar_uid VARCHAR(16),
+  calendar_uid VARCHAR(32),
   topic_uid VARCHAR(32),
   FOREIGN KEY (calendar_uid) REFERENCES Calendar(uid),
   FOREIGN KEY (topic_uid) REFERENCES Topic(uid)

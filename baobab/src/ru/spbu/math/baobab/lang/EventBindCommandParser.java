@@ -1,14 +1,20 @@
 package ru.spbu.math.baobab.lang;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
+
 import ru.spbu.math.baobab.model.Attendee;
 import ru.spbu.math.baobab.model.AttendeeExtent;
 import ru.spbu.math.baobab.model.Auditorium;
 import ru.spbu.math.baobab.model.AuditoriumExtent;
+import ru.spbu.math.baobab.model.Event;
 import ru.spbu.math.baobab.model.TimeSlot;
 import ru.spbu.math.baobab.model.TimeSlotExtent;
 import ru.spbu.math.baobab.model.Topic;
@@ -25,16 +31,16 @@ import ru.spbu.math.baobab.model.impl.TimeSlotConverter;
 public class EventBindCommandParser extends Parser {
   private static final Pattern PATTERN_ENG = Pattern.compile(String.format(
       "^\\s*event\\s+(%s)\\s+holds on\\s+(%s)\\s+from\\s+(%s)\\s+till\\s+(%s)\\s+at\\s+(%s)(\\s+for\\s+(%s))?\\s*$",
-      ID_PATTERN, TIMESLOT_KEY_ENG_PATTERN, DATE_PATTERN, DATE_PATTERN, ID_PATTERN, ATTENDEES_PATTERN));
+      ID_PATTERN, TIMESLOT_KEY_ENG_PATTERN, DATE_PATTERN, DATE_PATTERN, ID_PATTERN, ID_LIST_PATTERN));
   private static final Pattern PATTERN_RUS = Pattern.compile(String.format(
       "^\\s*событие\\s+(%s)\\s+состоится на\\s+(%s)\\s+с\\s+(%s)\\s+по\\s+(%s)\\s+в\\s+(%s)(\\s+для\\s+(%s))?\\s*$",
-      ID_PATTERN, TIMESLOT_KEY_RUS_PATTERN, DATE_PATTERN, DATE_PATTERN, ID_PATTERN, ATTENDEES_PATTERN));
+      ID_PATTERN, TIMESLOT_KEY_RUS_PATTERN, DATE_PATTERN, DATE_PATTERN, ID_PATTERN, ID_LIST_PATTERN));
   private static final Pattern PATTERN_ENG_WITHOUT_REPEATING = Pattern.compile(String.format(
       "^\\s*event\\s+(%s)\\s+holds on\\s+(%s)\\s+(%s)\\s+at\\s+(%s)(\\s+for\\s+(%s))?\\s*$", ID_PATTERN, ID_PATTERN,
-      DATE_PATTERN, ID_PATTERN, ATTENDEES_PATTERN));
+      DATE_PATTERN, ID_PATTERN, ID_LIST_PATTERN));
   private static final Pattern PATTERN_RUS_WITHOUT_REPEATING = Pattern.compile(String.format(
       "^\\s*событие\\s+(%s)\\s+состоится на\\s+(%s)\\s+(%s)\\s+в\\s+(%s)(\\s+для\\s+(%s))?\\s*$", ID_PATTERN,
-      ID_PATTERN, DATE_PATTERN, ID_PATTERN, ATTENDEES_PATTERN));
+      ID_PATTERN, DATE_PATTERN, ID_PATTERN, ID_LIST_PATTERN));
 
   private final TopicExtent myTopicExtent;
   private final AttendeeExtent myAttendeeExtent;
@@ -85,12 +91,10 @@ public class EventBindCommandParser extends Parser {
     Date from = DateConverter.convertToDate(match.group(5));
     Date to = DateConverter.convertToDate(match.group(6));
     Auditorium auditorium = myAuditoriumExtent.find(unquote(match.group(7)));
-    List<Attendee> participants = AttendeeListConverter.convertToList(match.group(9), myAttendeeExtent);
+    List<Attendee> participants = Strings.isNullOrEmpty(match.group(9))
+        ? Collections.<Attendee>emptyList() : AttendeeListConverter.convertToList(match.group(9), myAttendeeExtent);
     Topic topic = findTopicById(id, myTopicExtent);
-    for (Attendee att : participants) {
-      topic.addAttendee(att);
-    }
-    topic.addAllEvents(from, to, timeSlot, auditorium);
+    addAttendees(topic.addAllEvents(from, to, timeSlot, auditorium), participants);
   }
 
   /**
@@ -103,14 +107,19 @@ public class EventBindCommandParser extends Parser {
     Date date = DateConverter.convertToDate(match.group(3));
     TimeSlot timeSlot = TimeSlotConverter.convertToTimeSlot(unquote(match.group(2)), date, myTimeSlotExtent);
     Auditorium auditorium = findAuditoriumById(unquote(match.group(4)), myAuditoriumExtent);
-    List<Attendee> participants = AttendeeListConverter.convertToList(match.group(6), myAttendeeExtent);
+    List<Attendee> participants = Strings.isNullOrEmpty(match.group(6))
+        ? Collections.<Attendee>emptyList() : AttendeeListConverter.convertToList(match.group(6), myAttendeeExtent);
     Topic topic = findTopicById(id, myTopicExtent);
-    for (Attendee att : participants) {
-      topic.addAttendee(att);
-    }
-    topic.addEvent(date, timeSlot, auditorium);
+    addAttendees(ImmutableList.of(topic.addEvent(date, timeSlot, auditorium)), participants);
   }
 
+  private void addAttendees(Collection<Event> events, List<Attendee> participants) {
+    for (Event e : events) {
+      for (Attendee att : participants) {
+        e.addAttendee(att);
+      }
+    }    
+  }
   /**
    * finds auditorium by Id using AuditoriumExtent. Throws RuntimeException in case of absence of it
    * 
