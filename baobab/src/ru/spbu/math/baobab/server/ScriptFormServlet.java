@@ -177,7 +177,11 @@ public class ScriptFormServlet extends HttpServlet {
       result = "Все завершилось прекрасно";
       for (String command : Splitter.on('\n').omitEmptyStrings().split(scriptText)) {
         try {
-          interpreter.process(command);
+          if (!interpreter.process(command)) {
+            request.setAttribute("script_text", scriptText);
+            result = String.format("Не удалось разобрать команду %s", command);
+            break;            
+          }
         } catch (Throwable e) {
           LOGGER.log(Level.SEVERE, "Failed to execute script", e);
           request.setAttribute("script_text", scriptText);

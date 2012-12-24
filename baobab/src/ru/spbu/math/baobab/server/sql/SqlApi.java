@@ -23,8 +23,8 @@ import com.google.common.collect.Lists;
 public abstract class SqlApi {
   private static final Logger LOGGER = Logger.getLogger("SqlService");
   private static final String CONNECTION_SPEC = "jdbc:google:rdbms://barashev.net:baobab:baobab/";
-  private static final Pattern PATTERN_COMMENT = Pattern.compile("^\\p{Blank}*--[^\\n]+(\\n|$)");
-  private static final Pattern PATTERN_WHITESPACE = Pattern.compile("^\\p{Blank}*(\\n|$)");
+  public static final Pattern PATTERN_COMMENT = Pattern.compile("^\\p{Blank}*--[^\\n]+(\\n|\\r|$)");
+  public static final Pattern PATTERN_WHITESPACE = Pattern.compile("^\\p{Blank}*(\\n|\\r|$)");
   private static final Pattern PATTERN_STMT_END = Pattern.compile(".*;\\p{Blank}*(\\n|$)");
 
   static {
