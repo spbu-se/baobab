@@ -33,4 +33,9 @@ public class CalendarExtentImpl implements CalendarExtent {
   public Calendar find(String uid) {
     return myCalendars.get(uid);
   }
+
+  @Override
+  public Collection<Calendar> getAll() {
+    return myCalendars.values();
+  }
 }

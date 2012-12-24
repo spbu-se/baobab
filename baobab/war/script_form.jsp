@@ -6,6 +6,13 @@
 <body>
   <div class="container-fluid">
     <div class="row-fluid">
+      <div class="span12">
+        <c:forEach var="calendar" items="${calendarList}">
+          <a href="/calendar/${calendar.ID}">${calendar.ID}</a>&nbsp;|&nbsp;
+        </c:forEach>
+      </div>
+    </div>
+    <div class="row-fluid">
       <div class="page-header span12">
         <h2>Редактирование данных</h2>
       </div>
@@ -73,5 +80,6 @@
       textarea.val(textarea.val() + placeholders[buttonID] + '\n');
     });
   </script>
+  <jsp:include page="include_footer.jsp"></jsp:include>
 </body>
 </html>
