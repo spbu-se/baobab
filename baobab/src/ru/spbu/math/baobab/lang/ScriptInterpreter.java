@@ -11,6 +11,7 @@ import ru.spbu.math.baobab.server.AttendeeExtentImpl;
 import ru.spbu.math.baobab.server.AuditoriumExtentImpl;
 import ru.spbu.math.baobab.server.TimeSlotExtentImpl;
 import ru.spbu.math.baobab.server.TopicExtentImpl;
+import ru.spbu.math.baobab.server.sql.SqlApi;
 
 /**
  * Script interpreter processes the lines satisfying specifications of the Baobab language and executes them
@@ -44,12 +45,15 @@ public class ScriptInterpreter {
    * 
    * @param command some command in baobab language
    */
-  public void process(String command) {
+  public boolean process(String command) {
+    if (SqlApi.PATTERN_WHITESPACE.matcher(command).matches() || SqlApi.PATTERN_COMMENT.matcher(command).matches()) {
+      return true;
+    }
     for (Parser p : myParsers) {
       if (p.parse(command)) {
-        return;
+        return true;
       }
     }
-    throw new IllegalArgumentException("Incorrect command");
+    return false;
   }
 }

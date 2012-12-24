@@ -3,6 +3,10 @@ package ru.spbu.math.baobab.server.sql;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collection;
+import java.util.List;
+
+import com.google.common.collect.Lists;
 
 import ru.spbu.math.baobab.model.Calendar;
 import ru.spbu.math.baobab.model.CalendarExtent;
@@ -44,6 +48,25 @@ public class CalendarExtentSqlImpl implements CalendarExtent {
       if (resultFind.next()) {
         return new CalendarSqlImpl(uid);
       }
+    } catch (SQLException e) {
+      e.printStackTrace();
+    } finally {
+      con.dispose();
+    }
+    return null;
+  }
+
+  @Override
+  public Collection<Calendar> getAll() {
+    SqlApi con = SqlApi.create();
+    try {
+      List<Calendar> result = Lists.newArrayList();
+      PreparedStatement stmt = con.prepareScript("SELECT * FROM Calendar").get(0);
+      ResultSet resultFind = stmt.executeQuery();
+      while (resultFind.next()) {
+        result.add(new CalendarSqlImpl(resultFind.getString("uid")));
+      }
+      return result;
     } catch (SQLException e) {
       e.printStackTrace();
     } finally {

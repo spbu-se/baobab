@@ -72,7 +72,7 @@ public class ExamsPdfServlet extends HttpServlet {
     Document document = new Document(PageSize.A4, 30f, 30f, 30f, 30f);
 
     try {
-      Multimap<Attendee, Event> schedule = getSchedule();
+      Multimap<Attendee, Event> schedule = getSchedule(req);
       Multimap<Collection<Event>, Attendee> invertedMap = HashMultimap.create();
       for (Attendee a : schedule.keySet()) {
         invertedMap.put(schedule.get(a), a);
@@ -135,9 +135,9 @@ public class ExamsPdfServlet extends HttpServlet {
     }
   }
   
-  private Multimap<Attendee, Event> getSchedule() {
+  private Multimap<Attendee, Event> getSchedule(HttpServletRequest req) {
     Multimap<Attendee, Event> schedule;
-    Calendar calendar = myCalendarExtent.find("exams-winter-2013");
+    Calendar calendar = myCalendarExtent.find(ExamScheduleServlet.getCalendarFromPath(req));
     if (calendar != null) {
       AttendeeEventMap data = new AttendeeEventMap(calendar);
       schedule = data.getAttendeeEventMap();      

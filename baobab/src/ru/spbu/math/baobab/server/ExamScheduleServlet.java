@@ -25,6 +25,7 @@ import com.google.common.collect.Multimap;
  * @author agudulin
  */
 public class ExamScheduleServlet extends HttpServlet {
+  private static final String CALENDAR_COMPONENT = "calendar";
   private CalendarExtent myCalendarExtent = new CalendarExtentSqlImpl();
   
   @Override
@@ -33,8 +34,9 @@ public class ExamScheduleServlet extends HttpServlet {
     if (DevMode.USE_TEST_DATA) {
       schedule = new TestData().getExamSchedule(); 
     } else {
-      Calendar calendar = myCalendarExtent.find("exams-winter-2013");
+      Calendar calendar = myCalendarExtent.find(getCalendarFromPath(request));
       if (calendar != null) {
+        request.setAttribute("calendarID", calendar.getID());
         AttendeeEventMap data = new AttendeeEventMap(calendar);
         schedule = data.getAttendeeEventMap();      
       } else {
@@ -44,6 +46,7 @@ public class ExamScheduleServlet extends HttpServlet {
     Multimap<String, Attendee> groups = getGroupList(schedule.keySet());
 
     request.setCharacterEncoding("UTF-8");
+    request.setAttribute("calendarList", myCalendarExtent.getAll());
     request.setAttribute("groupsList", groups.asMap());
     request.setAttribute("schedule", schedule.asMap());
     RequestDispatcher view = request.getRequestDispatcher("/exam_schedule.jsp");
@@ -61,5 +64,10 @@ public class ExamScheduleServlet extends HttpServlet {
     }
 
     return groups;
+  }
+  
+  static String getCalendarFromPath(HttpServletRequest req) {
+    String[] path = req.getRequestURI().split("/");
+    return (path.length >= 2 && CALENDAR_COMPONENT.equals(path[1])) ? path[2] : "exams-winter-2013";
   }
 }
