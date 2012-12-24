@@ -10,7 +10,7 @@
     <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <style type="text/css">
       body {
-        padding-top: 10px;
+        padding-top: 30px;
         padding-bottom: 40px;
       }
       .sidebar-nav {

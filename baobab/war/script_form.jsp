@@ -4,14 +4,22 @@
 <%@ include file="../include_header.jsp" %>
 <html>
 <body>
-  <div class="container-fluid">
-    <div class="row-fluid">
-      <div class="span12">
-        <c:forEach var="calendar" items="${calendarList}">
-          <a href="/calendar/${calendar.ID}">${calendar.ID}</a>&nbsp;|&nbsp;
-        </c:forEach>
+  <div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container">
+        <a class="brand" href="/">Baobab</a>
+        <div class="nav-collapse collapse navbar-responsive-collapse">
+          <ul class="nav">
+            <c:forEach var="calendar" items="${calendarList}">
+              <li><a href="/calendar/${calendar.ID}">${calendar.ID}</a></li>
+            </c:forEach>
+          </ul>
+        </div>
       </div>
     </div>
+  </div>
+
+  <div class="container-fluid">
     <div class="row-fluid">
       <div class="page-header span12">
         <h2>Редактирование данных</h2>
