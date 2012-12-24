@@ -73,5 +73,6 @@
       textarea.val(textarea.val() + placeholders[buttonID] + '\n');
     });
   </script>
+  <jsp:include page="include_footer.jsp"></jsp:include>
 </body>
 </html>

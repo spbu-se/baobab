@@ -109,5 +109,6 @@
         document.location.hash = e.target.hash.replace("#g", "#");
       });
     </script>
+  <jsp:include page="include_footer.jsp"></jsp:include>
   </body>
 </html>
