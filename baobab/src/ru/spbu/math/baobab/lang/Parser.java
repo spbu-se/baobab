@@ -61,7 +61,7 @@ public abstract class Parser {
   public static final List<String> THESIS_DEFENSE = Arrays.asList("defense", "защита");
 
   // group patterns
-  public final static String ID_PATTERN = "(?:[\\wа-яА-Я]+|\"[\\wа-яА-Я\\s\\.-]+\")";
+  public final static String ID_PATTERN = "(?:[\\wа-яА-Я]+|\"[\\wа-яА-Я\\s\\.\\-/]+\")";
   protected final static String ID_LIST_PATTERN = String.format("(%s,\\s*)*%s", ID_PATTERN, ID_PATTERN);
   protected final static String TIME_PATTERN = "\\d{1,2}:\\d{2}";
   protected final static String DATE_PATTERN = "\\d{4}-\\d{2}-\\d{2}";
