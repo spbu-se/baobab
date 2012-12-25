@@ -91,10 +91,10 @@ public class TopicSqlImpl implements Topic {
       Event event = new EventSqlImpl(id, date, timeSlot, auditorium, this);
       return event;
     } catch (SQLException e) {
+      throw new RuntimeException(String.format("Ошибка при добавлении события %s в дату %s:\n%s", myId, date.toString(), e.getMessage()), e);
     } finally {
       sqlApi.dispose();
     }
-    return null;
   }
 
   @Override
