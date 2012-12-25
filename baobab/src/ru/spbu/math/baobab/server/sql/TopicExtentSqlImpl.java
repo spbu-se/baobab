@@ -1,6 +1,6 @@
 package ru.spbu.math.baobab.server.sql;
 
-import java.sql.PreparedStatement;
+import java.sql.CallableStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
@@ -33,7 +33,7 @@ public class TopicExtentSqlImpl implements TopicExtent {
     SqlApi sqlApi = SqlApi.create();
 
     try {
-      PreparedStatement stmt = sqlApi.prepareScript("SELECT * FROM Topic WHERE uid=?;").get(0);
+      CallableStatement stmt = sqlApi.prepareScript("SELECT * FROM Topic WHERE uid=?;").get(0);
       stmt.setString(1, id);
 
       int rowCount = 0;
@@ -71,7 +71,7 @@ public class TopicExtentSqlImpl implements TopicExtent {
     SqlApi sqlApi = SqlApi.create();
 
     try {
-      List<PreparedStatement> stmts = sqlApi.prepareScript("SELECT * FROM Topic;");
+      List<CallableStatement> stmts = sqlApi.prepareScript("SELECT * FROM Topic;");
 
       ResultSet rs = stmts.get(0).executeQuery();
       fetchTopic(rs, topics);
@@ -92,7 +92,7 @@ public class TopicExtentSqlImpl implements TopicExtent {
 
     try {
       List<Topic> topics = Lists.newArrayList();
-      List<PreparedStatement> stmts = sqlApi.prepareScript("SELECT * FROM Topic WHERE uid=?;");
+      List<CallableStatement> stmts = sqlApi.prepareScript("SELECT * FROM Topic WHERE uid=?;");
       stmts.get(0).setString(1, id);
       
       ResultSet rs = stmts.get(0).executeQuery();

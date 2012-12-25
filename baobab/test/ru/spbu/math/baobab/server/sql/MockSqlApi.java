@@ -1,7 +1,7 @@
 package ru.spbu.math.baobab.server.sql;
 
 import java.sql.Date;
-import java.sql.PreparedStatement;
+import java.sql.CallableStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -32,7 +32,7 @@ import com.google.common.collect.Queues;
 import static org.mockito.Mockito.*;
 
 /**
- * Implements SqlApi which creates mocks of PreparedStatement and ResultSet,
+ * Implements SqlApi which creates mocks of CallableStatement and ResultSet,
  * with ability to verify SQL commands being issued to JDBC, and return
  * predefined results.
  * 
@@ -62,7 +62,7 @@ public class MockSqlApi extends SqlApi {
     final Pattern myStmtPattern;
     Map<Integer, Object> myParameters;
     List<Map<String, Object>> myResultSet;
-    private PreparedStatement myMock;
+    private CallableStatement myMock;
 
     /**
      * Initializes expectations with command text pattern. Pattern is a sequence
@@ -120,7 +120,7 @@ public class MockSqlApi extends SqlApi {
       return myResultSet != null;
     }
 
-    void setMock(PreparedStatement mock) {
+    void setMock(CallableStatement mock) {
       myMock = mock;
     }
     
@@ -178,11 +178,11 @@ public class MockSqlApi extends SqlApi {
  }
 
   @Override
-  protected PreparedStatement prepareCall(String stmt) throws SQLException {
+  protected CallableStatement prepareCall(String stmt) throws SQLException {
     final Expectations expectedData = myExpectedData.poll();
     Assert.assertTrue("Expected that string=" + stmt + " would match pattern=" + expectedData.myStmtPattern.pattern(),
         expectedData.myStmtPattern.matcher(stmt).matches());
-    PreparedStatement mock = mock(PreparedStatement.class);
+    CallableStatement mock = mock(CallableStatement.class);
     if (expectedData.myParameters != null) {
       Answer<Void> verifyParameter = new Answer<Void>() {
         @Override
