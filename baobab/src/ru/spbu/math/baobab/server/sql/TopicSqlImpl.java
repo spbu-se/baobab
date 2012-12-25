@@ -64,31 +64,15 @@ public class TopicSqlImpl implements Topic {
   public Event addEvent(Date date, TimeSlot timeSlot, @Nullable Auditorium auditorium) {
     SqlApi sqlApi = SqlApi.create();
     try {
-      CallableStatement stmt = sqlApi.prepareScript(
-          "INSERT INTO Event SET date=?,  time_slot_id=?,  topic_id=?,  auditorium_num=?;").get(0);
+      CallableStatement stmt = sqlApi.prepareScript("CALL Topic_AddEvent(?, ?, ?, ?, ?)").get(0);
       java.sql.Date sqlDate = new java.sql.Date(date.getTime());
-      stmt.setDate(1, sqlDate);
-      stmt.setInt(2, timeSlot.getID());
-      stmt.setString(3, this.getID());
+      stmt.setString(1, this.getID());
+      stmt.setDate(2, sqlDate);
+      stmt.setInt(3, timeSlot.getID());
       stmt.setString(4, auditorium.getID());
-      stmt.execute();
-      
-      stmt = sqlApi.prepareScript("SELECT id FROM Event WHERE date=? AND time_slot_id=? AND topic_id=?").get(0);
-      stmt.setDate(1, sqlDate);
-      stmt.setInt(2, timeSlot.getID());
-      stmt.setString(3, this.getID());
-
-      ResultSet rs = stmt.executeQuery();
-      if (!rs.next()) {
-        throw new IllegalStateException("Event identified by this date: " + date.toString() +
-        		", timeslot: " + timeSlot.getName() + ",  topic: " + this.getName() + " does not exist");
-      } 
-      int id = rs.getInt("id");
-      if (rs.next()) {
-        throw new IllegalStateException("There are too many events identified by this date: " + sqlDate.toString() +
-                ", timeslot: " + timeSlot.getName() + ",  topic: " + this.getName());
-      } 
-     
+      stmt.registerOutParameter(5, Types.INTEGER);
+      stmt.executeUpdate();
+      int id = stmt.getInt(5);
       Event event = new EventSqlImpl(id, date, timeSlot, auditorium, this);
       return event;
     } catch (SQLException e) {
