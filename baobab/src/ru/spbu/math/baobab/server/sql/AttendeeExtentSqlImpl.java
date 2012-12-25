@@ -1,6 +1,6 @@
 package ru.spbu.math.baobab.server.sql;
 
-import java.sql.PreparedStatement;
+import java.sql.CallableStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
@@ -26,7 +26,7 @@ public class AttendeeExtentSqlImpl implements AttendeeExtent {
     }
     SqlApi con = SqlApi.create();
     try {
-      List<PreparedStatement> stmt = con.prepareScript("INSERT INTO Attendee SET uid=?, name=?, type=?; \n"
+      List<CallableStatement> stmt = con.prepareScript("INSERT INTO Attendee SET uid=?, name=?, type=?; \n"
           + "SELECT id FROM Attendee WHERE uid=?; \n" + "INSERT INTO AttendeeGroup SET id=?; \n"
           + "UPDATE Attendee SET group_id = ? WHERE id = ?;");
       // insert new Attendee into Attendee table
@@ -64,7 +64,7 @@ public class AttendeeExtentSqlImpl implements AttendeeExtent {
   public Attendee find(String id) {
     SqlApi con = SqlApi.create();
     try {
-      PreparedStatement stmt = con.prepareScript("SELECT id, uid, name, type, group_id FROM Attendee WHERE uid=?").get(0);
+      CallableStatement stmt = con.prepareScript("SELECT id, uid, name, type, group_id FROM Attendee WHERE uid=?").get(0);
       stmt.setString(1, id);
       ResultSet resultFind = stmt.executeQuery();
       List<Attendee> findedAttendees = (List<Attendee>) fetchAttendees(resultFind);
@@ -84,7 +84,7 @@ public class AttendeeExtentSqlImpl implements AttendeeExtent {
   public Collection<Attendee> getAll() {
     SqlApi con = SqlApi.create();
     try {
-      PreparedStatement stmt = con.prepareScript("SELECT id, uid, name, type, group_id FROM Attendee").get(0);
+      CallableStatement stmt = con.prepareScript("SELECT id, uid, name, type, group_id FROM Attendee").get(0);
       ResultSet resultFind = stmt.executeQuery();
       return fetchAttendees(resultFind);
     } catch (SQLException e) {

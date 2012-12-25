@@ -1,6 +1,6 @@
 package ru.spbu.math.baobab.server.sql;
 
-import java.sql.PreparedStatement;
+import java.sql.CallableStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
@@ -23,7 +23,7 @@ public class AuditoriumExtentSqlImpl implements AuditoriumExtent {
     }
     SqlApi sqlApi = SqlApi.create();
     try {
-      PreparedStatement stmt = sqlApi.prepareScript("INSERT INTO Auditorium SET num=?, capacity=?;").get(0);
+      CallableStatement stmt = sqlApi.prepareScript("INSERT INTO Auditorium SET num=?, capacity=?;").get(0);
       stmt.setString(1, id);
       stmt.setInt(2, capacity);
       stmt.execute();
@@ -42,7 +42,7 @@ public class AuditoriumExtentSqlImpl implements AuditoriumExtent {
     List<Auditorium> auditoriums = Lists.newArrayList();
     SqlApi sqlApi = SqlApi.create();
     try {
-      List<PreparedStatement> stmts = sqlApi.prepareScript("SELECT * FROM Auditorium ORDER BY num;");
+      List<CallableStatement> stmts = sqlApi.prepareScript("SELECT * FROM Auditorium ORDER BY num;");
       ResultSet rs = stmts.get(0).executeQuery();
       for (boolean hasRow = rs.next(); hasRow; hasRow = rs.next()) {
         String id = rs.getString("num");
@@ -63,7 +63,7 @@ public class AuditoriumExtentSqlImpl implements AuditoriumExtent {
   public Auditorium find(String id) {
     SqlApi con = SqlApi.create();
     try {
-      PreparedStatement stmt = con.prepareScript("SELECT capacity FROM Auditorium WHERE num=?").get(0);
+      CallableStatement stmt = con.prepareScript("SELECT capacity FROM Auditorium WHERE num=?").get(0);
       stmt.setString(1, id);
       ResultSet resultFind = stmt.executeQuery();
       if (resultFind.next()) {
