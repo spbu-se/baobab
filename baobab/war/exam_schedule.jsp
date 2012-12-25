@@ -4,16 +4,12 @@
 
 <!doctype html>
 <html lang="ru">
-  <jsp:include page="include_header.jsp"></jsp:include>
+  <jsp:include page="include_header.jsp" />
   <body>
+    <c:set var="calendarList" scope="request" value="${calendarList}" />
+    <jsp:include page="include_navbar.jsp" />
+
     <div class="container-fluid">
-      <div class="row-fluid">
-        <div class="span12">
-          <c:forEach var="calendar" items="${calendarList}">
-            <a href="/calendar/${calendar.ID}">${calendar.ID}</a>&nbsp;|&nbsp;
-          </c:forEach>
-        </div>
-      </div>
       <div class="row-fluid page-header">
         <div class="span10">
           <h2>Расписание зимней сессии</h2>

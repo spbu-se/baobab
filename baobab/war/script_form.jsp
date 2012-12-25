@@ -1,17 +1,13 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!doctype html>
-<%@ include file="../include_header.jsp" %>
-<html>
+<html lang="ru">
+<jsp:include page="include_header.jsp" />
 <body>
+  <c:set var="calendarList" scope="request" value="${calendarList}" />
+  <jsp:include page="include_navbar.jsp" />
+
   <div class="container-fluid">
-    <div class="row-fluid">
-      <div class="span12">
-        <c:forEach var="calendar" items="${calendarList}">
-          <a href="/calendar/${calendar.ID}">${calendar.ID}</a>&nbsp;|&nbsp;
-        </c:forEach>
-      </div>
-    </div>
     <div class="row-fluid">
       <div class="page-header span12">
         <h2>Редактирование данных</h2>
