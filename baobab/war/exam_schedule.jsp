@@ -30,7 +30,7 @@
                     <li class="nav-header">${course_group.key} курс</li>
                     <p>
                       <c:forEach var="group" items="${course_group.value}">
-                        <a data-toggle="tab" href="#g${group.name}">${group.name}</a>
+                        <a data-toggle="tab" href="#g${group.anchor}">${group.name}</a>
                       </c:forEach>
                     </p>
                   </c:forEach>
@@ -50,12 +50,11 @@
               <c:if test="${groupsList != null}">
                 <c:forEach items="${groupsList}" var="course_group">
                   <c:forEach items="${course_group.value}" var="group">
-                    <div class="tab-pane active" id="g${group.name}">
+                    <div class="tab-pane active" id="g${group.anchor}">
                       <h2>
-                        <c:out value="${group.name}" />
-                        группа
+                        <c:out value="${group.fullName}" />
                       </h2>
-                      <c:forEach var="event" items="${schedule[group]}">
+                      <c:forEach var="event" items="${schedule[group.key]}">
                         <div class="row-fluid">
                           <div class="span2" class="datetime">
                             <h4>
@@ -80,10 +79,12 @@
                       <div class="row-fluid">
                         <div class="span6">
                           <hr>
+                          <!-- 
                           <p>
                             <a class="btn btn-small" a href="#"><i
                               class="icon-download"></i> PDF</a>
                           </p>
+                          -->
                         </div>
                       </div>
                     </div>
@@ -98,7 +99,7 @@
   
     </div><!--/.fluid-container-->
 
-    <script src="bootstrap/js/bootstrap-tab.js"></script>
+    <script src="/bootstrap/js/bootstrap-tab.js"></script>
     <script type="text/javascript">
       var activeTab = {};
   
