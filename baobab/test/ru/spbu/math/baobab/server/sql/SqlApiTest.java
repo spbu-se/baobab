@@ -1,7 +1,7 @@
 package ru.spbu.math.baobab.server.sql;
 
 import java.sql.Date;
-import java.sql.PreparedStatement;
+import java.sql.CallableStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Calendar;
@@ -45,7 +45,7 @@ public class SqlApiTest extends SqlTestCase {
     expectSql("SELECT FROM Foo WHERE id").withParameters(1, 4);
     expectSql("SELECT FROM Foo WHERE id").withParameters(1, "qwe");
     
-    List<PreparedStatement> script = sqlApi.prepareScript(
+    List<CallableStatement> script = sqlApi.prepareScript(
         "INSERT INTO Foo(id, value) VALUES (1, 'val1');\n" + 
         "SELECT * FROM Foo;\n" + 
         "SELECT * FROM Foo WHERE id=?;\n" + 
@@ -91,7 +91,7 @@ public class SqlApiTest extends SqlTestCase {
   public void testMockNullValues() throws SQLException {
     SqlApi sqlApi = SqlApi.create();
     expectQuery("SELECT * FROM Foo", row("id", null, "value1", null, "value2", "foobar"));
-    List<PreparedStatement> script = sqlApi.prepareScript("SELECT * FROM Foo;");
+    List<CallableStatement> script = sqlApi.prepareScript("SELECT * FROM Foo;");
     ResultSet resultSet = script.get(0).executeQuery();
     assertTrue(resultSet.next());
     assertEquals(0, resultSet.getInt("id"));
@@ -105,7 +105,7 @@ public class SqlApiTest extends SqlTestCase {
   public void testDateValue() throws SQLException {
     SqlApi sqlApi = SqlApi.create();
     expectQuery("SELECT * FROM Foo", row("date", "2012-11-14"));
-    List<PreparedStatement> script = sqlApi.prepareScript("SELECT * FROM Foo;");
+    List<CallableStatement> script = sqlApi.prepareScript("SELECT * FROM Foo;");
     ResultSet resultSet = script.get(0).executeQuery();
     assertTrue(resultSet.next());
     

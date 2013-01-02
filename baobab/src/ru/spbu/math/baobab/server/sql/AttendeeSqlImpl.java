@@ -1,6 +1,6 @@
 package ru.spbu.math.baobab.server.sql;
 
-import java.sql.PreparedStatement;
+import java.sql.CallableStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -55,7 +55,7 @@ public class AttendeeSqlImpl implements Attendee {
     }
     SqlApi con = SqlApi.create();
     try {
-      PreparedStatement stmt = con.prepareScript("UPDATE Attendee SET uid = ? WHERE id = ?").get(0);
+      CallableStatement stmt = con.prepareScript("UPDATE Attendee SET uid = ? WHERE id = ?").get(0);
       stmt.setString(1, id);
       stmt.setInt(2, myIntID);
       stmt.execute();
@@ -89,7 +89,7 @@ public class AttendeeSqlImpl implements Attendee {
     try {
       Collection<Attendee> members = new ArrayList<Attendee>();
       // find out data about members of this group
-      List<PreparedStatement> stmt = con.prepareScript(GET_GROUP_MEMBERS_QUERY);
+      List<CallableStatement> stmt = con.prepareScript(GET_GROUP_MEMBERS_QUERY);
       stmt.get(0).setInt(1, myIntID);
       ResultSet result = stmt.get(0).executeQuery();
       while (result.next()) {
@@ -122,7 +122,7 @@ public class AttendeeSqlImpl implements Attendee {
     }
     SqlApi con = SqlApi.create();
     try {
-      List<PreparedStatement> stmt = con.prepareScript("SELECT id FROM Attendee WHERE uid = ?; \n"
+      List<CallableStatement> stmt = con.prepareScript("SELECT id FROM Attendee WHERE uid = ?; \n"
           + "INSERT INTO GroupMember SET group_id=?, attendee_id = ?;");
       stmt.get(0).setString(1, member.getID());
       // adding a new group member

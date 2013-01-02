@@ -170,24 +170,38 @@ public class ScriptFormServlet extends HttpServlet {
       result = "Неправильный пароль";
     }
     else {
-      ScriptInterpreter interpreter = new ScriptInterpreter(Lists.<Parser>newArrayList(
-          new TimeSlotCommandParser(myTimeSlotExtent), new AttendeeCommandParser(myAttendeeExtent), new AuditoriumCommandParser(myAuditoriumExtent), 
-          new EventDeclareCommandParser(myTopicExtent, myAttendeeExtent), new EventBindCommandParser(myTopicExtent, myAttendeeExtent, myAuditoriumExtent, myTimeSlotExtent),
-          new CalendarCommandParser(myCalendarExtent, myTopicExtent)));
-
-      result = "Все завершилось прекрасно";
-      for (String command : Splitter.on('\n').omitEmptyStrings().split(scriptText)) {
+      if (scriptText.startsWith("#")) {
+        LegacyExamScheduleImporter importer = new LegacyExamScheduleImporter(myAuditoriumExtent, myAttendeeExtent, myTopicExtent);
         try {
-          if (!interpreter.process(command)) {
-            request.setAttribute("script_text", scriptText);
-            result = String.format("Не удалось разобрать команду %s", command);
-            break;            
-          }
+          String schedule = importer.importSchedule(scriptText, "exams-winter-2013");
+          request.setAttribute("script_text", schedule);
+          result = "Данные импортированы успешно";
         } catch (Throwable e) {
-          LOGGER.log(Level.SEVERE, "Failed to execute script", e);
+          LOGGER.log(Level.SEVERE, "Failed to import data", e);
+          LOGGER.log(Level.SEVERE, scriptText);
           request.setAttribute("script_text", scriptText);
-          result = String.format("Ошибка при выполнении команды %s:%s\n", command, e.getMessage());
-          break;
+          result = String.format("Ошибка при импорте:\n %s", e.getMessage());
+        }
+      } else {
+        ScriptInterpreter interpreter = new ScriptInterpreter(Lists.<Parser>newArrayList(
+            new TimeSlotCommandParser(myTimeSlotExtent), new AttendeeCommandParser(myAttendeeExtent), new AuditoriumCommandParser(myAuditoriumExtent), 
+            new EventDeclareCommandParser(myTopicExtent, myAttendeeExtent), new EventBindCommandParser(myTopicExtent, myAttendeeExtent, myAuditoriumExtent, myTimeSlotExtent),
+            new CalendarCommandParser(myCalendarExtent, myTopicExtent)));
+  
+        result = "Все завершилось прекрасно";
+        for (String command : Splitter.on('\n').omitEmptyStrings().split(scriptText)) {
+          try {
+            if (!interpreter.process(command)) {
+              request.setAttribute("script_text", scriptText);
+              result = String.format("Не удалось разобрать команду %s", command);
+              break;            
+            }
+          } catch (Throwable e) {
+            LOGGER.log(Level.SEVERE, "Failed to execute script", e);
+            request.setAttribute("script_text", scriptText);
+            result = String.format("Ошибка при выполнении команды %s:%s\n", command, e.getMessage());
+            break;
+          }
         }
       }
     }

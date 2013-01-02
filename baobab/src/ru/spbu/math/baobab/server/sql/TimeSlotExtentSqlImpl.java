@@ -1,6 +1,6 @@
 package ru.spbu.math.baobab.server.sql;
 
-import java.sql.PreparedStatement;
+import java.sql.CallableStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Calendar;
@@ -50,7 +50,7 @@ public class TimeSlotExtentSqlImpl implements TimeSlotExtent {
     SqlApi sqlApi = SqlApi.create();
 
     try {
-      List<PreparedStatement> stmts = sqlApi.prepareScript("SELECT * FROM TimeSlot ORDER BY start_min;");
+      List<CallableStatement> stmts = sqlApi.prepareScript("SELECT * FROM TimeSlot ORDER BY start_min;");
 
       ResultSet rs = stmts.get(0).executeQuery();
       fetchTimeSlots(rs, timeSlots);
@@ -71,7 +71,7 @@ public class TimeSlotExtentSqlImpl implements TimeSlotExtent {
     SqlApi sqlApi = SqlApi.create();
 
     try {
-      List<PreparedStatement> stmts = sqlApi.prepareScript("SELECT * FROM TimeSlot WHERE day=? ORDER BY start_min");
+      List<CallableStatement> stmts = sqlApi.prepareScript("SELECT * FROM TimeSlot WHERE day=? ORDER BY start_min");
       stmts.get(0).setInt(1, day);
 
       ResultSet rs = stmts.get(0).executeQuery();
@@ -98,7 +98,7 @@ public class TimeSlotExtentSqlImpl implements TimeSlotExtent {
     boolean isOdd = calendar.get(Calendar.WEEK_OF_YEAR) % 2 == 1;
 
     try {
-      List<PreparedStatement> stmts = sqlApi
+      List<CallableStatement> stmts = sqlApi
           .prepareScript("SELECT * FROM TimeSlot WHERE day=? AND is_odd=? ORDER BY start_min");
       stmts.get(0).setInt(1, day);
       stmts.get(0).setInt(2, (isOdd) ? 1 : 2);
@@ -121,7 +121,7 @@ public class TimeSlotExtentSqlImpl implements TimeSlotExtent {
     SqlApi sqlApi = SqlApi.create();
 
     try {
-      PreparedStatement stmt = sqlApi.prepareScript(
+      CallableStatement stmt = sqlApi.prepareScript(
           "SELECT * FROM TimeSlot WHERE name=? AND day=? AND (is_odd=? OR is_odd=?);").get(0);
       stmt.setString(1, name);
       stmt.setInt(2, day);
@@ -177,7 +177,7 @@ public class TimeSlotExtentSqlImpl implements TimeSlotExtent {
     SqlApi sqlApi = SqlApi.create();
 
     try {
-      List<PreparedStatement> stmts = sqlApi.prepareScript("SELECT * FROM TimeSlot WHERE id=?;");
+      List<CallableStatement> stmts = sqlApi.prepareScript("SELECT * FROM TimeSlot WHERE id=?;");
       stmts.get(0).setInt(1, id);
 
       ResultSet rs = stmts.get(0).executeQuery();
