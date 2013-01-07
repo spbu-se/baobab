@@ -53,7 +53,7 @@ public class AttendeeEventMap {
       + "JOIN TimeSlot ts ON (ts.id = ev.time_slot_id) "
       + "JOIN Auditorium au ON (au.num = ev.auditorium_num) "
       + "WHERE ct.calendar_uid = ? "
-      + "ORDER BY att.id, ev.date, ts.start_min;";
+      + "ORDER BY att.uid, ev.date, ts.start_min, top.name;";
 
   public AttendeeEventMap(Calendar calendar) {
     myCalendar = Preconditions.checkNotNull(calendar);
