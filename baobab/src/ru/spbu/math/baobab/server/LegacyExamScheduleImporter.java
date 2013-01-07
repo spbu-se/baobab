@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import ru.spbu.math.baobab.lang.AttendeeCommandParser;
 import ru.spbu.math.baobab.lang.AuditoriumCommandParser;
@@ -18,6 +19,7 @@ import ru.spbu.math.baobab.model.TopicExtent;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
 import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
@@ -124,6 +126,10 @@ class LegacyExamScheduleImporter {
 
   private void createEvent(Topic topic, Auditorium auditorium, List<Attendee> groups, String dateLine,
       StringBuilder commands) {
+    Preconditions.checkNotNull(topic, "Topic is undefined");
+    Preconditions.checkNotNull(auditorium, "Auditorium is not defined");
+    Preconditions.checkNotNull(groups, "Groups are not defined");
+    Preconditions.checkArgument(!groups.isEmpty(), "Group list is empty");
     String command = String.format("событие \"%s\" состоится на \"экзамен\" %s в \"%s\" для %s", topic.getID(),
         convertDate(dateLine), auditorium.getID(), createAttendeeList(groups));
     commands.append(command).append("\n");
@@ -196,6 +202,7 @@ class LegacyExamScheduleImporter {
     return null;
   }
 
+  private static Pattern ABBR_PATTERN = Pattern.compile("^[a-zA-Zа-яА-Я].*");
   /**
    * generates abbreviation consisting of lowercased first characters of words in the given string
    */
@@ -203,7 +210,9 @@ class LegacyExamScheduleImporter {
     StringBuilder result = new StringBuilder();
     for (String word : line.split("\\s+")) {
       if (!word.isEmpty()) {
-        result.append(word.charAt(0));
+        if (ABBR_PATTERN.matcher(word).matches()) {
+          result.append(word.charAt(0));
+        }
       }
     }
     return result.toString().toLowerCase();
