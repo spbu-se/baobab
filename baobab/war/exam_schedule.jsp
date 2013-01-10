@@ -19,6 +19,11 @@
       <div class="row-fluid">
         <div class="span3">
           <div class="row-fluid">
+            <div class="span12">
+              <a href="/today" class="link">Сегодня</a>&nbsp;|&nbsp;<a href="/today?date=${tomorrowDate}" class="link">Завтра </a>
+            </div>          
+          </div>
+          <div class="row-fluid">
             <div class="well sidebar-nav">
               <ul class="nav nav-list">
                 <c:if test="${groupsList != null}">

@@ -3,8 +3,12 @@ package ru.spbu.math.baobab.server;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -32,25 +36,18 @@ import com.google.common.collect.Sets;
  * @author agudulin
  */
 public class ExamScheduleServlet extends HttpServlet {
-  private CalendarExtent myCalendarExtent = new CalendarExtentSqlImpl();
+  private static final SimpleDateFormat DF = new SimpleDateFormat("yy-MM-dd", new Locale("ru", "RU"));
+private CalendarExtent myCalendarExtent = new CalendarExtentSqlImpl();
   
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    Multimap<Attendee, Event> schedule;
-    if (DevMode.USE_TEST_DATA) {
-      schedule = new TestData().getExamSchedule(); 
-    } else {
-      Calendar calendar = myCalendarExtent.find(getCalendarFromPath(request));
-      if (calendar != null) {
-        request.setAttribute("calendarID", calendar.getID());
-        AttendeeEventMap data = new AttendeeEventMap(calendar);
-        schedule = data.getAttendeeEventMap();      
-      } else {
-        schedule = LinkedListMultimap.create();
-      }
-    }
+    Multimap<Attendee, Event> schedule = getSchedule(myCalendarExtent, request);
     Multimap<String, Attendee> groups = getGroupList(schedule.keySet());
 
+    java.util.Calendar c = (java.util.Calendar) java.util.Calendar.getInstance(TimeZone.getTimeZone("UTC+04"), new Locale("ru", "RU")).clone();
+    c.add(java.util.Calendar.DAY_OF_YEAR, 1);
+    Date result = c.getTime();
+    request.setAttribute("tomorrowDate", DF.format(result));
     request.setCharacterEncoding("UTF-8");
     request.setAttribute("calendarList", myCalendarExtent.getAll());
     request.setAttribute("groupsList", getJspAttendees(groups));
@@ -116,16 +113,33 @@ public class ExamScheduleServlet extends HttpServlet {
     return groups;
   }
 
-  private static final Set<String> CALENDAR_COMPONENTS = Sets.newHashSet("calendar", "export");
+  private static final Set<String> CALENDAR_COMPONENTS = Sets.newHashSet("calendar", "export", "today");
   
   static String getCalendarFromPath(HttpServletRequest req) {
     String[] path = req.getRequestURI().split("/");
     try {
-      return (path.length >= 2 && CALENDAR_COMPONENTS.contains(path[1])) ? URLDecoder.decode(path[2], Charsets.UTF_8.name()) : "exams-winter-2013";
+      return (path.length > 2 && CALENDAR_COMPONENTS.contains(path[1])) ? URLDecoder.decode(path[2], Charsets.UTF_8.name()) : "exams-winter-2013";
     } catch (UnsupportedEncodingException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
       return "exams-winter-2013";
     }
+  }
+  
+  static Multimap<Attendee, Event> getSchedule(CalendarExtent calendarExtent, HttpServletRequest req) {
+    Multimap<Attendee, Event> schedule;
+    if (DevMode.USE_TEST_DATA) {
+      schedule = new TestData().getExamSchedule(); 
+    } else {
+      Calendar calendar = calendarExtent.find(getCalendarFromPath(req));
+      if (calendar != null) {
+        req.setAttribute("calendarID", calendar.getID());
+        AttendeeEventMap data = AttendeeEventMap.create(calendar);
+        schedule = data.getAttendeeEventMap();      
+      } else {
+        schedule = LinkedListMultimap.create();
+      }
+    }
+    return schedule;
   }
 }

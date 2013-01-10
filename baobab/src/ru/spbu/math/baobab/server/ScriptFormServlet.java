@@ -32,6 +32,7 @@ import ru.spbu.math.baobab.model.TimeSlot;
 import ru.spbu.math.baobab.model.TimeSlotExtent;
 import ru.spbu.math.baobab.model.Topic;
 import ru.spbu.math.baobab.model.TopicExtent;
+import ru.spbu.math.baobab.server.sql.AttendeeEventMap;
 import ru.spbu.math.baobab.server.sql.AttendeeExtentSqlImpl;
 import ru.spbu.math.baobab.server.sql.AuditoriumExtentSqlImpl;
 import ru.spbu.math.baobab.server.sql.CalendarExtentSqlImpl;
@@ -203,6 +204,7 @@ public class ScriptFormServlet extends HttpServlet {
             break;
           }
         }
+        AttendeeEventMap.clearCaches();
       }
     }
     process(request, response, result);

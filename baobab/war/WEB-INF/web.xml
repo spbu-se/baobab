@@ -65,6 +65,15 @@
     <url-pattern>/calendar/*</url-pattern>
   </servlet-mapping>
 
+  <servlet>
+    <servlet-name>today_servlet</servlet-name>
+    <servlet-class>ru.spbu.math.baobab.server.TodayScheduleServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>today_servlet</servlet-name>
+    <url-pattern>/today</url-pattern>
+  </servlet-mapping>
+
   <!--  Single exam page -->
   <servlet>
     <servlet-name>exam_servlet</servlet-name>
