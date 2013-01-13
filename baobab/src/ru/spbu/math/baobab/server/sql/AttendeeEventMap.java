@@ -39,24 +39,8 @@ public class AttendeeEventMap {
   private final Calendar myCalendar;
   private Multimap<Attendee, Event> myAttendeeEvent = LinkedListMultimap.create();
   private final static String GET_TABLE_INFO_QUERY = 
-      "SELECT att.uid AS att_uid, att.name AS att_name, att.type AS att_type, "
-      + "ts.id AS ts_id, ts.name AS ts_name, ts.start_min AS ts_start_min, "
-      + "ts.finish_min AS ts_finish_min, ts.day AS ts_day, ts.is_odd AS ts_is_odd, "
-      + "au.num AS au_num, au.capacity AS au_capacity, "
-      + "top.uid AS topic_uid, top.type AS topic_type, top.name AS topic_name, "
-      + "att2.uid AS owner_uid, att2.name AS owner_name, att2.type AS owner_type, "
-      + "ev.date AS ev_date "
-      + "FROM CalendarTopic ct "
-      + "JOIN Topic top ON (top.uid = ct.topic_uid) "
-      + "JOIN Event ev ON (ev.topic_id = ct.topic_uid) "
-      + "JOIN TopicOwner topow ON (ev.topic_id = topow.topic_id) "
-      + "JOIN Attendee att2 ON (topow.attendee_id = att2.id) "
-      + "JOIN EventAttendee ea ON (ea.event_id = ev.id) "
-      + "JOIN Attendee att ON (ea.attendee_uid = att.uid) "
-      + "JOIN TimeSlot ts ON (ts.id = ev.time_slot_id) "
-      + "JOIN Auditorium au ON (au.num = ev.auditorium_num) "
-      + "WHERE ct.calendar_uid = ? "
-      + "ORDER BY att.uid, ev.date, ts.start_min, top.name;";
+      "SELECT * FROM ExamsView WHERE calendar_uid = ? "
+      + "ORDER BY att_uid, ev_date, ts_start_min, topic_name;";
 
   private AttendeeEventMap(Calendar calendar) {
     myCalendar = Preconditions.checkNotNull(calendar);
