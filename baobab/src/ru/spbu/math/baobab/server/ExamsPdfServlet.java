@@ -56,7 +56,7 @@ import com.itextpdf.text.pdf.draw.LineSeparator;
 public class ExamsPdfServlet extends HttpServlet {
   private static final Logger LOGGER = Logger.getLogger("PdfService");
 
-  private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd MMM", new Locale("ru", "RU"));
+  
   
   private static final String EXAM_START_MESSAGE = "Экзамены начинаются в %02d:%02d, если явно не указано иное";
 
@@ -185,7 +185,7 @@ public class ExamsPdfServlet extends HttpServlet {
     for (Event e : events) {
       table.getDefaultCell().setPaddingTop(6.0f);
       table.getDefaultCell().setHorizontalAlignment(PdfPCell.ALIGN_CENTER);
-      table.addCell(new Phrase(DATE_FORMAT.format(e.getStartDate()), PdfFonts.MEDIUM_FONT));
+      table.addCell(new Phrase(ExamScheduleServlet.DATE_FORMAT.format(e.getStartDate()), PdfFonts.MEDIUM_FONT));
       
       table.getDefaultCell().setHorizontalAlignment(PdfPCell.ALIGN_LEFT);
       table.addCell(new Phrase(e.getTopic().getName(), PdfFonts.MEDIUM_FONT));
