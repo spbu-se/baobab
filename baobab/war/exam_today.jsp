@@ -15,13 +15,27 @@
           <h2>Экзамены ${scheduleDate}</h2>
         </div>
       </div>
-  
-      <table border=0 cellspacing=2>
-        <tr><th>Ауд.</th><th>Предмет</th><th>Группы</th></tr>
-	      <c:forEach items="${entries}" var="entry">
-	        <tr><td><b>${entry.auditorium}</b></td><td>${entry.title}</td><td>${entry.attendees}</td></tr>
-	      </c:forEach>  
-      </table>
+    </div><!--/.fluid-container-->
+
+    <div class="container-fluid">
+      <div class="row-fluid">
+        <div class="span8">
+          <table class="table table-hover">
+            <thead>
+              <tr><th>Ауд.</th><th>Предмет</th><th>Группы</th></tr>
+            </thead>
+            <tbody>
+              <c:forEach items="${entries}" var="entry">
+                <tr>
+                  <td><b>${entry.auditorium}</b></td>
+                  <td>${entry.title}</td>
+                  <td>${entry.attendees}</td>
+                </tr>
+              </c:forEach>
+            </tbody>  
+          </table>
+        </div>
+      </div>
     </div><!--/.fluid-container-->
 
   <jsp:include page="include_footer.jsp"></jsp:include>
