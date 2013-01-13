@@ -139,7 +139,7 @@ public class ExamsPdfServlet extends HttpServlet {
     Multimap<Attendee, Event> schedule;
     Calendar calendar = myCalendarExtent.find(ExamScheduleServlet.getCalendarFromPath(req));
     if (calendar != null) {
-      AttendeeEventMap data = new AttendeeEventMap(calendar);
+      AttendeeEventMap data = AttendeeEventMap.create(calendar);
       schedule = data.getAttendeeEventMap();      
     } else {
       schedule = DevMode.USE_TEST_DATA ? myTestData.getExamSchedule() : LinkedListMultimap.<Attendee, Event>create();

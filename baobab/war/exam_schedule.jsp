@@ -4,22 +4,10 @@
 
 <!doctype html>
 <html lang="ru">
-  <jsp:include page="include_header.jsp"></jsp:include>
+  <jsp:include page="include_header.jsp" />
   <body>
-    <div class="navbar navbar-fixed-top">
-      <div class="navbar-inner">
-        <div class="container">
-          <a class="brand" href="/">Baobab</a>
-          <div class="nav-collapse collapse navbar-responsive-collapse">
-            <ul class="nav">
-              <c:forEach var="calendar" items="${calendarList}">
-                <li><a href="/calendar/${calendar.ID}">${calendar.ID}</a></li>
-              </c:forEach>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
+    <c:set var="calendarList" scope="request" value="${calendarList}" />
+    <jsp:include page="include_navbar.jsp" />
 
     <div class="container-fluid">
       <div class="row-fluid page-header">
@@ -30,6 +18,11 @@
   
       <div class="row-fluid">
         <div class="span3">
+          <div class="row-fluid">
+            <div class="span12">
+              <a href="/today" class="link">Сегодня</a>&nbsp;|&nbsp;<a href="/today?date=${tomorrowDate}" class="link">Завтра </a>
+            </div>          
+          </div>
           <div class="row-fluid">
             <div class="well sidebar-nav">
               <ul class="nav nav-list">

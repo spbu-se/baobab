@@ -42,7 +42,7 @@ public class TestSqlServlet extends HttpServlet {
       }
       resp.getWriter().println("Success. " + rowCount + " rows fetched");
       CalendarExtent extent =  new CalendarExtentSqlImpl();
-      AttendeeEventMap attev = new AttendeeEventMap(extent.find("TESTCALENDAR"));
+      AttendeeEventMap attev = AttendeeEventMap.create(extent.find("TESTCALENDAR"));
       Multimap<Attendee, Event> map = attev.getAttendeeEventMap();
       resp.getWriter().println(map.size());
     } catch (SQLException e) {

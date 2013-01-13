@@ -3,6 +3,7 @@ package ru.spbu.math.baobab.server.sql;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Map;
 
 import ru.spbu.math.baobab.model.Attendee;
 import ru.spbu.math.baobab.model.AttendeeExtent;
@@ -24,6 +25,7 @@ import ru.spbu.math.baobab.server.TopicExtentImpl;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.LinkedListMultimap;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
 /**
@@ -32,7 +34,8 @@ import com.google.common.collect.Multimap;
  * @author aoool
  */
 public class AttendeeEventMap {
-
+  private static final Map<Calendar, AttendeeEventMap> ourCalendarScheduleMap = Maps.newHashMap();
+  
   private final Calendar myCalendar;
   private Multimap<Attendee, Event> myAttendeeEvent = LinkedListMultimap.create();
   private final static String GET_TABLE_INFO_QUERY = 
@@ -53,9 +56,9 @@ public class AttendeeEventMap {
       + "JOIN TimeSlot ts ON (ts.id = ev.time_slot_id) "
       + "JOIN Auditorium au ON (au.num = ev.auditorium_num) "
       + "WHERE ct.calendar_uid = ? "
-      + "ORDER BY att.id, ev.date, ts.start_min;";
+      + "ORDER BY att.uid, ev.date, ts.start_min, top.name;";
 
-  public AttendeeEventMap(Calendar calendar) {
+  private AttendeeEventMap(Calendar calendar) {
     myCalendar = Preconditions.checkNotNull(calendar);
     initializeMyAttendeeTables();
   }
@@ -118,5 +121,18 @@ public class AttendeeEventMap {
       }
     }
     return timeSlotExtent.create(name, start, finish, day, flashing);
+  }
+
+  public static AttendeeEventMap create(Calendar calendar) {
+    AttendeeEventMap schedule = ourCalendarScheduleMap.get(calendar);
+    if (schedule == null) {
+      schedule = new AttendeeEventMap(calendar);
+      ourCalendarScheduleMap.put(calendar, schedule);
+    }
+    return schedule;
+  }
+  
+  public static void clearCaches() {
+    ourCalendarScheduleMap.clear();
   }
 }
