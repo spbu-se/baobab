@@ -3,14 +3,16 @@ package ru.spbu.math.baobab.server;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.TimeZone;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TimeZone;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -26,7 +28,10 @@ import ru.spbu.math.baobab.server.sql.AttendeeEventMap;
 import ru.spbu.math.baobab.server.sql.CalendarExtentSqlImpl;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Joiner;
 import com.google.common.collect.LinkedListMultimap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
@@ -36,8 +41,9 @@ import com.google.common.collect.Sets;
  * @author agudulin
  */
 public class ExamScheduleServlet extends HttpServlet {
+  static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd MMM", new Locale("ru", "RU"));
   private static final SimpleDateFormat DF = new SimpleDateFormat("yy-MM-dd", new Locale("ru", "RU"));
-private CalendarExtent myCalendarExtent = new CalendarExtentSqlImpl();
+  private CalendarExtent myCalendarExtent = new CalendarExtentSqlImpl();
   
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -51,19 +57,86 @@ private CalendarExtent myCalendarExtent = new CalendarExtentSqlImpl();
     request.setCharacterEncoding("UTF-8");
     request.setAttribute("calendarList", myCalendarExtent.getAll());
     request.setAttribute("groupsList", getJspAttendees(groups));
-    request.setAttribute("schedule", schedule.asMap());
+    
+    Multimap<String, ExamJsp> scheduleView = LinkedListMultimap.create();
+    for (Entry<Attendee, Collection<Event>> entry : schedule.asMap().entrySet()) {
+      Map<String, Event> exam2oh = Maps.newHashMap();
+      for (Event e : entry.getValue()) {
+        switch (e.getTopic().getType()) {
+        case OFFICE_HOURS:
+          exam2oh.put(e.getTopic().getName(), e);
+          break;
+        case EXAM:
+          Event oh = exam2oh.get(e.getTopic().getID());
+          scheduleView.put(entry.getKey().getID(), new ExamJsp(e, oh));
+        }
+      }
+    }
+    request.setAttribute("schedule", scheduleView.asMap());
     RequestDispatcher view = request.getRequestDispatcher("/exam_schedule.jsp");
     view.forward(request, response);
   }
 
+  public static class ExamJsp {
+    public final Date examDate;
+    public final String topicID;
+    public final String topicName;
+    public final String owners;
+    public final String auditorium;
+    public final String comment;
+    
+    ExamJsp(Event examEvent, Event officeHoursEvent) {
+      this.examDate = examEvent.getStartDate();
+      this.topicID = examEvent.getTopic().getID();
+      this.topicName = examEvent.getTopic().getName();
+      this.auditorium = examEvent.getAuditorium().getID();
+      List<String> ownerNames = Lists.newArrayList();
+      for (Attendee a : examEvent.getTopic().getOwners()) {
+        if (a != null && a.getName() != null) {
+          ownerNames.add(a.getName());
+        }
+      }
+      this.owners = Joiner.on(", ").join(ownerNames);
+      if (officeHoursEvent == null) {
+        this.comment = null;
+      } else {
+        this.comment = String.format("консультация %s в %s", DATE_FORMAT.format(officeHoursEvent.getStartDate()), officeHoursEvent.getAuditorium().getID());
+      }
+    }
+
+    public Date getExamDate() {
+      return examDate;
+    }
+
+    public String getTopicID() {
+      return topicID;
+    }
+
+    public String getTopicName() {
+      return topicName;
+    }
+
+    public String getOwners() {
+      return owners;
+    }
+
+    public String getAuditorium() {
+      return auditorium;
+    }
+
+    public String getComment() {
+      return comment;
+    }
+  }
+  
   public static class AttendeeJsp {
     public final String name;
     public final String fullName;
     public final String anchor;
-    public final Attendee key;
+    public final String key;
     
     AttendeeJsp(Attendee key) {
-      this.key = key;
+      this.key = key.getID();
       this.name = key.getName();
       if (key.getType() == Attendee.Type.ACADEMIC_GROUP) {
         this.fullName = name + " группа"; 
@@ -85,7 +158,7 @@ private CalendarExtent myCalendarExtent = new CalendarExtentSqlImpl();
       return anchor;
     }
     
-    public Attendee getKey() {
+    public String getKey() {
       return key;
     }
   }
