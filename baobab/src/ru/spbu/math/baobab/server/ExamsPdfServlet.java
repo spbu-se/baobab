@@ -21,6 +21,7 @@ import ru.spbu.math.baobab.model.Calendar;
 import ru.spbu.math.baobab.model.CalendarExtent;
 import ru.spbu.math.baobab.model.Event;
 import ru.spbu.math.baobab.model.TimeSlot;
+import ru.spbu.math.baobab.model.Topic;
 import ru.spbu.math.baobab.server.sql.AttendeeEventMap;
 import ru.spbu.math.baobab.server.sql.CalendarExtentSqlImpl;
 
@@ -183,6 +184,9 @@ public class ExamsPdfServlet extends HttpServlet {
     table.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
     table.getDefaultCell().setPadding(0);
     for (Event e : events) {
+      if (e.getTopic().getType() != Topic.Type.EXAM) {
+        continue;
+      }
       table.getDefaultCell().setPaddingTop(6.0f);
       table.getDefaultCell().setHorizontalAlignment(PdfPCell.ALIGN_CENTER);
       table.addCell(new Phrase(ExamScheduleServlet.DATE_FORMAT.format(e.getStartDate()), PdfFonts.MEDIUM_FONT));
