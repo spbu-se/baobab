@@ -1,8 +1,11 @@
 package ru.spbu.math.baobab.server;
 
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -13,6 +16,7 @@ import ru.spbu.math.baobab.model.Attendee;
 import ru.spbu.math.baobab.model.AttendeeExtent;
 import ru.spbu.math.baobab.model.Auditorium;
 import ru.spbu.math.baobab.model.AuditoriumExtent;
+import ru.spbu.math.baobab.model.Event;
 import ru.spbu.math.baobab.model.Topic;
 import ru.spbu.math.baobab.model.TopicExtent;
 
@@ -23,6 +27,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.TreeMultimap;
 
 /**
  * This class imports exam schedule from the following format: one file with
@@ -259,7 +265,7 @@ class LegacyExamScheduleImporter {
   /**
    * Creates a list of comma-separated quoted attendee IDs
    */
-  private String createAttendeeList(Collection<Attendee> attendees) {
+  private static String createAttendeeList(Collection<Attendee> attendees) {
     return createIDList(attendees, new Function<Attendee, String>() {
       @Override
       public String apply(Attendee a) {
@@ -270,5 +276,36 @@ class LegacyExamScheduleImporter {
   
   private static <T> String createIDList(Collection<T> objects, Function<T, String> getId) {
     return Joiner.on(',').join(Collections2.transform(objects, getId));
+  }
+  
+  static class OfficeHourGenerator {
+    static String generateOficeHours(TopicExtent topicExtent) {
+      Multimap<String, String> att2oh = TreeMultimap.create();
+      StringBuilder buffer = new StringBuilder();
+      for (Topic t : topicExtent.getAll()) {
+        if (t.getType() == Topic.Type.EXAM) {
+          String ohID = t.getID().replace("exam", "oh");
+          buffer.append(String.format("определить консультация \"%s\" \"%s\"\n", ohID, t.getID()));
+          for (Event e : t.getEvents()) {
+            String attendees = LegacyExamScheduleImporter.createAttendeeList(e.getAttendees());
+            att2oh.put(attendees, String.format("событие \"%s\" состоится на консультация %s в \"%s\" для %s\n", 
+                ohID, getPrevWorkingDate(e.getStartDate()), e.getAuditorium().getID(), attendees));
+          }
+        }
+      }
+      for (String s : att2oh.values()) {
+        buffer.append(s);
+      }
+      return buffer.toString();
+    }
+    
+    private static String getPrevWorkingDate(Date startDate) {
+      Calendar c = (Calendar) Calendar.getInstance(new Locale("ru", "RU")).clone();;
+      c.setTime(startDate);
+      do {
+        c.add(Calendar.DAY_OF_YEAR, -1);
+      } while (c.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY);
+      return String.format("%04d-%02d-%02d", c.get(Calendar.YEAR), c.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH));
+    }
   }
 }

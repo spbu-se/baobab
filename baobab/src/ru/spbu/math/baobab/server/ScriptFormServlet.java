@@ -171,7 +171,10 @@ public class ScriptFormServlet extends HttpServlet {
       result = "Неправильный пароль";
     }
     else {
-      if (scriptText.startsWith("#")) {
+      if (scriptText.startsWith("#office hours")) {
+        request.setAttribute("script_text", LegacyExamScheduleImporter.OfficeHourGenerator.generateOficeHours(myTopicExtent));
+      }
+      else if (scriptText.startsWith("#")) {
         LegacyExamScheduleImporter importer = new LegacyExamScheduleImporter(myAuditoriumExtent, myAttendeeExtent, myTopicExtent);
         try {
           String schedule = importer.importSchedule(scriptText, "exams-winter-2013");
