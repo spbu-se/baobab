@@ -21,6 +21,7 @@ import ru.spbu.math.baobab.model.Calendar;
 import ru.spbu.math.baobab.model.CalendarExtent;
 import ru.spbu.math.baobab.model.Event;
 import ru.spbu.math.baobab.model.TimeSlot;
+import ru.spbu.math.baobab.model.Topic;
 import ru.spbu.math.baobab.server.sql.AttendeeEventMap;
 import ru.spbu.math.baobab.server.sql.CalendarExtentSqlImpl;
 
@@ -56,7 +57,7 @@ import com.itextpdf.text.pdf.draw.LineSeparator;
 public class ExamsPdfServlet extends HttpServlet {
   private static final Logger LOGGER = Logger.getLogger("PdfService");
 
-  private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd MMM", new Locale("ru", "RU"));
+  
   
   private static final String EXAM_START_MESSAGE = "Экзамены начинаются в %02d:%02d, если явно не указано иное";
 
@@ -183,9 +184,12 @@ public class ExamsPdfServlet extends HttpServlet {
     table.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
     table.getDefaultCell().setPadding(0);
     for (Event e : events) {
+      if (e.getTopic().getType() != Topic.Type.EXAM) {
+        continue;
+      }
       table.getDefaultCell().setPaddingTop(6.0f);
       table.getDefaultCell().setHorizontalAlignment(PdfPCell.ALIGN_CENTER);
-      table.addCell(new Phrase(DATE_FORMAT.format(e.getStartDate()), PdfFonts.MEDIUM_FONT));
+      table.addCell(new Phrase(ExamScheduleServlet.DATE_FORMAT.format(e.getStartDate()), PdfFonts.MEDIUM_FONT));
       
       table.getDefaultCell().setHorizontalAlignment(PdfPCell.ALIGN_LEFT);
       table.addCell(new Phrase(e.getTopic().getName(), PdfFonts.MEDIUM_FONT));

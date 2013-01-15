@@ -60,20 +60,21 @@
                           <div class="span2" class="datetime">
                             <h4>
                               <fmt:setLocale value="ru_RU" scope="session"/>
-                              <fmt:formatDate pattern="dd MMM" value="${event.startDate}" />
+                              <fmt:formatDate pattern="dd MMM" value="${event.examDate}" />
                             </h4>
                             <h5 class="time">
-                              <fmt:formatDate pattern="HH:mm" value="${event.startDate}" />
+                              <fmt:formatDate pattern="HH:mm" value="${event.examDate}" />
                             </h5>
                           </div>
                           <div class="span7">
                             <h4>
-                              <a href="/exam?id=${event.topic.ID}"> <c:out value="${event.topic.name}" /></a>
+                              <a href="/exam?id=${event.topicID}"> <c:out value="${event.topicName}" /></a>
                             </h4>
                             <p>
-                              <c:forEach items="${event.topic.owners}" var="owner">${owner.name}, </c:forEach>
-                              ауд. ${event.auditorium.ID}
+                              ${event.owners}, ауд. ${event.auditorium} 
+                              <c:if test="${event.comment != null}"><br><small>${event.comment}</small></c:if>
                             </p>
+                            
                           </div>
                         </div>
                       </c:forEach>
