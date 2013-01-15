@@ -34,6 +34,9 @@ public class TopicTypeConverter {
     if (Parser.TEAM_MEETING.contains(value)) {
       return Type.TEAM_MEETING;
     }
+    if (Parser.OFFICE_HOURS.contains(value)) {
+      return Type.OFFICE_HOURS;
+    }
     throw new IllegalArgumentException("convertToTopicType: Incorrect value");
   }
 }

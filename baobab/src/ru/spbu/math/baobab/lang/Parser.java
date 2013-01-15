@@ -59,7 +59,8 @@ public abstract class Parser {
   public static final List<String> INVITED_LECTURE = Arrays.asList("talk", "доклад");
   public static final List<String> TEAM_MEETING = Arrays.asList("meeting", "встреча");
   public static final List<String> THESIS_DEFENSE = Arrays.asList("defense", "защита");
-
+  public static final List<String> OFFICE_HOURS = Arrays.asList("office_hours", "консультация");
+  
   // group patterns
   public final static String ID_PATTERN = "(?:[\\wа-яА-Я]+|\"[\\wа-яА-Я\\s\\.\\-/\\(\\)«»:,]+\")";
   protected final static String ID_LIST_PATTERN = String.format("(%s,\\s*)*%s", ID_PATTERN, ID_PATTERN);
@@ -79,10 +80,10 @@ public abstract class Parser {
       ACADEMIC_GROUP.get(0), CHAIR.get(0), FREE_FORM_GROUP.get(0));
   protected final static String ATTENDEE_PATTERN_RUS = String.format("%s|%s|%s|%s|%s", STUDENT.get(1), TEACHER.get(1),
       ACADEMIC_GROUP.get(1), CHAIR.get(1), FREE_FORM_GROUP.get(1));
-  protected final static String TOPIC_TYPE_PATTERN_ENG = String.format("%s|%s|%s|%s|%s|%s", LECTURE_COURSE.get(0),
-      LABS_COURSE.get(0), EXAM.get(0), INVITED_LECTURE.get(0), TEAM_MEETING.get(0), THESIS_DEFENSE.get(0));
-  protected final static String TOPIC_TYPE_PATTERN_RUS = String.format("%s|%s|%s|%s|%s|%s", LECTURE_COURSE.get(1),
-      LABS_COURSE.get(1), EXAM.get(1), INVITED_LECTURE.get(1), TEAM_MEETING.get(1), THESIS_DEFENSE.get(1));
+  protected final static String TOPIC_TYPE_PATTERN_ENG = String.format("%s|%s|%s|%s|%s|%s|%s", LECTURE_COURSE.get(0),
+      LABS_COURSE.get(0), EXAM.get(0), INVITED_LECTURE.get(0), TEAM_MEETING.get(0), THESIS_DEFENSE.get(0), OFFICE_HOURS.get(0));
+  protected final static String TOPIC_TYPE_PATTERN_RUS = String.format("%s|%s|%s|%s|%s|%s|%s", LECTURE_COURSE.get(1),
+      LABS_COURSE.get(1), EXAM.get(1), INVITED_LECTURE.get(1), TEAM_MEETING.get(1), THESIS_DEFENSE.get(1), OFFICE_HOURS.get(1));
   protected final static String TIMESLOT_KEY_ENG_PATTERN = String.format("%s(\\s+%s)?\\s+(%s)", ID_PATTERN,
       EVEN_ODD_PATTERN_ENG, Parser.WEEKDAY_PATTERN_ENG);
   protected final static String TIMESLOT_KEY_RUS_PATTERN = String.format("%s(\\s+%s)?\\s+(%s)", ID_PATTERN,
