@@ -17,9 +17,10 @@ import ru.spbu.math.baobab.model.Topic;
 import ru.spbu.math.baobab.model.TimeSlot.Utils;
 import ru.spbu.math.baobab.server.EventImpl;
 
-import java.sql.PreparedStatement;
+import java.sql.CallableStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 
 import javax.annotation.Nullable;
 
@@ -63,38 +64,22 @@ public class TopicSqlImpl implements Topic {
   public Event addEvent(Date date, TimeSlot timeSlot, @Nullable Auditorium auditorium) {
     SqlApi sqlApi = SqlApi.create();
     try {
-      PreparedStatement stmt = sqlApi.prepareScript(
-          "INSERT INTO Event SET date=?,  time_slot_id=?,  topic_id=?,  auditorium_num=?;").get(0);
+      CallableStatement stmt = sqlApi.prepareScript("CALL Topic_AddEvent(?, ?, ?, ?, ?)").get(0);
       java.sql.Date sqlDate = new java.sql.Date(date.getTime());
-      stmt.setDate(1, sqlDate);
-      stmt.setInt(2, timeSlot.getID());
-      stmt.setString(3, this.getID());
+      stmt.setString(1, this.getID());
+      stmt.setDate(2, sqlDate);
+      stmt.setInt(3, timeSlot.getID());
       stmt.setString(4, auditorium.getID());
-      stmt.execute();
-      
-      stmt = sqlApi.prepareScript("SELECT id FROM Event WHERE date=? AND time_slot_id=? AND topic_id=?").get(0);
-      stmt.setDate(1, sqlDate);
-      stmt.setInt(2, timeSlot.getID());
-      stmt.setString(3, this.getID());
-
-      ResultSet rs = stmt.executeQuery();
-      if (!rs.next()) {
-        throw new IllegalStateException("Event identified by this date: " + date.toString() +
-        		", timeslot: " + timeSlot.getName() + ",  topic: " + this.getName() + " does not exist");
-      } 
-      int id = rs.getInt("id");
-      if (rs.next()) {
-        throw new IllegalStateException("There are too many events identified by this date: " + sqlDate.toString() +
-                ", timeslot: " + timeSlot.getName() + ",  topic: " + this.getName());
-      } 
-     
+      stmt.registerOutParameter(5, Types.INTEGER);
+      stmt.executeUpdate();
+      int id = stmt.getInt(5);
       Event event = new EventSqlImpl(id, date, timeSlot, auditorium, this);
       return event;
     } catch (SQLException e) {
+      throw new RuntimeException(String.format("Ошибка при добавлении события %s в дату %s:\n%s", myId, date.toString(), e.getMessage()), e);
     } finally {
       sqlApi.dispose();
     }
-    return null;
   }
 
   @Override
@@ -114,7 +99,7 @@ public class TopicSqlImpl implements Topic {
     List<Event> events = Lists.newArrayList();
     SqlApi sqlApi = SqlApi.create();
     try {
-      List<PreparedStatement> stmts = sqlApi.prepareScript("SELECT * FROM Event WHERE topic_id=?");
+      List<CallableStatement> stmts = sqlApi.prepareScript("SELECT * FROM Event WHERE topic_id=?");
       stmts.get(0).setString(1, this.getID());
       ResultSet rs = stmts.get(0).executeQuery();
       fetchEvents(rs, events);
@@ -130,7 +115,7 @@ public class TopicSqlImpl implements Topic {
   private void insertAttendee(Attendee att, String tableName) {
     SqlApi sqlApi = SqlApi.create();
     try {
-      PreparedStatement stmt = sqlApi.prepareScript(
+      CallableStatement stmt = sqlApi.prepareScript(
           "INSERT INTO " + tableName + " SET topic_id=?, attendee_id=(SELECT id FROM Attendee WHERE uid=?);").get(0);
       stmt.setString(1, this.getID());
       stmt.setString(2, att.getID());
@@ -147,7 +132,7 @@ public class TopicSqlImpl implements Topic {
     List<Attendee> attendees = Lists.newArrayList();
     SqlApi sqlApi = SqlApi.create();
     try {
-      PreparedStatement stmt = sqlApi.prepareScript(
+      CallableStatement stmt = sqlApi.prepareScript(
           "SELECT * FROM Attendee a JOIN " + tableName + " ta ON ta.attendee_id = a.id " + "WHERE ta.topic_id=?;").get(0);
       stmt.setString(1, this.getID());
       ResultSet rs = stmt.executeQuery();
@@ -222,7 +207,7 @@ public class TopicSqlImpl implements Topic {
   public void setUrl(String url) {
     SqlApi sqlApi = SqlApi.create();
     try {
-      PreparedStatement stmt = sqlApi.prepareScript(
+      CallableStatement stmt = sqlApi.prepareScript(
           "UPDATE Topic SET url=? WHERE uid=?;").get(0);
       stmt.setString(1, this.getID());
       stmt.setString(2, url);
@@ -237,7 +222,7 @@ public class TopicSqlImpl implements Topic {
   public String getUrl() {
     SqlApi sqlApi = SqlApi.create();
     try {
-      PreparedStatement stmt = sqlApi.prepareScript(
+      CallableStatement stmt = sqlApi.prepareScript(
           "SELECT url FROM Topic WHERE uid=?;").get(0);
       stmt.setString(1, this.getID());
       ResultSet rs = stmt.executeQuery();

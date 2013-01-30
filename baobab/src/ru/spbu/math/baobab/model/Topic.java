@@ -23,7 +23,7 @@ import javax.annotation.Nullable;
  */
 public interface Topic {
   enum Type {
-    LECTURE_COURSE, LABS_COURSE, EXAM, INVITED_LECTURE, TEAM_MEETING, THESIS_DEFENSE
+    LECTURE_COURSE, LABS_COURSE, EXAM, INVITED_LECTURE, TEAM_MEETING, THESIS_DEFENSE, OFFICE_HOURS
   }
   
   /**

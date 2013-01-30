@@ -21,6 +21,7 @@ import ru.spbu.math.baobab.model.Calendar;
 import ru.spbu.math.baobab.model.CalendarExtent;
 import ru.spbu.math.baobab.model.Event;
 import ru.spbu.math.baobab.model.TimeSlot;
+import ru.spbu.math.baobab.model.Topic;
 import ru.spbu.math.baobab.server.sql.AttendeeEventMap;
 import ru.spbu.math.baobab.server.sql.CalendarExtentSqlImpl;
 
@@ -56,7 +57,7 @@ import com.itextpdf.text.pdf.draw.LineSeparator;
 public class ExamsPdfServlet extends HttpServlet {
   private static final Logger LOGGER = Logger.getLogger("PdfService");
 
-  private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd MMM", new Locale("ru", "RU"));
+  
   
   private static final String EXAM_START_MESSAGE = "Экзамены начинаются в %02d:%02d, если явно не указано иное";
 
@@ -72,7 +73,7 @@ public class ExamsPdfServlet extends HttpServlet {
     Document document = new Document(PageSize.A4, 30f, 30f, 30f, 30f);
 
     try {
-      Multimap<Attendee, Event> schedule = getSchedule();
+      Multimap<Attendee, Event> schedule = getSchedule(req);
       Multimap<Collection<Event>, Attendee> invertedMap = HashMultimap.create();
       for (Attendee a : schedule.keySet()) {
         invertedMap.put(schedule.get(a), a);
@@ -135,11 +136,11 @@ public class ExamsPdfServlet extends HttpServlet {
     }
   }
   
-  private Multimap<Attendee, Event> getSchedule() {
+  private Multimap<Attendee, Event> getSchedule(HttpServletRequest req) {
     Multimap<Attendee, Event> schedule;
-    Calendar calendar = myCalendarExtent.find("exams-winter-2013");
+    Calendar calendar = myCalendarExtent.find(ExamScheduleServlet.getCalendarFromPath(req));
     if (calendar != null) {
-      AttendeeEventMap data = new AttendeeEventMap(calendar);
+      AttendeeEventMap data = AttendeeEventMap.create(calendar);
       schedule = data.getAttendeeEventMap();      
     } else {
       schedule = DevMode.USE_TEST_DATA ? myTestData.getExamSchedule() : LinkedListMultimap.<Attendee, Event>create();
@@ -183,9 +184,12 @@ public class ExamsPdfServlet extends HttpServlet {
     table.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
     table.getDefaultCell().setPadding(0);
     for (Event e : events) {
+      if (e.getTopic().getType() != Topic.Type.EXAM) {
+        continue;
+      }
       table.getDefaultCell().setPaddingTop(6.0f);
       table.getDefaultCell().setHorizontalAlignment(PdfPCell.ALIGN_CENTER);
-      table.addCell(new Phrase(DATE_FORMAT.format(e.getStartDate()), PdfFonts.MEDIUM_FONT));
+      table.addCell(new Phrase(ExamScheduleServlet.DATE_FORMAT.format(e.getStartDate()), PdfFonts.MEDIUM_FONT));
       
       table.getDefaultCell().setHorizontalAlignment(PdfPCell.ALIGN_LEFT);
       table.addCell(new Phrase(e.getTopic().getName(), PdfFonts.MEDIUM_FONT));

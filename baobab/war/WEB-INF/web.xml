@@ -32,7 +32,6 @@
     <url-pattern>/auth/logout</url-pattern>
   </servlet-mapping>
   
-  <!-- Landing -->
   <servlet>
     <servlet-name>team_servlet</servlet-name>
     <servlet-class>ru.spbu.math.baobab.server.TeamServlet</servlet-class>
@@ -40,14 +39,6 @@
   <servlet-mapping>
     <servlet-name>team_servlet</servlet-name>
     <url-pattern>/team</url-pattern>
-  </servlet-mapping>
-  <servlet>
-    <servlet-name>landing_servlet</servlet-name>
-    <servlet-class>ru.spbu.math.baobab.server.ExamScheduleServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>landing_servlet</servlet-name>
-    <url-pattern>/root</url-pattern>
   </servlet-mapping>
 
   <!--  Exports --> 
@@ -57,8 +48,42 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>exam_all_pdf_servlet</servlet-name>
-    <url-pattern>/exam/all/pdf</url-pattern>
+    <url-pattern>/export/*</url-pattern>
   </servlet-mapping>
+  
+  <!--  All groups page -->
+  <servlet>
+    <servlet-name>landing_servlet</servlet-name>
+    <servlet-class>ru.spbu.math.baobab.server.ExamScheduleServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>landing_servlet</servlet-name>
+    <url-pattern>/root</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>landing_servlet</servlet-name>
+    <url-pattern>/calendar/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>today_servlet</servlet-name>
+    <servlet-class>ru.spbu.math.baobab.server.TodayScheduleServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>today_servlet</servlet-name>
+    <url-pattern>/today</url-pattern>
+  </servlet-mapping>
+
+  <!--  Single exam page -->
+  <servlet>
+    <servlet-name>exam_servlet</servlet-name>
+    <servlet-class>ru.spbu.math.baobab.server.ViewOfExamServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>exam_servlet</servlet-name>
+    <url-pattern>/exam</url-pattern>
+  </servlet-mapping>
+
   
   <!--  Devtools and testing -->
   <servlet>
@@ -105,16 +130,7 @@
     <servlet-name>test_pdf_schedule</servlet-name>
     <url-pattern>/_ah/test_pdf_schedule</url-pattern>
   </servlet-mapping>
-  
-  <servlet>
-    <servlet-name>exam_servlet</servlet-name>
-    <servlet-class>ru.spbu.math.baobab.server.ViewOfExamServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>exam_servlet</servlet-name>
-    <url-pattern>/exam</url-pattern>
-  </servlet-mapping>
-  
+    
   <!-- GWT -->
   <servlet>
     <servlet-name>greetServlet</servlet-name>

@@ -3,6 +3,7 @@ package ru.spbu.math.baobab.server;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -14,11 +15,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import ru.spbu.math.baobab.model.Attendee;
 import ru.spbu.math.baobab.model.AuditoriumExtent;
+import ru.spbu.math.baobab.model.CalendarExtent;
 import ru.spbu.math.baobab.model.Event;
 import ru.spbu.math.baobab.model.TimeSlotExtent;
 import ru.spbu.math.baobab.model.Topic;
 import ru.spbu.math.baobab.model.TopicExtent;
 import ru.spbu.math.baobab.server.sql.AuditoriumExtentSqlImpl;
+import ru.spbu.math.baobab.server.sql.CalendarExtentSqlImpl;
 import ru.spbu.math.baobab.server.sql.TimeSlotExtentSqlImpl;
 import ru.spbu.math.baobab.server.sql.TopicExtentSqlImpl;
 
@@ -35,6 +38,7 @@ public class ViewOfExamServlet extends HttpServlet {
   private final AuditoriumExtent myAuditoriumExtent = DevMode.USE_TEST_DATA ? myTestData.getAuditoriumExtent() : new AuditoriumExtentSqlImpl();
   private final TimeSlotExtent myTimeSlotExtent = DevMode.USE_TEST_DATA ? myTestData.getTimeSlotExtent() : new TimeSlotExtentSqlImpl();
   private final TopicExtent myTopicExtent = DevMode.USE_TEST_DATA ? myTestData.getTopicExtent() : new TopicExtentSqlImpl(myTimeSlotExtent, myAuditoriumExtent);
+  private final CalendarExtent myCalendarExtent = DevMode.USE_TEST_DATA ? myTestData.getCalendarExtent() : new CalendarExtentSqlImpl();
   
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -46,6 +50,7 @@ public class ViewOfExamServlet extends HttpServlet {
       request.setAttribute("owners", getOwnerList(topic));
       request.setAttribute("attendees", getAttendees(topic));
       request.setAttribute("url", topic.getUrl());
+      request.setAttribute("calendarList", myCalendarExtent.getAll());
     }
     RequestDispatcher scriptForm = request.getRequestDispatcher("/view_of_exam.jsp");
     scriptForm.forward(request, response);
@@ -73,6 +78,7 @@ public class ViewOfExamServlet extends HttpServlet {
             att.getName(), ev.getAuditorium().getID()));
       }
     }
+    Collections.sort(names);
     return names;
   }
 }

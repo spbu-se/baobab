@@ -47,13 +47,13 @@
           </div>
           <div class="row-fluid">
             <span class="span7">
-              <c:if test="${(hasResult) &&  (!wasErr)}">
+              <c:if test="${(hasResult) && (!wasErr)}">
                 <div class="alert alert-success">
                   <button type="button" class="close" data-dismiss="alert">&times;</button>
                   ${result}
                 </div>
               </c:if>   
-              <c:if test="${(hasResult) &&  (wasErr)}">
+              <c:if test="${(hasResult) && (wasErr)}">
                 <div class="alert alert-error">
                   <button type="button" class="close" data-dismiss="alert">&times;</button>
                   ${result}
