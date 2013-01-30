@@ -46,18 +46,26 @@
             </div>
           </div>
           <div class="row-fluid">
-              <span class="span7">
-                <div class="${alert}">
+            <span class="span7">
+              <c:if test="${(hasResult) &&  (!wasErr)}">
+                <div class="alert alert-success">
                   <button type="button" class="close" data-dismiss="alert">&times;</button>
                   ${result}
-                </div>          
-              </span>
-              <div class="span5 input-append">
-                <div class="right">
-                  <input type="password" placeholder="Введите пароль..." name="password" required>
-                  <input type="submit" class="btn btn-primary" value="Поехали!">
                 </div>
+              </c:if>   
+              <c:if test="${(hasResult) &&  (wasErr)}">
+                <div class="alert alert-error">
+                  <button type="button" class="close" data-dismiss="alert">&times;</button>
+                  ${result}
+                </div>
+              </c:if>           
+            </span>
+            <div class="span5 input-append">
+              <div class="right">
+                <input type="password" placeholder="Введите пароль..." name="password" required>
+                <input type="submit" class="btn btn-primary" value="Поехали!">
               </div>
+            </div>
           </div>
         </form>
       </div>  

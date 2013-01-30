@@ -76,19 +76,24 @@ public class ScriptFormServlet extends HttpServlet {
     request.setAttribute("auditorium_list", getAuditoriumList());
     request.setAttribute("time_slot_list", getTimeSlotList());
     request.setAttribute("placeholders", Parser.placeholders());
-    request.setAttribute("alert", getTypeOfAlert(result));
+    request.setAttribute("wasErr", getTypeOfAlert(result));
+    request.setAttribute("hasResult", isResultEmpty(result));
     RequestDispatcher scriptForm = request.getRequestDispatcher("/script_form.jsp");
     scriptForm.forward(request, response);
   }
   
-  private String getTypeOfAlert(String result) {
+  private boolean getTypeOfAlert(String result) {
     if (result.equals(SUCCESSFUL_RESULT)) {
-      return "alert alert-success";
+      return false;
     }
-    if (result.indexOf("Ошибка при выполнении") != -1) {
-      return "alert alert-error";     
+    return true;     
+  }
+  
+  private boolean isResultEmpty(String result) {
+    if (result.isEmpty()) {
+      return false;
     }
-    return null;
+    return true;
   }
 
   private Collection<String> getTopicList() {
