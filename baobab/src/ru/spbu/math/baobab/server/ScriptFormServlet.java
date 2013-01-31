@@ -172,9 +172,11 @@ public class ScriptFormServlet extends HttpServlet {
     }
     else {
       if (scriptText.startsWith("#")) {
-        LegacyExamScheduleImporter importer = new LegacyExamScheduleImporter(myAuditoriumExtent, myAttendeeExtent, myTopicExtent);
+        // LegacyExamScheduleImporter importer = new LegacyExamScheduleImporter(myAuditoriumExtent, myAttendeeExtent, myTopicExtent);
+        LegacyExamRetakingScheduleImporter importer = new LegacyExamRetakingScheduleImporter(myAuditoriumExtent, myAttendeeExtent, myTopicExtent);
         try {
-          String schedule = importer.importSchedule(scriptText, "exams-winter-2013");
+          // String schedule = importer.importSchedule(scriptText, "exams-winter-2013");
+          String schedule = importer.importSchedule(scriptText, "re-exams-winter-2013");
           request.setAttribute("script_text", schedule);
           result = "Данные импортированы успешно";
         } catch (Throwable e) {
