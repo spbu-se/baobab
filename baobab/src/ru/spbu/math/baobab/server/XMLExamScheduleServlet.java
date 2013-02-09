@@ -46,87 +46,63 @@ import org.w3c.dom.Element;
 
 public class XMLExamScheduleServlet extends HttpServlet {
   private CalendarExtent myCalendarExtent = new CalendarExtentSqlImpl();
-  
+
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-      Multimap<Attendee, Event> schedule = getSchedule(myCalendarExtent, request);
-  
-      try {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder builder = factory.newDocumentBuilder();
-        
-        Document document = builder.newDocument();
-        
-        String groupReq = request.getParameter("group");
-        
-        if (groupReq == null) {
-          Element rootElement = document.createElement("Groups");
-          document.appendChild(rootElement);
-          
-          for (Attendee group : schedule.keySet()) {
-            Element groupElement = document.createElement("Group");
-            groupElement.setAttribute("name", group.getName());
-            rootElement.appendChild(groupElement);
-          }
-        } else {
-          Element rootElement = document.createElement("Group");
-          rootElement.setAttribute("name", groupReq);
-          document.appendChild(rootElement);
-          
-          Attendee group = null;
-          for (Attendee g : schedule.keySet()) {
-            if (g.getName().equals(groupReq)) {
-              group = g;
-              break;
-            }
-          }
-          
-          if (group != null){
-            for (Event event : schedule.get(group)) {
-              Element eventElement = document.createElement("Event");
-              eventElement.setAttribute("name", event.getTopic().getName());
-              eventElement.setAttribute("auditorium", event.getAuditorium().getID());
-              eventElement.setAttribute("date", DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, Locale.UK).format(event.getStartDate()));
-              eventElement.setAttribute("id", event.getTopic().getID());
-              eventElement.setAttribute("type", event.getTopic().getType().toString());
-              rootElement.appendChild(eventElement);
-              
-              for (Attendee owner : event.getTopic().getOwners()) {
-                Element ownerElement = document.createElement("Owner");
-                ownerElement.setAttribute("name", owner.getName());
-                eventElement.appendChild(ownerElement);
-              }
-            }
+    Multimap<Attendee, Event> schedule = getSchedule(myCalendarExtent, request);
+
+    try {
+      XMLResponseBuilder builder = new XMLResponseBuilder();
+
+      Document document;
+
+      String groupReq = request.getParameter("group");
+
+      if (groupReq == null) {
+        document = builder.buildAttendeeNameList(schedule.keySet(), "Groups");
+      } else {
+        Attendee group = null;
+        for (Attendee g : schedule.keySet()) {
+          if (g.getName().equals(groupReq)) {
+            group = g;
+            break;
           }
         }
-        
-        TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        Transformer transformer = transformerFactory.newTransformer();
-        DOMSource source = new DOMSource(document);
-        StreamResult result = new StreamResult(response.getOutputStream());
-        
-        response.setContentType("text/xml");
-        
-        transformer.transform(source, result);
-      } catch (Exception e) {
-        e.printStackTrace();
+
+        if (group != null) {
+          document = builder.buildEventList(schedule.get(group), group.getName());
+        } else {
+          document = builder.buildError("Requested group does not exist", "Cannot find " + groupReq);
+        }
       }
+
+      TransformerFactory transformerFactory = TransformerFactory.newInstance();
+      Transformer transformer = transformerFactory.newTransformer();
+      DOMSource source = new DOMSource(document);
+      StreamResult result = new StreamResult(response.getOutputStream());
+
+      response.setContentType("text/xml");
+
+      transformer.transform(source, result);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
-  
+
   static Multimap<Attendee, Event> getSchedule(CalendarExtent calendarExtent, HttpServletRequest req) {
-      Multimap<Attendee, Event> schedule;
-      if (DevMode.USE_TEST_DATA) {
-          schedule = new TestData().getExamSchedule();
+    Multimap<Attendee, Event> schedule;
+    if (DevMode.USE_TEST_DATA) {
+      schedule = new TestData().getExamSchedule();
+    } else {
+      Calendar calendar = calendarExtent.find("exams-winter-2013");
+      if (calendar != null) {
+        req.setAttribute("calendarID", calendar.getID());
+        AttendeeEventMap data = AttendeeEventMap.create(calendar);
+        schedule = data.getAttendeeEventMap();
       } else {
-          Calendar calendar = calendarExtent.find("exams-winter-2013");
-          if (calendar != null) {
-              req.setAttribute("calendarID", calendar.getID());
-              AttendeeEventMap data = AttendeeEventMap.create(calendar);
-              schedule = data.getAttendeeEventMap();
-          } else {
-              schedule = LinkedListMultimap.create();
-          }
+        schedule = LinkedListMultimap.create();
       }
-      return schedule;
+    }
+    return schedule;
   }
 }
