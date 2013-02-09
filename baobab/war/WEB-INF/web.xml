@@ -71,7 +71,7 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>xml_servlet</servlet-name>
-    <url-pattern>/api</url-pattern>
+    <url-pattern>/api/xml/examschedule</url-pattern>
   </servlet-mapping>
 
   <servlet>
