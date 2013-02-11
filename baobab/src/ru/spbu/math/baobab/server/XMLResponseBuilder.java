@@ -15,7 +15,9 @@ import ru.spbu.math.baobab.model.Attendee;
 import ru.spbu.math.baobab.model.Event;
 
 /**
- * Class for building xml response from specified data
+ * Class for building xml document from specified data.
+ * 
+ * It can build list of attendee names from Collection&ltAttendee&gt and list of events from Collection&ltEvent&gt
  * 
  * @author cons
  */
