@@ -1,20 +1,7 @@
 package ru.spbu.math.baobab.server;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.TimeZone;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -27,22 +14,14 @@ import ru.spbu.math.baobab.model.Event;
 import ru.spbu.math.baobab.server.sql.AttendeeEventMap;
 import ru.spbu.math.baobab.server.sql.CalendarExtentSqlImpl;
 
-import com.google.common.base.Charsets;
-import com.google.common.base.Joiner;
 import com.google.common.collect.LinkedListMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.DocumentBuilder;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 public class XMLExamScheduleServlet extends HttpServlet {
   private CalendarExtent myCalendarExtent = new CalendarExtentSqlImpl();
@@ -86,6 +65,7 @@ public class XMLExamScheduleServlet extends HttpServlet {
       transformer.transform(source, result);
     } catch (Exception e) {
       e.printStackTrace();
+      response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
     }
   }
 
