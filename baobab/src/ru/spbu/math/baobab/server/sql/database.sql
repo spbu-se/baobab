@@ -48,7 +48,7 @@ CREATE TABLE GroupMember(
   FOREIGN KEY(attendee_id) REFERENCES Attendee(id));
   
 CREATE TABLE Auditorium(
-  num VARCHAR(10) PRIMARY KEY,
+  num VARCHAR(64) PRIMARY KEY,
   capacity INT CHECK (capacity > 0)
 );
 
@@ -64,7 +64,7 @@ CREATE TABLE Event(
   `date` DATE NOT NULL,
   time_slot_id INT NOT NULL,
   topic_id VARCHAR(32) NOT NULL,
-  auditorium_num VARCHAR(10),
+  auditorium_num VARCHAR(64),
   UNIQUE(`date`, time_slot_id, topic_id),
   FOREIGN KEY (time_slot_id) REFERENCES TimeSlot(id),
   FOREIGN KEY (auditorium_num) REFERENCES Auditorium(num),
@@ -111,7 +111,7 @@ CREATE TABLE CalendarTopic(
 
 DROP PROCEDURE IF EXISTS Topic_AddEvent;
 
-CREATE PROCEDURE Topic_AddEvent(_topic_id VARCHAR(32), _event_date DATE, _time_slot_id INT, _auditorium_num VARCHAR(10), OUT _event_id INT)
+CREATE PROCEDURE Topic_AddEvent(_topic_id VARCHAR(32), _event_date DATE, _time_slot_id INT, _auditorium_num VARCHAR(64), OUT _event_id INT)
 BEGIN
 DECLARE evt_id INT;
 SELECT id INTO evt_id FROM Event WHERE topic_id = _topic_id AND time_slot_id = _time_slot_id AND date = _event_date;
@@ -136,7 +136,7 @@ SELECT att.uid AS att_uid, att.name AS att_name, att.type AS att_type,
     JOIN Topic top ON (top.uid = ct.topic_uid)
     JOIN Event ev ON (ev.topic_id = ct.topic_uid)
     LEFT OUTER JOIN TopicOwner topow ON (ev.topic_id = topow.topic_id)
-    JOIN Attendee att2 ON (topow.attendee_id = att2.id)
+    LEFT OUTER JOIN Attendee att2 ON (topow.attendee_id = att2.id)
     JOIN EventAttendee ea ON (ea.event_id = ev.id)
     JOIN Attendee att ON (ea.attendee_uid = att.uid)
     JOIN TimeSlot ts ON (ts.id = ev.time_slot_id)
