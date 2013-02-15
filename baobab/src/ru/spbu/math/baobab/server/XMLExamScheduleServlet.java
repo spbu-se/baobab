@@ -26,6 +26,9 @@ import org.w3c.dom.Document;
 public class XMLExamScheduleServlet extends HttpServlet {
   private CalendarExtent myCalendarExtent = new CalendarExtentSqlImpl();
 
+  static {
+    System.setProperty("javax.xml.transform.TransformerFactory", "com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl");
+  }
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     Multimap<Attendee, Event> schedule = getSchedule(myCalendarExtent, request);
