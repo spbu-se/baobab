@@ -77,23 +77,12 @@ public class ScriptFormServlet extends HttpServlet {
     request.setAttribute("time_slot_list", getTimeSlotList());
     request.setAttribute("placeholders", Parser.placeholders());
     request.setAttribute("wasErr", getTypeOfAlert(result));
-    request.setAttribute("hasResult", isResultEmpty(result));
     RequestDispatcher scriptForm = request.getRequestDispatcher("/script_form.jsp");
     scriptForm.forward(request, response);
   }
   
   private boolean getTypeOfAlert(String result) {
-    if (result.equals(SUCCESSFUL_RESULT)) {
-      return false;
-    }
-    return true;     
-  }
-  
-  private boolean isResultEmpty(String result) {
-    if (result.isEmpty()) {
-      return false;
-    }
-    return true;
+    return !SUCCESSFUL_RESULT.equals(result);    
   }
 
   private Collection<String> getTopicList() {
@@ -104,6 +93,7 @@ public class ScriptFormServlet extends HttpServlet {
       }
     });
   }
+  
   private String getGroupList() {
     return getAttendeeList(Attendee.Type.ACADEMIC_GROUP);
   }
