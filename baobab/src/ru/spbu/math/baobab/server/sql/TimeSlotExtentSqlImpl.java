@@ -1,6 +1,6 @@
 package ru.spbu.math.baobab.server.sql;
 
-import java.sql.PreparedStatement;
+import java.sql.CallableStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Calendar;
@@ -26,6 +26,7 @@ public class TimeSlotExtentSqlImpl implements TimeSlotExtent {
 
   private void fetchTimeSlots(ResultSet rs, List<TimeSlot> timeSlots) throws SQLException {
     for (boolean hasRow = rs.next(); hasRow; hasRow = rs.next()) {
+      int id = rs.getInt("id");
       String name = rs.getString("name");
 
       Integer startInMinutes = rs.getInt("start_min");
@@ -38,7 +39,7 @@ public class TimeSlotExtentSqlImpl implements TimeSlotExtent {
 
       EvenOddWeek flashing = EvenOddWeek.values()[rs.getInt("is_odd")];
 
-      TimeSlot ts = new TimeSlotImpl(name, start, finish, day, flashing, this);
+      TimeSlot ts = new TimeSlotImpl(id, name, start, finish, day, flashing, this);
       timeSlots.add(ts);
     }
   }
@@ -49,7 +50,7 @@ public class TimeSlotExtentSqlImpl implements TimeSlotExtent {
     SqlApi sqlApi = SqlApi.create();
 
     try {
-      List<PreparedStatement> stmts = sqlApi.prepareScript("SELECT * FROM TimeSlot ORDER BY start_min;");
+      List<CallableStatement> stmts = sqlApi.prepareScript("SELECT * FROM TimeSlot ORDER BY start_min;");
 
       ResultSet rs = stmts.get(0).executeQuery();
       fetchTimeSlots(rs, timeSlots);
@@ -70,7 +71,7 @@ public class TimeSlotExtentSqlImpl implements TimeSlotExtent {
     SqlApi sqlApi = SqlApi.create();
 
     try {
-      List<PreparedStatement> stmts = sqlApi.prepareScript("SELECT * FROM TimeSlot WHERE day=? ORDER BY start_min");
+      List<CallableStatement> stmts = sqlApi.prepareScript("SELECT * FROM TimeSlot WHERE day=? ORDER BY start_min");
       stmts.get(0).setInt(1, day);
 
       ResultSet rs = stmts.get(0).executeQuery();
@@ -97,7 +98,7 @@ public class TimeSlotExtentSqlImpl implements TimeSlotExtent {
     boolean isOdd = calendar.get(Calendar.WEEK_OF_YEAR) % 2 == 1;
 
     try {
-      List<PreparedStatement> stmts = sqlApi
+      List<CallableStatement> stmts = sqlApi
           .prepareScript("SELECT * FROM TimeSlot WHERE day=? AND is_odd=? ORDER BY start_min");
       stmts.get(0).setInt(1, day);
       stmts.get(0).setInt(2, (isOdd) ? 1 : 2);
@@ -120,7 +121,7 @@ public class TimeSlotExtentSqlImpl implements TimeSlotExtent {
     SqlApi sqlApi = SqlApi.create();
 
     try {
-      PreparedStatement stmt = sqlApi.prepareScript(
+      CallableStatement stmt = sqlApi.prepareScript(
           "SELECT * FROM TimeSlot WHERE name=? AND day=? AND (is_odd=? OR is_odd=?);").get(0);
       stmt.setString(1, name);
       stmt.setInt(2, day);
@@ -138,7 +139,6 @@ public class TimeSlotExtentSqlImpl implements TimeSlotExtent {
 
       stmt = sqlApi.prepareScript("INSERT INTO TimeSlot SET name=?, start_min=?, finish_min=?, day=?, is_odd=?;")
           .get(0);
-
       stmt.setString(1, name);
       stmt.setInt(2, start.getHour() * 60 + start.getMinute());
       stmt.setInt(3, finish.getHour() * 60 + finish.getMinute());
@@ -146,8 +146,21 @@ public class TimeSlotExtentSqlImpl implements TimeSlotExtent {
       stmt.setInt(5, flashing.ordinal());
 
       stmt.execute();
-
-      TimeSlot ts = new TimeSlotImpl(name, start, finish, day, flashing, this);
+      stmt = sqlApi.prepareScript("SELECT id FROM TimeSlot WHERE name=? AND day=? AND is_odd=?;").get(0);
+      stmt.setString(1, name);
+      stmt.setInt(2, day);
+      stmt.setInt(3, flashing.ordinal());
+      resultSet = stmt.executeQuery();
+      
+      if (!resultSet.next()) {
+        throw new IllegalStateException("The TimeSlot with this name is not exist");
+      }      
+      int id = resultSet.getInt("id");        
+      if (resultSet.next()) {
+        throw new IllegalStateException("There are more than one TimeSlot with this name");
+      }
+      
+      TimeSlot ts = new TimeSlotImpl(id, name, start, finish, day, flashing, this);
       return ts;
 
     } catch (SQLException e) {
@@ -156,6 +169,28 @@ public class TimeSlotExtentSqlImpl implements TimeSlotExtent {
       sqlApi.dispose();
     }
 
+    return null;
+  }
+
+  @Override
+  public TimeSlot findById(int id) {
+    SqlApi sqlApi = SqlApi.create();
+
+    try {
+      List<CallableStatement> stmts = sqlApi.prepareScript("SELECT * FROM TimeSlot WHERE id=?;");
+      stmts.get(0).setInt(1, id);
+
+      ResultSet rs = stmts.get(0).executeQuery();
+      List<TimeSlot> timeSlots = Lists.newArrayList();
+      fetchTimeSlots(rs, timeSlots);
+      return timeSlots.get(0);
+      
+    } catch (SQLException e) {
+      e.printStackTrace();
+    } finally {
+      sqlApi.dispose();
+    }
+    
     return null;
   }
 }

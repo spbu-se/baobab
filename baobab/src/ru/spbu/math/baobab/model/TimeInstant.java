@@ -29,10 +29,10 @@ public class TimeInstant {
   public int getDayMinute() {
     return myHour * 60 + myMinute;
   }
-  
+
   @Override
   public int hashCode() {
-    return com.google.common.base.Objects.hashCode(myHour, myMinute);
+    return Objects.hashCode(myHour, myMinute);
   }
 
   @Override
@@ -40,14 +40,23 @@ public class TimeInstant {
     if (this == obj) {
       return true;
     }
-    if (obj == null) {
+    if (obj instanceof TimeInstant == false) {
       return false;
     }
-    if (getClass() != obj.getClass()) {
-      return false;
-    }
+
     TimeInstant other = (TimeInstant) obj;
-    return Objects.equal(myHour, other.myHour)
-        && Objects.equal(myMinute, other.myMinute);
+    return Objects.equal(myHour, other.myHour) && Objects.equal(myMinute, other.myMinute);
+  }
+
+  /**
+   * Create TimeInstant using only minutes
+   * 
+   * @param minutes
+   * @author aoool
+   */
+  public TimeInstant(int minutes) {
+    assert minutes >= 0 && minutes < 1440 : "invalid minutes value=" + minutes;
+    myHour = minutes / 60;
+    myMinute = minutes - (myHour * 60);
   }
 }

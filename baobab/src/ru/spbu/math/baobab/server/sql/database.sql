@@ -1,3 +1,6 @@
+DROP TABLE IF EXISTS CalendarTopic;
+DROP TABLE IF EXISTS Calendar;
+DROP TABLE IF EXISTS EventAttendee;
 DROP TABLE IF EXISTS TopicAttendee;
 DROP TABLE IF EXISTS TopicOwner;
 DROP TABLE IF EXISTS Event;
@@ -50,33 +53,92 @@ CREATE TABLE Auditorium(
 );
 
 CREATE TABLE Topic(
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  uid VARCHAR(32) NOT NULL UNIQUE,
+  uid VARCHAR(32) NOT NULL PRIMARY KEY,
   name VARCHAR(256),
-  type INT NOT NULL CHECK(type >= 0 AND type <= 5)
+  type INT NOT NULL CHECK(type >= 0 AND type <= 5),
+  url VARCHAR(256)
 );
 
 CREATE TABLE Event(
   id INT PRIMARY KEY AUTO_INCREMENT,
   `date` DATE NOT NULL,
   time_slot_id INT NOT NULL,
-  topic_id INT NOT NULL,
+  topic_id VARCHAR(32) NOT NULL,
   auditorium_num VARCHAR(10),
+  UNIQUE(`date`, time_slot_id, topic_id),
   FOREIGN KEY (time_slot_id) REFERENCES TimeSlot(id),
   FOREIGN KEY (auditorium_num) REFERENCES Auditorium(num),
-  FOREIGN KEY (topic_id) REFERENCES Topic(id)
+  FOREIGN KEY (topic_id) REFERENCES Topic(uid)
 );
 
 CREATE TABLE TopicOwner(
-  topic_id INT,
+  topic_id VARCHAR(32),
   attendee_id INT,
-  FOREIGN KEY (topic_id) REFERENCES Topic(id),
+  FOREIGN KEY (topic_id) REFERENCES Topic(uid),
   FOREIGN KEY (attendee_id) REFERENCES Attendee(id)
 );
 
 CREATE TABLE TopicAttendee(
-  topic_id INT,
+  topic_id VARCHAR(32),
   attendee_id INT,
-  FOREIGN KEY (topic_id) REFERENCES Topic(id),
+  FOREIGN KEY (topic_id) REFERENCES Topic(uid),
   FOREIGN KEY (attendee_id) REFERENCES Attendee(id)  
 );
+
+-- This table keeps relationships between attendees and event instances.
+-- Attendees may opt to attend just a single event or to miss a single event.
+CREATE TABLE EventAttendee(
+  event_id INT NOT NULL,
+  attendee_uid VARCHAR(64) NOT NULL,
+  is_attending BOOLEAN NOT NULL DEFAULT TRUE,
+  UNIQUE(event_id, attendee_uid),
+  FOREIGN KEY (event_id) REFERENCES Event(id),
+  FOREIGN KEY(attendee_uid) REFERENCES Attendee(uid)
+);
+
+-- This table is just an enumeration of the available calendars
+CREATE TABLE Calendar(
+  uid VARCHAR(32) PRIMARY KEY
+);
+
+-- This table implements M:N relationship between calendars and topics
+CREATE TABLE CalendarTopic(
+  calendar_uid VARCHAR(32),
+  topic_uid VARCHAR(32),
+  FOREIGN KEY (calendar_uid) REFERENCES Calendar(uid),
+  FOREIGN KEY (topic_uid) REFERENCES Topic(uid)
+);
+
+DROP PROCEDURE IF EXISTS Topic_AddEvent;
+
+CREATE PROCEDURE Topic_AddEvent(_topic_id VARCHAR(32), _event_date DATE, _time_slot_id INT, _auditorium_num VARCHAR(10), OUT _event_id INT)
+BEGIN
+DECLARE evt_id INT;
+SELECT id INTO evt_id FROM Event WHERE topic_id = _topic_id AND time_slot_id = _time_slot_id AND date = _event_date;
+IF evt_id IS NULL THEN
+  INSERT INTO Event (topic_id, `date`, time_slot_id, auditorium_num) VALUES (_topic_id, _event_date, _time_slot_id, _auditorium_num);
+  SELECT id INTO evt_id FROM Event WHERE topic_id = _topic_id AND time_slot_id = _time_slot_id AND `date` = _event_date;
+END IF;
+SET _event_id := evt_id;
+END
+
+DROP VIEW IF EXISTS ExamsView;
+
+CREATE VIEW ExamsView AS
+SELECT att.uid AS att_uid, att.name AS att_name, att.type AS att_type, 
+    ts.id AS ts_id, ts.name AS ts_name, ts.start_min AS ts_start_min, ts.finish_min AS ts_finish_min, ts.day AS ts_day, ts.is_odd AS ts_is_odd,
+    au.num AS au_num, au.capacity AS au_capacity,
+    top.uid AS topic_uid, top.type AS topic_type, top.name AS topic_name,
+    att2.uid AS owner_uid, att2.name AS owner_name, att2.type AS owner_type,
+    ev.date AS ev_date,
+    ct.calendar_uid AS calendar_uid
+    FROM CalendarTopic ct 
+    JOIN Topic top ON (top.uid = ct.topic_uid)
+    JOIN Event ev ON (ev.topic_id = ct.topic_uid)
+    LEFT OUTER JOIN TopicOwner topow ON (ev.topic_id = topow.topic_id)
+    JOIN Attendee att2 ON (topow.attendee_id = att2.id)
+    JOIN EventAttendee ea ON (ea.event_id = ev.id)
+    JOIN Attendee att ON (ea.attendee_uid = att.uid)
+    JOIN TimeSlot ts ON (ts.id = ev.time_slot_id)
+    JOIN Auditorium au ON (au.num = ev.auditorium_num)    
+    ORDER BY att.uid, ev.date, ts.start_min, top.name;

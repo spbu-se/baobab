@@ -2,27 +2,29 @@ package ru.spbu.math.baobab.server.sql;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
+import java.sql.CallableStatement;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
+import ru.spbu.math.baobab.server.DevMode;
+
 import com.google.appengine.api.rdbms.AppEngineDriver;
 import com.google.common.collect.Lists;
 
 /**
  * Encapsulates JDBC connection stuff and provides interface for transforming 
- * an SQL script to a list of {@link PreparedStatement} instances.
+ * an SQL script to a list of {@link CallableStatement} instances.
  * 
  * @author dbarashev
  */
 public abstract class SqlApi {
   private static final Logger LOGGER = Logger.getLogger("SqlService");
   private static final String CONNECTION_SPEC = "jdbc:google:rdbms://barashev.net:baobab:baobab/";
-  private static final Pattern PATTERN_COMMENT = Pattern.compile("^\\p{Blank}*--[^\\n]+(\\n|$)");
-  private static final Pattern PATTERN_WHITESPACE = Pattern.compile("^\\p{Blank}*(\\n|$)");
+  public static final Pattern PATTERN_COMMENT = Pattern.compile("^\\p{Blank}*--[^\\n]+(\\n|\\r|$)");
+  public static final Pattern PATTERN_WHITESPACE = Pattern.compile("^\\p{Blank}*(\\n|\\r|$)");
   private static final Pattern PATTERN_STMT_END = Pattern.compile(".*;\\p{Blank}*(\\n|$)");
 
   static {
@@ -44,7 +46,7 @@ public abstract class SqlApi {
         private final Connection myConnection = createConnection("prod", "frontend");
         
         @Override
-        protected PreparedStatement prepareCall(String stmt) throws SQLException {
+        protected CallableStatement prepareCall(String stmt) throws SQLException {
           return myConnection.prepareCall(stmt);
         }
         
@@ -85,7 +87,7 @@ public abstract class SqlApi {
   private static Connection createConnection(String database, String username) {
     Connection c = null;
     try {
-      c = DriverManager.getConnection(CONNECTION_SPEC + database, username, null);
+      c = DriverManager.getConnection(CONNECTION_SPEC + database + (DevMode.IS_ENABLED ? "&useUnicode=yes&characterEncoding=UTF-8" : ""), username, null);
     } catch (SQLException e) {
       LOGGER.log(Level.SEVERE, "Failed to create connection", e);
     }
@@ -99,15 +101,15 @@ public abstract class SqlApi {
   
   /**
    * Splits the given text to a list of SQL statements, striping out comments, and creates
-   * {@link PreparedStatement} instance for each statement.
+   * {@link CallableStatement} instance for each statement.
    * 
    * @param text SQL script with statements separated by semicolon + linebreak pairs
    * @return a list of ready-to-run statements
    * 
    * @throws SQLException
    */
-  public List<PreparedStatement> prepareScript(String text) throws SQLException {
-    return createPreparedStatements(splitScript(text));
+  public List<CallableStatement> prepareScript(String text) throws SQLException {
+    return createCallableStatements(splitScript(text));
   }  
 
   static List<String> splitScript(String text) {
@@ -132,13 +134,13 @@ public abstract class SqlApi {
     return stmts;
   }
   
-  private List<PreparedStatement> createPreparedStatements(List<String> stmts) throws SQLException {
-    List<PreparedStatement> result = Lists.newArrayList();
+  private List<CallableStatement> createCallableStatements(List<String> stmts) throws SQLException {
+    List<CallableStatement> result = Lists.newArrayList();
     for (String s : stmts) {
       result.add(prepareCall(s));
     }    
     return result;
   }
   
-  protected abstract PreparedStatement prepareCall(String stmt) throws SQLException;
+  protected abstract CallableStatement prepareCall(String stmt) throws SQLException;  
 }
