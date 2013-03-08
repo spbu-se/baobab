@@ -44,7 +44,14 @@ public class TimeSlotExtentImplTest extends TestCase {
     TimeInstant start1 = new TimeInstant(13, 40);
     TimeInstant finish1 = new TimeInstant(15, 15);
     try {
-      timeSlotExtent.create("first double class", start1, finish1, 5, EvenOddWeek.ODD);
+      // the same name, but other day => OK
+      timeSlotExtent.create("first double class", start, finish, 3, EvenOddWeek.ALL);
+      
+      // the same name and day but other flashing => OK
+      timeSlotExtent.create("first double class", start, finish, 2, EvenOddWeek.ODD);
+
+      // the same name and the same day + flashing => should fail despite that interval is different
+      timeSlotExtent.create("first double class", start1, finish1, 2, EvenOddWeek.ALL);
       fail("Expected IllegalArgumentException");
     } catch (IllegalStateException e) {
       // can't create with existing name
@@ -88,5 +95,19 @@ public class TimeSlotExtentImplTest extends TestCase {
     date1 = c.getTime();
     list1 = timeSlotExtent.findByDate(date1);
     assertFalse(list.equals(list1));
+  }
+  
+  public void testFindById() {
+    TimeSlotExtent timeSlotExtent = new TimeSlotExtentImpl();
+    TimeInstant start = new TimeInstant(9, 30);
+    TimeInstant finish = new TimeInstant(11, 5);
+    TimeInstant start1 = new TimeInstant(13, 40);
+    TimeInstant finish1 = new TimeInstant(15, 15);
+    timeSlotExtent.create("first double class", start, finish, 2, EvenOddWeek.ALL);
+    timeSlotExtent.create("second double class", start, finish, 3, EvenOddWeek.ALL);
+    timeSlotExtent.create("third double class", start1, finish1, 4, EvenOddWeek.ALL);
+    timeSlotExtent.create("fourth double class", start, finish, 4, EvenOddWeek.ALL);
+    assertEquals(timeSlotExtent.findById(4).getName(), "fourth double class");
+    assertEquals(timeSlotExtent.findById(3).getName(), "third double class");
   }
 }

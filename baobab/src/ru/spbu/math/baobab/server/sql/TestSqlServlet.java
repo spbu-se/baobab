@@ -1,7 +1,7 @@
 package ru.spbu.math.baobab.server.sql;
 
 import java.io.IOException;
-import java.sql.PreparedStatement;
+import java.sql.CallableStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -12,6 +12,12 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.google.common.collect.Multimap;
+
+import ru.spbu.math.baobab.model.Attendee;
+import ru.spbu.math.baobab.model.CalendarExtent;
+import ru.spbu.math.baobab.model.Event;
 
 /**
  * This servlet does a smoke test of database connection. It runs a single select and
@@ -26,7 +32,7 @@ public class TestSqlServlet extends HttpServlet {
   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     SqlApi sqlApi = SqlApi.create();
     try {
-      List<PreparedStatement> stmts = sqlApi.prepareScript("SELECT * FROM TimeSlot;");
+      List<CallableStatement> stmts = sqlApi.prepareScript("SELECT * FROM TimeSlot;");
       assert stmts.size() == 1;
       
       int rowCount = 0;
@@ -35,6 +41,10 @@ public class TestSqlServlet extends HttpServlet {
         rowCount++;
       }
       resp.getWriter().println("Success. " + rowCount + " rows fetched");
+      CalendarExtent extent =  new CalendarExtentSqlImpl();
+      AttendeeEventMap attev = AttendeeEventMap.create(extent.find("TESTCALENDAR"));
+      Multimap<Attendee, Event> map = attev.getAttendeeEventMap();
+      resp.getWriter().println(map.size());
     } catch (SQLException e) {
       LOGGER.log(Level.SEVERE, "Failed to execute SQL", e);
       resp.getWriter().println("Failure. " + e.getMessage());

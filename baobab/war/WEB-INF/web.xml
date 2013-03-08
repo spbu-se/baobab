@@ -1,4 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?><web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.5" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee                http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+  <servlet>
+    <servlet-name>data_edit_servlet</servlet-name>
+    <servlet-class>ru.spbu.math.baobab.server.ScriptFormServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>data_edit_servlet</servlet-name>
+    <url-pattern>/data/edit</url-pattern>
+  </servlet-mapping>
+  
 
   <!--  Auth -->
   <servlet>
@@ -23,7 +32,6 @@
     <url-pattern>/auth/logout</url-pattern>
   </servlet-mapping>
   
-  <!-- Landing -->
   <servlet>
     <servlet-name>team_servlet</servlet-name>
     <servlet-class>ru.spbu.math.baobab.server.TeamServlet</servlet-class>
@@ -32,15 +40,50 @@
     <servlet-name>team_servlet</servlet-name>
     <url-pattern>/team</url-pattern>
   </servlet-mapping>
+
+  <!--  Exports --> 
+  <servlet>
+    <servlet-name>exam_all_pdf_servlet</servlet-name>
+    <servlet-class>ru.spbu.math.baobab.server.ExamsPdfServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>exam_all_pdf_servlet</servlet-name>
+    <url-pattern>/export/*</url-pattern>
+  </servlet-mapping>
+  
+  <!--  All groups page -->
   <servlet>
     <servlet-name>landing_servlet</servlet-name>
-    <servlet-class>ru.spbu.math.baobab.server.LandingServlet</servlet-class>
+    <servlet-class>ru.spbu.math.baobab.server.ExamScheduleServlet</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>landing_servlet</servlet-name>
-    <url-pattern>/</url-pattern>
+    <url-pattern>/root</url-pattern>
   </servlet-mapping>
- 
+  <servlet-mapping>
+    <servlet-name>landing_servlet</servlet-name>
+    <url-pattern>/calendar/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>today_servlet</servlet-name>
+    <servlet-class>ru.spbu.math.baobab.server.TodayScheduleServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>today_servlet</servlet-name>
+    <url-pattern>/today</url-pattern>
+  </servlet-mapping>
+
+  <!--  Single exam page -->
+  <servlet>
+    <servlet-name>exam_servlet</servlet-name>
+    <servlet-class>ru.spbu.math.baobab.server.ViewOfExamServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>exam_servlet</servlet-name>
+    <url-pattern>/exam</url-pattern>
+  </servlet-mapping>
+
   
   <!--  Devtools and testing -->
   <servlet>
@@ -79,6 +122,15 @@
     <url-pattern>/_ah/test_schedule</url-pattern>
   </servlet-mapping>
   
+  <servlet>
+    <servlet-name>test_pdf_schedule</servlet-name>
+    <servlet-class>ru.spbu.math.baobab.server.SimpleSchedulePdfDemoServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>test_pdf_schedule</servlet-name>
+    <url-pattern>/_ah/test_pdf_schedule</url-pattern>
+  </servlet-mapping>
+    
   <!-- GWT -->
   <servlet>
     <servlet-name>greetServlet</servlet-name>
@@ -90,11 +142,11 @@
     <url-pattern>/baobab/greet</url-pattern>
   </servlet-mapping>
   
-  <!-- 
+  
   <welcome-file-list>
-    <welcome-file>Baobab.html</welcome-file>
+    <welcome-file>root</welcome-file>
   </welcome-file-list>
--->
+  
   <servlet>
     <servlet-name>SystemServiceServlet</servlet-name>
     <servlet-class>com.google.api.server.spi.SystemServiceServlet</servlet-class>

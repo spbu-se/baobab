@@ -1,6 +1,6 @@
 package ru.spbu.math.baobab.server.sql;
 
-import java.sql.PreparedStatement;
+import java.sql.CallableStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
@@ -8,6 +8,8 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
+import ru.spbu.math.baobab.model.AuditoriumExtent;
+import ru.spbu.math.baobab.model.TimeSlotExtent;
 import ru.spbu.math.baobab.model.Topic;
 import ru.spbu.math.baobab.model.Topic.Type;
 import ru.spbu.math.baobab.model.TopicExtent;
@@ -18,13 +20,20 @@ import ru.spbu.math.baobab.model.TopicExtent;
  * @author agudulin
  */
 public class TopicExtentSqlImpl implements TopicExtent {
+  private final TimeSlotExtent myTimeSlotExtent;
+  private final AuditoriumExtent myAuditoriumExtent;
+
+  public TopicExtentSqlImpl(TimeSlotExtent timeSlotExtent, AuditoriumExtent auditoriumExtent) {
+    myTimeSlotExtent = timeSlotExtent;
+    myAuditoriumExtent = auditoriumExtent;
+  }
 
   @Override
   public Topic createTopic(String id, Type type, String name) {
     SqlApi sqlApi = SqlApi.create();
 
     try {
-      PreparedStatement stmt = sqlApi.prepareScript("SELECT * FROM Topic WHERE uid=?;").get(0);
+      CallableStatement stmt = sqlApi.prepareScript("SELECT * FROM Topic WHERE uid=?;").get(0);
       stmt.setString(1, id);
 
       int rowCount = 0;
@@ -44,7 +53,7 @@ public class TopicExtentSqlImpl implements TopicExtent {
 
       stmt.execute();
 
-      Topic topic = new TopicSqlImpl(id, type, name);
+      Topic topic = new TopicSqlImpl(id, type, name, myTimeSlotExtent, myAuditoriumExtent);
       return topic;
 
     } catch (SQLException e) {
@@ -62,21 +71,12 @@ public class TopicExtentSqlImpl implements TopicExtent {
     SqlApi sqlApi = SqlApi.create();
 
     try {
-      List<PreparedStatement> stmts = sqlApi.prepareScript("SELECT * FROM Topic;");
+      List<CallableStatement> stmts = sqlApi.prepareScript("SELECT * FROM Topic;");
 
       ResultSet rs = stmts.get(0).executeQuery();
-
-      for (boolean hasRow = rs.next(); hasRow; hasRow = rs.next()) {
-        String id = rs.getString("uid");
-        Type type = Type.values()[rs.getInt("type")];
-        String name = rs.getString("name");
-
-        Topic topic = new TopicSqlImpl(id, type, name);
-        topics.add(topic);
-      }
-
+      fetchTopic(rs, topics);
+      
       return topics;
-
     } catch (SQLException e) {
       e.printStackTrace();
     } finally {
@@ -84,5 +84,38 @@ public class TopicExtentSqlImpl implements TopicExtent {
     }
 
     return null;
+  }
+
+  @Override
+  public Topic find(String id) {
+    SqlApi sqlApi = SqlApi.create();
+
+    try {
+      List<Topic> topics = Lists.newArrayList();
+      List<CallableStatement> stmts = sqlApi.prepareScript("SELECT * FROM Topic WHERE uid=?;");
+      stmts.get(0).setString(1, id);
+      
+      ResultSet rs = stmts.get(0).executeQuery();
+      fetchTopic(rs, topics);
+      return topics.isEmpty() ? null : topics.get(0);
+      
+    } catch (SQLException e) {
+      e.printStackTrace();
+    } finally {
+      sqlApi.dispose();
+    }
+    
+    return null;
+  }
+  
+  private void fetchTopic(ResultSet rs, List<Topic> topics) throws SQLException {
+    for (boolean hasRow = rs.next(); hasRow; hasRow = rs.next()) {
+      String id = rs.getString("uid");
+      Type type = Type.values()[rs.getInt("type")];
+      String name = rs.getString("name");
+
+      Topic topic = new TopicSqlImpl(id, type, name, myTimeSlotExtent, myAuditoriumExtent);
+      topics.add(topic);
+    }      
   }
 }
