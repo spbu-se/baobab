@@ -1,12 +1,9 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!doctype html>
-<html lang="ru">
-<jsp:include page="include_header.jsp" />
+<%@ include file="../include_header.jsp" %>
+<html>
 <body>
-  <c:set var="calendarList" scope="request" value="${calendarList}" />
-  <jsp:include page="include_navbar.jsp" />
-
   <div class="container-fluid">
     <div class="row-fluid">
       <div class="page-header span12">
@@ -49,13 +46,26 @@
             </div>
           </div>
           <div class="row-fluid">
-              <span class="span7">${result}</span>
-              <div class="span5 input-append">
-                <div class="right">
-                  <input type="password" placeholder="Введите пароль..." name="password" required>
-                  <input type="submit" class="btn btn-primary" value="Поехали!">
+            <span class="span7">
+              <c:if test="${(hasResult) && (!wasErr)}">
+                <div class="alert alert-success">
+                  <button type="button" class="close" data-dismiss="alert">&times;</button>
+                  ${result}
                 </div>
+              </c:if>   
+              <c:if test="${(hasResult) && (wasErr)}">
+                <div class="alert alert-error">
+                  <button type="button" class="close" data-dismiss="alert">&times;</button>
+                  ${result}
+                </div>
+              </c:if>           
+            </span>
+            <div class="span5 input-append">
+              <div class="right">
+                <input type="password" placeholder="Введите пароль..." name="password" required>
+                <input type="submit" class="btn btn-primary" value="Поехали!">
               </div>
+            </div>
           </div>
         </form>
       </div>  
@@ -76,6 +86,5 @@
       textarea.val(textarea.val() + placeholders[buttonID] + '\n');
     });
   </script>
-  <jsp:include page="include_footer.jsp"></jsp:include>
 </body>
 </html>

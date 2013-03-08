@@ -32,7 +32,6 @@ import ru.spbu.math.baobab.model.TimeSlot;
 import ru.spbu.math.baobab.model.TimeSlotExtent;
 import ru.spbu.math.baobab.model.Topic;
 import ru.spbu.math.baobab.model.TopicExtent;
-import ru.spbu.math.baobab.server.sql.AttendeeEventMap;
 import ru.spbu.math.baobab.server.sql.AttendeeExtentSqlImpl;
 import ru.spbu.math.baobab.server.sql.AuditoriumExtentSqlImpl;
 import ru.spbu.math.baobab.server.sql.CalendarExtentSqlImpl;
@@ -53,6 +52,8 @@ import com.google.common.collect.Lists;
  */
 public class ScriptFormServlet extends HttpServlet {
   private static final Logger LOGGER = Logger.getLogger("ScriptFormService");
+  private static final String SUCCESSFUL_RESULT = "Все завершилось прекрасно";
+  private static final String WRONG_RESULT = "Ошибка при выполнении команды %s:%s\n";
 
   private final AttendeeExtent myAttendeeExtent = new AttendeeExtentSqlImpl();
   private final AuditoriumExtent myAuditoriumExtent = new AuditoriumExtentSqlImpl();
@@ -74,10 +75,25 @@ public class ScriptFormServlet extends HttpServlet {
     request.setAttribute("topic_list", getTopicList());
     request.setAttribute("auditorium_list", getAuditoriumList());
     request.setAttribute("time_slot_list", getTimeSlotList());
-    request.setAttribute("calendarList", myCalendarExtent.getAll());
     request.setAttribute("placeholders", Parser.placeholders());
+    request.setAttribute("wasErr", getTypeOfAlert(result));
+    request.setAttribute("hasResult", isResultEmpty(result));
     RequestDispatcher scriptForm = request.getRequestDispatcher("/script_form.jsp");
     scriptForm.forward(request, response);
+  }
+  
+  private boolean getTypeOfAlert(String result) {
+    if (result.equals(SUCCESSFUL_RESULT)) {
+      return false;
+    }
+    return true;     
+  }
+  
+  private boolean isResultEmpty(String result) {
+    if (result.isEmpty()) {
+      return false;
+    }
+    return true;
   }
 
   private Collection<String> getTopicList() {
@@ -171,40 +187,21 @@ public class ScriptFormServlet extends HttpServlet {
       result = "Неправильный пароль";
     }
     else {
-      if (scriptText.startsWith("#")) {
-        LegacyExamScheduleImporter importer = new LegacyExamScheduleImporter(myAuditoriumExtent, myAttendeeExtent, myTopicExtent);
+      ScriptInterpreter interpreter = new ScriptInterpreter(Lists.<Parser>newArrayList(
+          new TimeSlotCommandParser(myTimeSlotExtent), new AttendeeCommandParser(myAttendeeExtent), new AuditoriumCommandParser(myAuditoriumExtent), 
+          new EventDeclareCommandParser(myTopicExtent, myAttendeeExtent), new EventBindCommandParser(myTopicExtent, myAttendeeExtent, myAuditoriumExtent, myTimeSlotExtent),
+          new CalendarCommandParser(myCalendarExtent, myTopicExtent)));
+
+      result = SUCCESSFUL_RESULT;
+      for (String command : Splitter.on('\n').omitEmptyStrings().split(scriptText)) {
         try {
-          String schedule = importer.importSchedule(scriptText, "exams-winter-2013");
-          request.setAttribute("script_text", schedule);
-          result = "Данные импортированы успешно";
+          interpreter.process(command);
         } catch (Throwable e) {
-          LOGGER.log(Level.SEVERE, "Failed to import data", e);
-          LOGGER.log(Level.SEVERE, scriptText);
+          LOGGER.log(Level.SEVERE, "Failed to execute script", e);
           request.setAttribute("script_text", scriptText);
-          result = String.format("Ошибка при импорте:\n %s", e.getMessage());
+          result = String.format(WRONG_RESULT, command, e.getMessage());
+          break;
         }
-      } else {
-        ScriptInterpreter interpreter = new ScriptInterpreter(Lists.<Parser>newArrayList(
-            new TimeSlotCommandParser(myTimeSlotExtent), new AttendeeCommandParser(myAttendeeExtent), new AuditoriumCommandParser(myAuditoriumExtent), 
-            new EventDeclareCommandParser(myTopicExtent, myAttendeeExtent), new EventBindCommandParser(myTopicExtent, myAttendeeExtent, myAuditoriumExtent, myTimeSlotExtent),
-            new CalendarCommandParser(myCalendarExtent, myTopicExtent)));
-  
-        result = "Все завершилось прекрасно";
-        for (String command : Splitter.on('\n').omitEmptyStrings().split(scriptText)) {
-          try {
-            if (!interpreter.process(command)) {
-              request.setAttribute("script_text", scriptText);
-              result = String.format("Не удалось разобрать команду %s", command);
-              break;            
-            }
-          } catch (Throwable e) {
-            LOGGER.log(Level.SEVERE, "Failed to execute script", e);
-            request.setAttribute("script_text", scriptText);
-            result = String.format("Ошибка при выполнении команды %s:%s\n", command, e.getMessage());
-            break;
-          }
-        }
-        AttendeeEventMap.clearCaches();
       }
     }
     process(request, response, result);
