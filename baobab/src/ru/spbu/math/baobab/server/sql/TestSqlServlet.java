@@ -18,6 +18,7 @@ import com.google.common.collect.Multimap;
 import ru.spbu.math.baobab.model.Attendee;
 import ru.spbu.math.baobab.model.CalendarExtent;
 import ru.spbu.math.baobab.model.Event;
+import ru.spbu.math.baobab.server.CalendarExtentImpl;
 
 /**
  * This servlet does a smoke test of database connection. It runs a single select and
