@@ -1,37 +1,62 @@
 package ru.spbu.math.baobab.server;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.regex.Pattern;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import ru.spbu.math.baobab.model.AuditoriumExtent;
+import ru.spbu.math.baobab.model.TimeSlotExtent;
+import ru.spbu.math.baobab.model.Topic;
+import ru.spbu.math.baobab.model.TopicExtent;
+import ru.spbu.math.baobab.model.Topic.Type;
+import ru.spbu.math.baobab.server.sql.TopicExtentSqlImpl;
+
 /**
- * TODO: doc brief
- * Парсим HTML-файл с расписанием (экспорт из Excel)
+ * Parser gets an html file exported from Excel. There is only one table inside the file.
+ * Then grabs some data from every cell of table.
+ * E.g.
+ *   Математический анализ (пр. з.) ст. пр. Голузина М.Г. 2520
+ *   Практикум на ЭВМ ст. пр. Киреев И.В. 2410
+ *   Математическая логика и теория множеств (лекц.) доц. Всемирнов М.А. 36
+ *   
+ * With every string creates a topic.
  * 
  * @author agudulin
  *
  */
 public class ScheduleParser {
-  private final static String URL = "http://gudulin.ru/baobab/sheet001.htm";
-  private File input;
-  
-  ScheduleParser(String inputFileName) {
-    //TODO: check if file doesn't exist if it necessary
-    input = new File(inputFileName);
+  private final TopicExtent topicExtent;
+  private static final Pattern pLabsMatch1 = Pattern.compile("(?=.*?(?:\\(пр\\.?[ ]*(з\\.?)?\\)?)).*",Pattern.CASE_INSENSITIVE);
+  private static final Pattern pLabsMatch2 = Pattern.compile("(?=.*?(?:практикум)).*", Pattern.CASE_INSENSITIVE);
+  private static final Pattern pLabsSplit = Pattern.compile("\\(пр\\.?[ ]*(з\\.?)?\\)?", Pattern.CASE_INSENSITIVE);
+  private static final Pattern pLectureMatch = Pattern.compile("(?=.*?(?:\\(лек[ц]?\\.?\\))).*", Pattern.CASE_INSENSITIVE);
+  private static final Pattern pLectureSplit = Pattern.compile("\\(лек[ц]?\\.?\\)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern pLabsLectureMatch = Pattern.compile("(?=.*?(?:(\\(лек[ц]?\\.?,[ ]*пр\\.?\\))|(\\(пр\\.?,[ ]*лек[ц]?\\.?\\)))).*", Pattern.CASE_INSENSITIVE);
+  private static final Pattern pLabsLectureSplit = Pattern.compile("(\\(лек[ц]?\\.?,[ ]*пр\\.?\\))|(\\(пр\\.?,[ ]*лек[ц]?\\.?\\))", Pattern.CASE_INSENSITIVE);
+
+  ScheduleParser(TimeSlotExtent timeSlotExtent, AuditoriumExtent auditoriumExtent) {
+    topicExtent = new TopicExtentSqlImpl(timeSlotExtent, auditoriumExtent);
   }
-  
-  public void Parse() throws IOException {
-    Document doc = Jsoup.connect(URL).get();
+
+  /**
+   * Parse html file of schedule
+   * 
+   * @param url URL of file to parse
+   * @throws IOException
+   */
+  public void Parse(String url) throws IOException {
+    Document doc = Jsoup.connect(url).get();
     Element table = doc.select("table").first();
     Iterator<Element> tr = table.select("tr").iterator();
 
     /* 
      * Get a list of count of groups per speciality
+     * Don't think it is necessary, but why not
      * 
      * Look at the first <tr>
      * It contains cells like
@@ -55,7 +80,7 @@ public class ScheduleParser {
       countOfGroupsPerSpeciality.add(tmp);
       System.out.println(tmp);
     }
-    
+
     /* 
      * Get the groups list
      * 
@@ -75,7 +100,7 @@ public class ScheduleParser {
       groups.add(groupName);
       System.out.println(groupName);
     }
-    
+
     /* 
      * Get the specialities list
      */
@@ -92,7 +117,13 @@ public class ScheduleParser {
       specialities.add(specialityName);
       System.out.println(specialityName);
     }
-    
+
+    /*
+     * Get departments list
+     * TODO: subj. and make this function optional,
+     *       because 1st and 2nd courses haven't departments
+     */ 
+
     /*
      * Get weekly schedule
      */
@@ -100,9 +131,9 @@ public class ScheduleParser {
       oneDaySchedule(tr);
     }
   }
-  
+
   /**
-   * Skip first two empty <td> (colspan mb equals 2)
+   * Skip first two empty <td> (colspan attribute mb equals 2)
    */
   private void skipTwoItems(Iterator<Element> td) {
     if (td.next().attr("colspan").equals("")) {
@@ -132,7 +163,7 @@ public class ScheduleParser {
       places.add(place);
       System.out.println(place);
     }
-    
+
     /* 
      * Get classes
      */
@@ -142,12 +173,84 @@ public class ScheduleParser {
     Integer classesCount = Integer.parseInt(firstCell.attr("rowspan"));
     System.out.println(firstCell.text());
     for (int i = 0; i < classesCount; ++i) {
+      td.next(); // skip class number and time info
+      System.out.println((i + 1) + "-я пара");
       while (td.hasNext()) {
-        System.out.println(td.next().text());
+        Element _td = td.next();
+        // ignore the last column because it's always empty
+        if (!td.hasNext()) {
+          break;
+        }
+
+        // TODO: check empty day in another way
+        if (_td.text().length() <= 3) {
+          System.out.println("ОКНО");
+          continue;
+        }
+
+        if (_td.attr("colspan").equals("")) {
+          topicFromString(_td.text());
+        } else {
+          Integer colspan = Integer.parseInt(_td.attr("colspan"));
+          for (int j = 0; j < colspan; ++j) {
+            topicFromString(_td.text());
+          }
+        }        
       }
       if (i < classesCount-1) {
         td = tr.next().select("td").iterator();
       }
     }
+  }
+
+  /**
+   * Parse classes text and create topic
+   * @param text a string from schedule cell 
+   */
+  public Topic topicFromString(String text) {
+    Topic topic = null;
+    String id;
+
+    // TODO: generate cool ID for every topic
+    // TODO: parse numerator and denominator situation
+    if (pLectureMatch.matcher(text).matches()) {
+      System.out.println("ЛЕКЦИЯ:: " + pLectureSplit.split(text)[0]);
+      id = pLectureSplit.split(text)[0];
+      if (topicExtent.find(id) == null) {
+        topic = topicExtent.createTopic(id, Type.LECTURE_COURSE, id);
+      }
+      return topic;
+    }
+    if (pLabsLectureMatch.matcher(text).matches()) {
+      System.out.println("ЛЕКЦИЯ+ПРАКТИКА:: " + pLabsLectureSplit.split(text)[0]);
+      id = pLabsLectureSplit.split(text)[0];
+      if (topicExtent.find(id) == null) {
+        topic = topicExtent.createTopic(id, Type.LECTURE_COURSE, id);
+//        topic = topicExtent.createTopic(id2, Type.LABS_COURSE, id);
+      }
+      return topic;
+    }
+    if (pLabsMatch1.matcher(text).matches()) {
+      System.out.println("ПРАКТИКА:: " + pLabsSplit.split(text)[0]);
+      id = pLabsSplit.split(text)[0];
+      if (topicExtent.find(id) == null) {
+        topic = topicExtent.createTopic(id, Type.LABS_COURSE, id);
+      }
+      return topic;
+    }
+    if (pLabsMatch2.matcher(text.toLowerCase()).matches()) {
+      System.out.println("ПРАКТИКА:: " + text);
+      id = text.substring(0, text.length() > 10 ? 10 : text.length()); // TODO: generate ID
+      if (topicExtent.find(id) == null) {
+        topic = topicExtent.createTopic(id, Type.LABS_COURSE, id);
+      }
+    } else {
+      System.out.println("НИРЫБАНИМЯСО:: " + text);
+      id = text.substring(0, text.length() > 10 ? 10 : text.length()); // TODO: generate ID
+      if (topicExtent.find(id) == null) {
+        topic = topicExtent.createTopic(id, Type.LABS_COURSE, id);
+      }
+    }
+    return topic;
   }
 }
