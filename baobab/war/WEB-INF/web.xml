@@ -8,6 +8,16 @@
     <url-pattern>/data/edit</url-pattern>
   </servlet-mapping>
   
+  <!--  Schedule Parser -->
+  <servlet>
+    <servlet-name>data_parser_servlet</servlet-name>
+    <servlet-class>ru.spbu.math.baobab.server.ScheduleParserServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>data_parser_servlet</servlet-name>
+    <url-pattern>/data/parser</url-pattern>
+  </servlet-mapping>
+
 
   <!--  Auth -->
   <servlet>
