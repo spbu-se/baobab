@@ -24,12 +24,18 @@ public class ProfileExtent {
    * @param academicGroup for academic group memberships for ex. students (can be null)
    * @param chair for chair memberships (ex. teacher) (can be null)
    * @return new Profile instance
-   * @throws IllegalArgumentException if 1. Profile of user with the given userKey is already exist; 2. all parameters
-   *           are null; 3. user with the given email is already exist
+   * @throws IllegalArgumentException if: 
+   * 1. Profile of user with the given userKey is already exist 
+   * 2. all parameters are null 
+   * 3. user with the given email is already exist 
+   * 4. wrong format of email address
    */
   public Profile create(String userKey, String email, Attendee academicGroup, Attendee chair) {
     if ((userKey == null) && (email == null) && (academicGroup == null) && (chair == null)) {
       throw new IllegalArgumentException("All parameters were == null."); // there is no need to create empty profile
+    }
+    if ((email != null) && !Profile.isValidEmailAddress(email)) {
+      throw new IllegalArgumentException("Wrong format of email address/XMPP was entered.");
     }
     Objectify ofy = ObjectifyService.begin();
     Profile profile = ofy.query(Profile.class).filter("myEmail", email).get();
@@ -54,12 +60,18 @@ public class ProfileExtent {
    * @param academicGroupId for academic group memberships for ex. students (can be null)
    * @param chairId for chair memberships (ex. teacher) (can be null)
    * @return new Profile instance
-   * @throws IllegalArgumentException if 1. Profile of user with the given userKey is already exist; 2. all parameters
-   *           are null; 3. user with the given email is already exist
+   * @throws IllegalArgumentException if: 
+   * 1. Profile of user with the given userKey is already exist 
+   * 2. all parameters are null 
+   * 3. user with the given email is already exist 
+   * 4. wrong format of email address
    */
   public Profile create(String userKey, String email, String academicGroupId, String chairId) {
     if ((userKey == null) && (email == null) && (academicGroupId == null) && (chairId == null)) {
       throw new IllegalArgumentException("All parameters were == null."); // there is no need to create empty profile
+    }
+    if ((email != null) && !Profile.isValidEmailAddress(email)) {
+      throw new IllegalArgumentException("Wrong format of email address/XMPP was entered.");
     }
     Objectify ofy = ObjectifyService.begin();
     Profile profile = ofy.query(Profile.class).filter("myEmail", email).get();
