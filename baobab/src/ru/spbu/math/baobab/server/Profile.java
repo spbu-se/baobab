@@ -11,9 +11,10 @@ import ru.spbu.math.baobab.model.Attendee;
 
 /**
  * Profile instance manages personal information about single Attendee (in case attendee provides this information).
- * Signed-in users can add or change the following information: 1. Membership in academic group if user is a student; 2.
- * Department if user is a teacher; 3. Email/XMPP for notifications.
- * 
+ * Signed-in users can add or change the following information: 
+ * 1. Membership in academic group if user is a student 
+ * 2. Department if user is a teacher 
+ * 3. Email/XMPP for notifications
  * @author aoool
  */
 @Entity(name = "Profile")
@@ -85,7 +86,9 @@ public class Profile {
    * Sets or changes user's email/XMPP.
    * 
    * @param email User's email or XMPP
-   * @throws IllegalArgumentException if 1. entered email or XMPP was wrong; 2.entered email already in use
+   * @throws IllegalArgumentException if:
+   * 1. entered email or XMPP was wrong 
+   * 2.entered email already in use
    */
   public void setEmail(String email) {
     if (myEmail == email) {
