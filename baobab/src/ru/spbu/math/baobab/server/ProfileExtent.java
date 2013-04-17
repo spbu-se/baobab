@@ -31,8 +31,8 @@ public class ProfileExtent {
    * 4. wrong format of email address
    */
   public Profile create(String userKey, String email, Attendee academicGroup, Attendee chair) {
-    if ((userKey == null) && (email == null) && (academicGroup == null) && (chair == null)) {
-      throw new IllegalArgumentException("All parameters were == null."); // there is no need to create empty profile
+    if ((userKey == null) || (email == null) && (academicGroup == null) && (chair == null)) {
+      throw new IllegalArgumentException("All parameters were == null or only userKey == null."); // there is no need to create empty profile
     }
     if ((email != null) && !Profile.isValidEmailAddress(email)) {
       throw new IllegalArgumentException("Wrong format of email address/XMPP was entered.");
@@ -66,9 +66,9 @@ public class ProfileExtent {
    * 3. user with the given email is already exist 
    * 4. wrong format of email address
    */
-  public Profile create(String userKey, String email, String academicGroupId, String chairId) {
-    if ((userKey == null) && (email == null) && (academicGroupId == null) && (chairId == null)) {
-      throw new IllegalArgumentException("All parameters were == null."); // there is no need to create empty profile
+  public Profile createWithIds(String userKey, String email, String academicGroupId, String chairId) {
+    if ((userKey == null) || (email == null) && (academicGroupId == null) && (chairId == null)) {
+      throw new IllegalArgumentException("All parameters were == null or only userKey == null."); // there is no need to create empty profile
     }
     if ((email != null) && !Profile.isValidEmailAddress(email)) {
       throw new IllegalArgumentException("Wrong format of email address/XMPP was entered.");
@@ -87,7 +87,7 @@ public class ProfileExtent {
     }
     return profile;
   }
-
+  
   /**
    * Finds Profile by user key.
    * 
