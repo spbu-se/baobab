@@ -33,7 +33,7 @@ public class ScheduleParserServlet extends HttpServlet {
       AuditoriumExtent auditoriumExtent = new AuditoriumExtentImpl();
       AttendeeExtent attendeeExtent = new AttendeeExtentImpl();
       TimeSlotExtent tsExtent = new TimeSlotExtentImpl();
-      ScheduleParser parser = new ScheduleParser(auditoriumExtent, attendeeExtent, topicExtent, tsExtent);
+      ScheduleParser parser = new ScheduleParser(auditoriumExtent, attendeeExtent, topicExtent, tsExtent, "2013-02-10", "2013-05-31");
       parser.Parse(url);
       result = parser.result();
     }

@@ -58,13 +58,16 @@ public class ScheduleParser {
   private static final Pattern myNumeratorDenominator = Pattern.compile("([^_]*)[_]+(.*)");
   private static final Pattern myAuditorium = Pattern.compile("(?=.*?(?:(\\d+([\\/-]\\d+)?))).*");
   private static final String myWordEndsWithDot = "[а-яёА-ЯЁ]+\\.";
+  private static final String[] daysOfWeek = {"пн", "вт", "ср", "чт", "пт", "сб", "вс"};
 
+  private final String myTermStartDate;
+  private final String myTermFinishDate;
   private final AttendeeExtentImpl myBufferAttendeeExtent;
   private final TopicExtentImpl myBufferTopicExtent;
   private final AuditoriumExtentImpl myBufferAuditoriumExtent;
   private final TimeSlotExtentImpl myBufferTimeSlotExtent;
 
-  ScheduleParser(AuditoriumExtent auditoriumExtent, AttendeeExtent attendeeExtent, TopicExtent topicExtent, TimeSlotExtent tsExtent) {
+  ScheduleParser(AuditoriumExtent auditoriumExtent, AttendeeExtent attendeeExtent, TopicExtent topicExtent, TimeSlotExtent tsExtent, String termStartDate, String termFinishDate) {
     myBufferAttendeeExtent = new AttendeeExtentImpl();
     for (Attendee att : attendeeExtent.getAll()) {
       myBufferAttendeeExtent.create(att.getID(), att.getName(), att.getType());
@@ -85,6 +88,8 @@ public class ScheduleParser {
       myBufferTimeSlotExtent.create(ts.getName(), ts.getStart(), ts.getFinish(), ts.getDayOfWeek(), ts.getEvenOddWeek());
     }
     myCommands = new StringBuilder();
+    myTermStartDate = termStartDate;
+    myTermFinishDate = termFinishDate;
   }
 
   /**
@@ -240,21 +245,22 @@ public class ScheduleParser {
         }
 
         Integer colspan = _td.attr("colspan").isEmpty() ? 0 : Integer.parseInt(_td.attr("colspan"));
-        List<String> groupsEvent = new ArrayList<String>();
+        List<String> studyGroups = new ArrayList<String>();
         String commonPrefix = groups.get(columnNumber);
         for (int x = 0; x < colspan; ++x) {
           commonPrefix = Strings.commonPrefix(commonPrefix, groups.get(columnNumber));
           System.out.println(groups.get(columnNumber));
-          groupsEvent.add(groups.get(columnNumber));
+          studyGroups.add(groups.get(columnNumber));
           columnNumber++;
         }
         String prefix = "-" + commonPrefix + "x";
         if (colspan == 0) {
           prefix = "";
           System.out.println(groups.get(columnNumber));
-          groupsEvent.add(groups.get(columnNumber));
+          studyGroups.add(groups.get(columnNumber));
           columnNumber++;
         }
+        List<Attendee> groupsAttendee = importStudentAttendees(studyGroups);
 
         // Create topics for numerator/denominator if it is
         Matcher m = myNumeratorDenominator.matcher(_td.text());
@@ -265,24 +271,24 @@ public class ScheduleParser {
             System.out.println("Числитель");
             Auditorium auditorium = importAuditorium(numerator);
             String timeSlotName = importTimeSlot(i, day, EvenOddWeek.EVEN);
-            List<Attendee> teachers = importAttendees(numerator);
-            Topic topic = importTopic(numerator, prefix, teachers);
-            createEvent(topic, auditorium, timeSlotName, groupsEvent);
+            List<Attendee> teachers = importTeacherAttendees(numerator);
+            Topic topic = importTopic(numerator, prefix, groupsAttendee, teachers);
+            createEvent(topic, auditorium, timeSlotName, groupsAttendee);
           }
           if (!denomenator.isEmpty()) {
             System.out.println("Знаменатель");
             Auditorium auditorium = importAuditorium(denomenator);
             String timeSlotName = importTimeSlot(i, day, EvenOddWeek.ODD);
-            List<Attendee> teachers = importAttendees(denomenator);
-            Topic topic = importTopic(denomenator, prefix, teachers);
-            createEvent(topic, auditorium, timeSlotName, groupsEvent);
+            List<Attendee> teachers = importTeacherAttendees(denomenator);
+            Topic topic = importTopic(denomenator, prefix, groupsAttendee, teachers);
+            createEvent(topic, auditorium, timeSlotName, groupsAttendee);
           }
         } else {
           Auditorium auditorium = importAuditorium(_td.text());
           String timeSlotName = importTimeSlot(i, day, EvenOddWeek.ALL);
-          List<Attendee> teachers = importAttendees(_td.text());
-          Topic topic = importTopic(_td.text(), prefix, teachers);
-          createEvent(topic, auditorium, timeSlotName, groupsEvent);
+          List<Attendee> teachers = importTeacherAttendees(_td.text());
+          Topic topic = importTopic(_td.text(), prefix, groupsAttendee, teachers);
+          createEvent(topic, auditorium, timeSlotName, groupsAttendee);
         }
       }
       if (i < classesCount) {
@@ -291,7 +297,7 @@ public class ScheduleParser {
     }
   }
 
-  private void createEvent(Topic topic, Auditorium auditorium, String timeSlotName, List<String> groups) {
+  private void createEvent(Topic topic, Auditorium auditorium, String timeSlotName, List<Attendee> groups) {
     String auditoriumID = "";
     if (auditorium != null) {
       auditoriumID = auditorium.getID();
@@ -300,8 +306,8 @@ public class ScheduleParser {
     if (topic != null) {
       topicID = topic.getID();
     }
-    String command = String.format("событие \"%s\" состоится на \"%s\" в \"%s\" для %s", topicID, timeSlotName,
-        auditoriumID, createStringList(groups));
+    String command = String.format("событие \"%s\" состоится на \"%s\" с %s по %s в \"%s\" для %s", topicID, timeSlotName,
+        myTermStartDate, myTermFinishDate, auditoriumID, createAttendeeList(groups));
     if (topicID.isEmpty() || auditoriumID.isEmpty() || groups.size() == 0 || timeSlotName.isEmpty()) {
       myCommands.append("<font color='red'>" + command + "</font>").append("\n\n");
     } else {
@@ -360,32 +366,7 @@ public class ScheduleParser {
       break;
     }
 
-    String dayOfWeek = "";
-    switch(day) {
-    case 1:
-      dayOfWeek = "пн";
-      break;
-    case 2:
-      dayOfWeek = "вт";
-      break;
-    case 3:
-      dayOfWeek = "ср";
-      break;
-    case 4:
-      dayOfWeek = "чт";
-      break;
-    case 5:
-      dayOfWeek = "пт";
-      break;
-    case 6:
-      dayOfWeek = "сб";
-      break;
-    case 7:
-      dayOfWeek = "вс";
-      break;
-    default:
-      break;
-    }
+    String dayOfWeek = (day > 0 && day < 8) ? daysOfWeek[day-1] : "";
 
     String name = String.format("%d-я пара", classesNumber);
     for (TimeSlot ts : myBufferTimeSlotExtent.getAll()) {
@@ -418,7 +399,7 @@ public class ScheduleParser {
    * 
    * @param text text contains attendee names and other trash
    */
-  private List<Attendee> importAttendees(String text) {
+  private List<Attendee> importTeacherAttendees(String text) {
     List<Attendee> result = Lists.newArrayList();
 
     Matcher m = pTeacher.matcher(text);
@@ -445,19 +426,48 @@ public class ScheduleParser {
   }
 
   /**
+   * Searches for existing study group and generates
+   * commands to create attendees which are not yet defined
+   * 
+   * @param groups list of study groups
+   */
+  private List<Attendee> importStudentAttendees(List<String> groups) {
+    List<Attendee> result = Lists.newArrayList();
+
+    for (String group : groups) {
+      Attendee attendee = myBufferAttendeeExtent.find(group);
+      if (attendee != null) {
+        result.add(attendee);
+        continue;
+      }
+
+      String command = String.format("определить участника \"%s\" как учебную группу", group);
+      if (new AttendeeCommandParser(myBufferAttendeeExtent).parse(command)) {
+        myCommands.append(command).append("\n");
+      } else {
+        myCommands.append("<font color='red'>" + command + "</font>").append("\n");
+      }
+      attendee = myBufferAttendeeExtent.find(group);
+      assert attendee != null;
+      result.add(attendee);
+    }
+    return result;
+  }
+
+  /**
    * Create topic from table cell text
    * 
    * @param text a string from schedule cell 
    * @param prefix short string of common group prefix
    */
-  public Topic importTopic(String text, String prefix, List<Attendee> teachers) {
+  public Topic importTopic(String text, String prefix, List<Attendee> groups, List<Attendee> teachers) {
     if (myLectureMatch.matcher(text).matches()) {
       String topicName = myLectureSplit.split(text)[0].trim().replaceAll("[^а-яА-ЯёЁ\\w\\s]", "");
-      return topicByType(topicName, teachers, prefix, Type.LECTURE_COURSE, true);
+      return topicByType(topicName, groups, teachers, prefix, Type.LECTURE_COURSE, true);
     }
     if (myLabsMatch1.matcher(text).matches()) {
       String topicName = myLabsSplit.split(text)[0].trim().replaceAll("[^а-яА-ЯёЁ\\w\\s]", "");
-      return topicByType(topicName, teachers, prefix, Type.LABS_COURSE, true);
+      return topicByType(topicName, groups, teachers, prefix, Type.LABS_COURSE, true);
     }
     if (myLabsMatch2.matcher(text.toLowerCase()).matches()) {
       String topicName = "";
@@ -468,10 +478,10 @@ public class ScheduleParser {
       } else {
         topicName = text.replaceAll(myWordEndsWithDot, "").trim().replaceAll("[^а-яА-ЯёЁ\\w\\s]", "");
       }
-      return topicByType(topicName, teachers, prefix, Type.LABS_COURSE, true);
+      return topicByType(topicName, groups, teachers, prefix, Type.LABS_COURSE, true);
     } else {
       String topicName = text.trim();
-      return topicByType(topicName, teachers, prefix, Type.LABS_COURSE, false);
+      return topicByType(topicName, groups, teachers, prefix, Type.LABS_COURSE, false);
     }
   }
 
@@ -484,7 +494,7 @@ public class ScheduleParser {
    * @param type type of the topic (lecture, labs, etc)
    * @return
    */
-  private Topic topicByType(String topicName, List<Attendee> teachers, String groupPrefix, Type type, boolean noDoubt) {
+  private Topic topicByType(String topicName, List<Attendee> groups, List<Attendee> teachers, String groupPrefix, Type type, boolean noDoubt) {
     String typeTag = "", typeName = "";
     switch (type) {
     case LECTURE_COURSE:
@@ -520,7 +530,7 @@ public class ScheduleParser {
     if (teachers.size() > 0) {
       owners = String.format("владельцы %s", createAttendeeList(teachers));
     }
-    String command = String.format("определить %s \"%s\" \"%s\" %s", typeName, id, topicName, owners);
+    String command = String.format("определить %s \"%s\" \"%s\" для %s %s", typeName, id, topicName, createAttendeeList(groups), owners);
     System.out.println(command);
     if (noDoubt && new EventDeclareCommandParser(myBufferTopicExtent, myBufferAttendeeExtent).parse(command)) {
       myCommands.append(command).append("\n");
