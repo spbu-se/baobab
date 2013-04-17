@@ -8,6 +8,7 @@ import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.ObjectifyService;
 import com.googlecode.objectify.annotation.Entity;
 import ru.spbu.math.baobab.model.Attendee;
+import ru.spbu.math.baobab.model.Attendee.Type;
 
 /**
  * Profile instance manages personal information about single Attendee (in case attendee provides this information).
@@ -51,6 +52,9 @@ public class Profile {
    * @throws IllegalArgumentException - if attendee's type != ACADEMIC_GROUP
    */
   public void setAcademicGroup(Attendee academicGroup) {
+    if((academicGroup != null) && (academicGroup.getType() != Type.ACADEMIC_GROUP)) {
+      throw new IllegalArgumentException("Can't use setAcademicGroup() for attendee whose type != ACADEMIC_GROUP.");
+    }
     myAcademicGroupId = academicGroup.getID();
     Objectify ofy = ObjectifyService.begin();
     ofy.put(this);
@@ -70,6 +74,9 @@ public class Profile {
    * @throws IllegalArgumentException - if attendee's type != CHAIR
    */
   public void setChair(Attendee chair) {
+    if((chair != null) && (chair.getType() != Type.CHAIR)) {
+      throw new IllegalArgumentException("Can't use setChair() for attendee whose type != CHAIR.");
+    }
     myDepartmentId = chair.getID();
     Objectify ofy = ObjectifyService.begin();
     ofy.put(this);
@@ -88,7 +95,7 @@ public class Profile {
    * @param email User's email or XMPP
    * @throws IllegalArgumentException if:
    * 1. entered email or XMPP was wrong 
-   * 2.entered email already in use
+   * 2. entered email already in use
    */
   public void setEmail(String email) {
     if (myEmail == email) {
