@@ -101,7 +101,7 @@ public class Profile {
     if (myEmail == email) {
       return;
     }
-    if (!isValidEmailAddress(email)) {
+    if ((email != null) && (!isValidEmailAddress(email))) {
       throw new IllegalArgumentException("Wrong format of email address/XMPP was entered.");
     }
     Objectify ofy = ObjectifyService.begin();
@@ -135,4 +135,20 @@ public class Profile {
     }
     return result;
   }
+  
+  /* Temporary section, some questions about Profile changing and creation */
+  
+  public void setAcademicGroup(String academicGroupId) {
+    myAcademicGroupId = academicGroupId;
+    Objectify ofy = ObjectifyService.begin();
+    ofy.put(this);
+  }
+  
+  public void setChair(String chairId) {
+    myDepartmentId = chairId;
+    Objectify ofy = ObjectifyService.begin();
+    ofy.put(this);
+  }
+  
+  /* Temporary section, some questions about Profile changing and creation */
 }
