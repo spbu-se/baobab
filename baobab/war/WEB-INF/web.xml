@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.5" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee                http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.5" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee                http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
   <servlet>
     <servlet-name>data_edit_servlet</servlet-name>
     <servlet-class>ru.spbu.math.baobab.server.ScriptFormServlet</servlet-class>
@@ -6,6 +7,15 @@
   <servlet-mapping>
     <servlet-name>data_edit_servlet</servlet-name>
     <url-pattern>/data/edit</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>profile</servlet-name>
+    <servlet-class>ru.spbu.math.baobab.server.ProfileServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>profile</servlet-name>
+    <url-pattern>/profile</url-pattern>
   </servlet-mapping>
   
 
@@ -40,6 +50,8 @@
     <servlet-name>team_servlet</servlet-name>
     <url-pattern>/team</url-pattern>
   </servlet-mapping>
+  
+   
 
   <!--  Exports --> 
   <servlet>
