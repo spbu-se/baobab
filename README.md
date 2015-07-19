@@ -2,4 +2,4 @@
 
 This project aims to create an online Baobab where students, teachers and other matmex people can get actual information and materials about the education process and faculty life.
 
-For more info, see the [wiki](wiki).
+For more info, see the [wiki](../../wiki).
